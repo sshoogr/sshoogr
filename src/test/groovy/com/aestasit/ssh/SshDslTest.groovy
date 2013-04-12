@@ -31,7 +31,7 @@ class SshDslTest {
   def static void startSshd() {
     sshd = SshServer.setUpDefaultServer()
     sshd.with {
-      port = 2222
+      port = 2233
       keyPairProvider = new SimpleGeneratorHostKeyProvider()
       commandFactory = new ScpCommandFactory( new MockCommandFactory() )
       shellFactory = new MockShellFactory()
@@ -54,7 +54,7 @@ class SshDslTest {
       defaultHost = '127.0.0.1'
       defaultUser = 'user1'
       defaultPassword = '123456'
-      defaultPort = 2222
+      defaultPort = 2233
 
       reuseConnection = true
       trustUnknownHosts = true
@@ -101,7 +101,7 @@ class SshDslTest {
     // Test overriding default connection settings through URL.
     engine.remoteSession {
 
-      url = 'user2:654321@localhost:2222'
+      url = 'user2:654321@localhost:2233'
 
       exec 'whoami'
       exec 'du -s'
@@ -114,7 +114,7 @@ class SshDslTest {
   @Test
   def void testMethodOverriding() throws Exception {
     // Test overriding default connection settings through method parameter.
-    engine.remoteSession('user2:654321@localhost:2222') {
+    engine.remoteSession('user2:654321@localhost:2233') {
 
       exec 'whoami'
       exec 'du -s'
@@ -132,7 +132,7 @@ class SshDslTest {
       host = 'localhost'
       username = 'user2'
       password = '654321'
-      port = 2222
+      port = 2233
 
       exec 'whoami'
       exec 'du -s'
