@@ -1,13 +1,13 @@
 
 buildscript {
   repositories { mavenCentral() }
-  dependencies { classpath 'org.ajoberstar:gradle-jacoco:0.2.0' }
+  dependencies { classpath 'net.saliman:gradle-cobertura-plugin:1.1.2' }
 }
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
-apply plugin: 'jacoco'
+apply plugin: 'cobertura'
 
 apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
