@@ -1,0 +1,73 @@
+package com.aestasit.ssh
+
+/**
+ * Configuration object holding options used for EXEC (remote command execution) functionality.
+ *
+ * @author Andrey Adamovich
+ *
+ */
+public class ExecOptions extends CommonOptions {
+
+  def Boolean showOutput       = true
+  def Boolean showCommand      = true
+  def Long maxWait             = 0
+  
+  def Long succeedOnExitStatus = 0
+  def File outputFile          = null
+  def Boolean appendFile       = false
+  
+  def String prefix            = null
+  def String suffix            = null
+  
+  ExecOptions() {
+
+  }
+
+  ExecOptions(ExecOptions opt1) {
+    this.failOnError         = setValue(opt1?.failOnError, true)
+    this.verbose             = setValue(opt1?.verbose, false)
+    this.showOutput          = setValue(opt1?.showOutput, true)
+    this.showCommand         = setValue(opt1?.showCommand, true)
+    this.maxWait             = setValue(opt1?.maxWait, 0)
+    this.succeedOnExitStatus = setValue(opt1?.succeedOnExitStatus, 0)
+    this.outputFile          = setValue(opt1?.outputFile, null)
+    this.appendFile          = setValue(opt1?.appendFile, false)
+    this.prefix              = setValue(opt1?.prefix, null)
+    this.suffix              = setValue(opt1?.suffix, null)
+  }
+
+  ExecOptions(ExecOptions opt1, ExecOptions opt2) {
+    this.failOnError         = setValue(opt2?.failOnError, opt1?.failOnError, true)
+    this.verbose             = setValue(opt2?.verbose, opt1?.verbose, false)
+    this.showOutput          = setValue(opt2?.showOutput, opt1?.showOutput, true)
+    this.showCommand         = setValue(opt2?.showCommand, opt1?.showCommand, true)
+    this.maxWait             = setValue(opt2?.maxWait, opt1?.maxWait, 0)
+    this.succeedOnExitStatus = setValue(opt2?.succeedOnExitStatus, opt1?.succeedOnExitStatus, 0)
+    this.outputFile          = setValue(opt2?.outputFile, opt1?.outputFile, null)
+    this.appendFile          = setValue(opt2?.appendFile, opt1?.appendFile, false)
+    this.prefix              = setValue(opt2?.prefix, opt1?.prefix, null)
+    this.suffix              = setValue(opt2?.suffix, opt1?.suffix, null)
+  }
+
+  ExecOptions(ExecOptions opt1, Map opt2) {
+    this.failOnError         = setValue(opt2?.failOnError, opt1?.failOnError, true)
+    this.verbose             = setValue(opt2?.verbose, opt1?.verbose, false)
+    this.showOutput          = setValue(opt2?.showOutput, opt1?.showOutput, true)
+    this.showCommand         = setValue(opt2?.showCommand, opt1?.showCommand, true)
+    this.maxWait             = setValue(opt2?.maxWait, opt1?.maxWait, 0)
+    this.succeedOnExitStatus = setValue(opt2?.succeedOnExitStatus, opt1?.succeedOnExitStatus, 0)
+    this.outputFile          = setValue(opt2?.outputFile, opt1?.outputFile, null)
+    this.appendFile          = setValue(opt2?.appendFile, opt1?.appendFile, false)
+    this.prefix              = setValue(opt2?.prefix, opt1?.prefix, null)
+    this.suffix              = setValue(opt2?.suffix, opt1?.suffix, null)
+  }
+
+  def setValue(val1, dflt) {
+    return val1 != null ? val1 : dflt
+  }
+
+  def setValue(val2, val1, dflt) {
+    return setValue(val2, setValue(val1, dflt))
+  }
+
+}

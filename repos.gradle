@@ -1,0 +1,14 @@
+apply plugin: 'maven'
+
+repositories {
+  mavenCentral()
+}
+
+uploadArchives {
+  repositories.mavenDeployer {
+    name = "snapshots" 
+    repository(url: ossSnapshotRepositoryUrl) {
+      authentication(userName: ossSnapshotRepositoryUserName, password: ossSnapshotRepositoryPassword)
+    }
+  }
+}
