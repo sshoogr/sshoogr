@@ -19,7 +19,6 @@ import com.jcraft.jsch.Session
 class SessionDelegate {
 
   private static final int DEFAULT_SSH_PORT = 22
-  private static final int RETRY_DELAY = 1000
   private static final Pattern SSH_URL = ~/^(([^:\@]+)(:([^\@]+))\@)?([^:]+)(:(\d+))?$/
 
   private String     host           = null

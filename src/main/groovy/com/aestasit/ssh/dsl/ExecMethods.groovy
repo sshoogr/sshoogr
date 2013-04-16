@@ -17,6 +17,8 @@ import com.jcraft.jsch.JSchException
  */
 class ExecMethods {
 
+  private static final int RETRY_DELAY = 1000
+
   def CommandOutput exec(String cmd) {
     doExec(cmd, new ExecOptions(options.execOptions))
   }
