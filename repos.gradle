@@ -2,6 +2,7 @@ apply plugin: 'maven'
 
 repositories {
   mavenCentral()
+  maven { url ossSnapshotRepositoryUrl }
 }
 
 uploadArchives {
