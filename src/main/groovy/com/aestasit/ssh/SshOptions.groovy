@@ -31,7 +31,7 @@ class SshOptions extends CommonOptions {
   }
 
   // SCP options.
-  ScpOptions scpOptions   = new ScpOptions()
+  ScpOptions scpOptions            = new ScpOptions()
 
   def scpOptions(Closure cl) {
     cl.delegate = scpOptions

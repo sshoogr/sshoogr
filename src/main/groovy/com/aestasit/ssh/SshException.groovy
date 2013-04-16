@@ -8,11 +8,11 @@ package com.aestasit.ssh
  */
 class SshException extends RuntimeException {
 
-  public SshException(String message, Throwable cause) {
+  SshException(String message, Throwable cause) {
     super(message, cause)
   }
 
-  public SshException(String message) {
+  SshException(String message) {
     super(message)
   }
 }

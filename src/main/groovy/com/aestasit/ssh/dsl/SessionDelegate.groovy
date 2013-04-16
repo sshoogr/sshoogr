@@ -16,7 +16,7 @@ import com.jcraft.jsch.Session
  *
  */
 @Mixin([ScpMethods, ExecMethods])
-public class SessionDelegate {
+class SessionDelegate {
 
   private static final int DEFAULT_SSH_PORT = 22
   private static final int RETRY_DELAY = 1000

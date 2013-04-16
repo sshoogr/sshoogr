@@ -8,7 +8,7 @@ import com.aestasit.ssh.ExecOptions
  * @author Andrey Adamovich
  *
  */
-public class ExecOptionsDelegate extends ExecOptions {
+class ExecOptionsDelegate extends ExecOptions {
 
   def String command
 

@@ -15,7 +15,7 @@ import com.jcraft.jsch.JSchException
  * @author Andrey Adamovich
  *
  */
-public class ExecMethods {
+class ExecMethods {
 
   def CommandOutput exec(String cmd) {
     return doExec(cmd, new ExecOptions(options.execOptions))

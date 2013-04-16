@@ -9,7 +9,7 @@ import com.aestasit.ssh.ScpOptions
  * @author Andrey Adamovich
  *
  */
-public class ScpOptionsDelegate extends ScpOptions {
+class ScpOptionsDelegate extends ScpOptions {
 
   private FileSetDelegate source = new FileSetDelegate()
   private FileSetDelegate target = new FileSetDelegate()

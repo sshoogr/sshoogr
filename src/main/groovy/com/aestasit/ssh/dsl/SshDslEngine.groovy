@@ -9,14 +9,14 @@ import com.jcraft.jsch.JSch
  * @author Andrey Adamovich
  *
  */
-public class SshDslEngine {
+class SshDslEngine {
 
   private JSch jsch
   private Properties config
   private SshOptions options
   private SessionDelegate delegate
 
-  public SshDslEngine(SshOptions options)  {
+  SshDslEngine(SshOptions options)  {
     this.options = options
     this.jsch = new JSch()
     this.config = new Properties()

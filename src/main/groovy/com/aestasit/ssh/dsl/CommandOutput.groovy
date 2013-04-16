@@ -6,7 +6,7 @@ package com.aestasit.ssh.dsl
  * @author Andrey Adamovich
  *
  */
-public class CommandOutput {
+class CommandOutput {
 
   def int exitStatus
   def String output

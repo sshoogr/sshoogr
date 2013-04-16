@@ -6,8 +6,7 @@ package com.aestasit.ssh
  * @author Andrey Adamovich
  *
  */
-public class ScpOptions extends CommonOptions {
+class ScpOptions extends CommonOptions {
 
   def Boolean showProgress     = true
-  
 }

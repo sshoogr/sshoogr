@@ -18,7 +18,7 @@ import com.jcraft.jsch.ChannelSftp.LsEntry
  * @author Andrey Adamovich
  *
  */
-public class ScpMethods {
+class ScpMethods {
 
   def scp(String sourceFile, String dst) {
     scp(new File(sourceFile), dst)
@@ -127,13 +127,13 @@ public class ScpMethods {
   }
 
   private String relativePath(File parent, File child) {
-    return separatorsToUnix(child.canonicalPath.replace(parent.canonicalPath, '')).replaceAll('^/', '')
+    separatorsToUnix(child.canonicalPath.replace(parent.canonicalPath, '')).replaceAll('^/', '')
   }
 
   private String relativePath(String parent, String child) {
-    return normalizeNoEndSeparator(child)
-    .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
-    .replace(File.separatorChar.toString(), '/')
+    normalizeNoEndSeparator(child)
+        .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
+        .replace(File.separatorChar.toString(), '/')
   }
 
   private void createRemoteDirectory(String dstFile, ChannelSftp channel) {

@@ -10,5 +10,4 @@ abstract class CommonOptions {
 
   def Boolean failOnError      = true
   def Boolean verbose          = false
-
-  }
+}
