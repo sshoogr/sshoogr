@@ -2,23 +2,26 @@
 
 ## Overview
 
-The `groovy-ssh-dsl` is a **Groovy**-based **DSL** library for working with remote **SSH** servers. The **DSL** allows connecting, 
-executing remote commands, coping files and directories, creating tunnels in a simple and concise way.
+The `groovy-ssh-dsl` is a **Groovy**-based **DSL** library for working with remote servers through **SSH**. The **DSL** allows:
 
-The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) 
-to support quickly growing operations and hosting department.
+- connecting
+- executing remote commands
+- copying files and directories
+- creating tunnels in a simple and concise way.
+
+The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) to support the quickly growing of the company's operations and hosting department.
 
 ## Usage
 
-### Creating SshDslEngine instance
+### Creating a SshDslEngine instance
 
-The library's classes are `SshDslEngine` and `SshOptions`, which obviously need to be imported before the library can be used:  
+The main library's classes are `SshDslEngine` and `SshOptions`, which need to be imported before the library can be used:
 
     import com.aestasit.ssh.dsl.SshDslEngine
     import com.aestasit.ssh.SshOptions
 
-To create a simple instance of the engine with default options you can just use the following line: 
-    
+To create a simple instance of the engine with the default options you can just use the following instruction:
+
     def engine = new SshDslEngine(new SshOptions())
 
 ### Basic usage
@@ -26,31 +29,31 @@ To create a simple instance of the engine with default options you can just use 
 The entry point for using the **DSL** is the `remoteSession` method, which accepts an **SSH** **URL** and a closure with **Groovy** or **DSL** code:
 
     engine.remoteSession('user2:654321@localhost:2222') {
-      exec 'rm -rf /tmp/*'  
+      exec 'rm -rf /tmp/*'
       exec 'touch /var/lock/my.pid'
-      remoteFile('/var/my.conf').text = "enabled=true" 
-    } 
+      remoteFile('/var/my.conf').text = "enabled=true"
+    }
 
-More examples and explanations can be found in the following sections.
+For more examples, please refer to the following sections.
 
 ### Remote connections
 
-The `remoteSession` method accepts an **SSH** **URL** and a closure, for example: 
+The `remoteSession` method accepts an **SSH** **URL** and a closure, for example:
 
     engine.remoteSession("user:password@localhost:22") {
       ...
     }
 
-Inside the closure you can execute remote commands, access remote file content, upload and download files, create tunnels. 
+Inside the closure you can execute remote commands, access remote file content, upload and download files, create tunnels.
 
-If your connection settings were set with the help of default configuration (see "Configuration options" section), 
-then you can omit **URL** parameter: 
+If your connection settings were set with the help of default configuration (see "Configuration options" section),
+then you can omit the **URL** parameter:
 
     engine.remoteSession {
       ...
     }
 
-You can also override the defaults in each session by directly assigning `host`, `username`, `password` and `port` properties:
+Furthermore, it is possible to override the default values in each session by directly assigning `host`, `username`, `password` and `port` properties:
 
     engine.remoteSession {
 
@@ -58,47 +61,49 @@ You can also override the defaults in each session by directly assigning `host`,
       username = 'user2'
       password = '654321'
       port = 2222
-    
+
       ...
-    
+
     }
 
-Also you can assign **SSH** **URL** to the `url` property instead:
+The **SSH**'s **URL** can be also assigned from withing the remote session declaration, like so:
 
     engine.remoteSession {
-    
+
       url = 'user2:654321@localhost:2222'
-    
+
       ...
-    
+
     }
 
-Actual connection to the remote host will be made upon first command or file access, and, naturally, connection will be 
-automatically closed after code block finishes. But you can explicitly call `connect` or `disconnect` methods to control this:
+The actual connection to the remote host will be executed upon the first command or file access, and, naturally, the connection will be
+automatically closed after the code block terminates.
+
+You can explicitly call `connect` or `disconnect` methods to control this behavior:
 
     engine.remoteSession {
-    
-      // explicitly call connect 
-      connect()     
-      
+
+      // explicitly call connect
+      connect()
+
       // do some stuff
       ...
-    
+
       // explicitly disconnect
       disconnect()
-    
+
       // explicitly connect again
-      connect()     
-    
+      connect()
+
       ...
-     
+
     }
-    
-In next section, we will see how to execute remote commands.    
+
+In the next section, we will see how to execute remote commands.
 
 ### Executing commands
 
-The simplest way to execute a command within a remote session is by using `exec` method that just takes a command string:
+The simplest way to execute a command within a remote session is by using the `exec` method that just takes a command string:
 
     engine.remoteSession {
       exec 'ls -la'
@@ -107,26 +112,26 @@ The simplest way to execute a command within a remote session is by using `exec`
 You can also pass a list of commands in an array:
 
     exec([
-     'ls -la', 
+     'ls -la',
      'date'
     ])
 
-The `exec` behavior can also be controlled with additional named parameters given to the method. For example, in order 
-to hide commands output you can use the following syntax:
+The `exec` behavior can also be controlled with additional named parameters given to the method. For example, in order
+to hide commands output, you can use the following syntax:
 
     exec(command: 'ls –la', showOutput: false)
 
-Parameter names match the ones specified in "Configuration options" section for the `execOptions`, and all 
-can be used to override default settings for specific commands.
+The additional Parameter names are specified in the "Configuration options" section for the `execOptions`. They can all
+be used to override default settings for specific commands.
 
 In the same way, you can also define common parameters for a block of commands passed as an array:
 
     exec(showOutput: false, command: [
-     'ls -la', 
+     'ls -la',
      'date'
     ])
 
-Also you can get access to command output, exit code and exception thrown during command execution. This can be useful 
+Also you can get access to command output, exit code and exception thrown during command execution. This can be useful
 for implementing logic based on a result returned by the remote command and/or parsing of the output. For example,
 
     def result = exec(command: '/usr/bin/mycmd', faileOnError: false, showOutput: false)
@@ -138,7 +143,7 @@ for implementing logic based on a result returned by the remote command and/or p
       }
     }
 
-Another 2 methods that you can use around your commands are `prefix` and `suffix`. They are similar to using `prefix` 
+Two additional methods that you can use around your commands are `prefix` and `suffix`. They are similar to using the `prefix`
 and `suffix` options in `execOptions` or named parameters to `exec` method.
 
     prefix("sudo") {
@@ -158,7 +163,7 @@ And with `suffix`:
  
 ### File uploading/downloading
 
-The simplest way to modify remote text file content is by using `remoteFile` method, which returns remote 
+The simplest way to modify a remote text file content is by using `remoteFile` method, which returns a remote
 file object instance, and assign some string to the `text` property:
 
     remoteFile('/etc/yum.repos.d/puppet.repo').text = '''
@@ -174,27 +179,26 @@ For text file downloading you can just read the `text` property:
 
     println remoteFile('/etc/yum.repos.d/puppet.repo').text
 
-Single file uploading can be done in the following way:
+Uploading of a single file can be done in the following way:
 
     scp "$buildDir/test.file", '/tmp/test.file'
 
-This method only works for file uploading (from local environment to remote). You can also write the example above 
-in more verbose form with the help of closures: 
+This method only works for file uploading (from local environment to remote). You can also write the example above
+in a more verbose form with the help of closures:
 
     scp {
       from { localFile "$buildDir/test.file" }
       into { remoteFile '/tmp/test.file' }
     }
 
-If you need to upload a directory or a set of several files that you need to use the same closure-based structure, 
-but with the help of `remoteDir` and `localDir` methods:
+A whole directory can be uploaded by using the `remoteDir` and `localDir` methods of `scp`.
 
     scp {
       from { localDir "$buildDir/application" }
       into { remoteDir '/var/bea/domain/application' }
     }
 
-In similar way you can download directories and files:
+In similar fashion, you can download directories and files:
 
     scp {
       from { remoteDir '/etc/nginx' }
@@ -204,30 +208,30 @@ In similar way you can download directories and files:
 You can also copy multiple sources into multiple targets:
 
     scp {
-      from { 
-        localDir "$buildDir/doc" 
-        localFile "$buildDir/readme.txt" 
-        localFile "$buildDir/license/license.txt" 
+      from {
+        localDir "$buildDir/doc"
+        localFile "$buildDir/readme.txt"
+        localFile "$buildDir/license/license.txt"
       }
-      into { 
-        remoteDir '/var/server/application' 
+      into {
+        remoteDir '/var/server/application'
         remoteDir '/repo/company/application'
       }
     }
 
-During upload/download operation target local and remote directories will be created automatically.
+During any upload/download operation, local and remote directories will be created automatically.
 
 ### Tunneling
 
-If inside your build script you need to get access to a remote server that is not visible directly from the local 
-machine, then you can create a tunnel to that server by using `tunnel` method:
+If inside your build script you need to get access to a remote server that is not visible directly from the local
+machine, then you can create a tunnel to that server by using the `tunnel` method:
 
     tunnel('1.2.3.4', 8080) { int localPort ->
       ...
     }
 
-All code executed within the closure passed to the tunnel method will have access to server tunnel running on `localhost` 
-and randomly selected `localPort`, which is passed as a parameter to the closure. Inside that tunnel code you can, for 
+All code executed within the closure passed to the tunnel method will have access to a server tunnel running on `localhost`
+and randomly selected `localPort`, which is passed as a parameter to the closure. Inside that tunnel code you can, for
 example, deploy a web application or send some **HTTP** command to remote server:
 
     tunnel('1.2.3.4', 8080) { int localPort ->
@@ -239,10 +243,10 @@ example, deploy a web application or send some **HTTP** command to remote server
       }
     }
 
-Tunnel will be closed upon closure completion.
-Also you can define local port yourself in the following way:
+The tunnel will be closed upon closure completion.
+Also you can define a local port yourself in the following way:
 
-    tunnel(7070, '1.2.3.4', 8080) { 
+    tunnel(7070, '1.2.3.4', 8080) {
       def result = new URL("http://localhost:7070/flushCache").text
       ...
     }
@@ -251,27 +255,27 @@ Also you can define local port yourself in the following way:
 
 The following list gives an overview of the available configuration options:
 
- - `defaultHost`, `defaultUser`, `defaultPassword`, `defaultPort` (defaults to 22) - Default host, user name, password or port to use in remote connection in case they are not specified in some other way (through `url`, `host`, `port`, `user` or `password` properties inside `remoteSession` method).
- - `defaultKeyFile` - Default key file to use in remote connection in case it is not specified through keyFile property inside remoteSession method. Key file is an alternative mechanism to using passwords.
- - `failOnError` (defaults to true) - If set to true, failed remote commands and file operations will fail the build.
- - `verbose` (defaults to false) - If set to true, library produces more debug output.
- 
-The `sshOptions` may also contain a nested `execOptions` structure, which defines remote command execution (see 
+ - `defaultHost`, `defaultUser`, `defaultPassword`, `defaultPort` (defaults to 22) - Default host, user name, password or port to use in remote connection in case they are not specified in some other way (through `url`, `host`, `port`, `user` or `password` properties inside the `remoteSession` method).
+ - `defaultKeyFile` - Default key file to use in remote connection in case it is not specified through the `keyFile` property inside the `remoteSession` method.
+ - `failOnError` (defaults to true) - If set to true, failed remote commands and file operations will throw an exception.
+ - `verbose` (defaults to false) - If set to true, the library produces more debug output.
+
+The `sshOptions` may also contain a nested `execOptions` structure, which defines remote command execution (see
 "Executing commands" section) options. It has the following properties:
 
  - `showOutput` (defaults to true) - If set to true, remote command output is printed.
  - `showCommand` (defaults to true) - If set to true, remote command is printed.
  - `maxWait` (defaults to 0) - Number of milliseconds to wait for command to finish. If it is set to 0, then library will wait forever.
  - `succeedOnExitStatus` (defaults to 0) - Exit code that indicates commands success. If command returns different exit code, then build will fail.
- - `outputFile` - File, to which to send command's output. 
+ - `outputFile` - File, to which to send command's output.
  - `appendFile` (defaults to false) - If outputFile is specified, then this option indicates if data should be appended or file should be created from scratch.
  - `failOnError` (defaults to true) - If set to true, failed remote commands will fail the build.
  - `verbose` (defaults to false) - If set to true, library produces more debug output.
  - `prefix` - String to prepend to each executed command, for example, "`sudo`".
  - `suffix` - String to append to each executed command, for example, "`>> output.log`".
 
-There is also a nested `scpOptions` structure, which defines remote file copying (see "File uploading/downloading" 
-section) options. It has the following properties:
+There is also a nested `scpOptions` structure, which defines remote file copying options (see "File uploading/downloading"
+section). It has the following properties:
 
  - `failOnError` (defaults to true) - If set to true, failed file operations will fail the build.
  - `showProgress` (defaults to false) - If set to true, library shows additional information regarding file upload/download progress.
@@ -279,7 +283,7 @@ section) options. It has the following properties:
 
 ### Populating SshOptions
 
-A more verbose example of creating `SshOptions` object (demonstrating most of available options) can be found below: 
+A more verbose example of creating a `SshOptions` object can be found below:
 
     import com.aestasit.ssh.log.SysOutLogger
 
@@ -307,10 +311,9 @@ A more verbose example of creating `SshOptions` object (demonstrating most of av
         appendFile = true
       }
 
-      scpOptions.with { 
+      scpOptions.with {
         verbose = true
-        showProgress = true 
+        showProgress = true
       }
-      
+
     }
-        
