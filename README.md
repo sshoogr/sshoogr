@@ -2,17 +2,17 @@
 
 ## Overview
 
-The `groovy-ssh-dsl` is a Groovy-based DSL library for working with remote SSH servers. The DSL allows connecting, executing remote commands, coping files and directories, 
-creating tunnels in a simple and concise way.
+The `groovy-ssh-dsl` is a Groovy-based DSL library for working with remote SSH servers. The DSL allows connecting, 
+executing remote commands, coping files and directories, creating tunnels in a simple and concise way.
 
-The library was jointly developed by Aestas/IT (http://aestasit.com) and NetCompany A/S (http://www.netcompany.com/) 
+The library was jointly developed by *Aestas/IT* (http://aestasit.com) and *NetCompany A/S* (http://www.netcompany.com/) 
 to support quickly growing operations and hosting department.
 
 ## Usage
 
 ### Creating SshDslEngine instance
 
-The entry classes in the library are `SshDslEngine` and `SshOptions`, which obviously need to be imported before library can be used:  
+The library's classes are `SshDslEngine` and `SshOptions`, which obviously need to be imported before the library can be used:  
 
     import com.aestasit.ssh.dsl.SshDslEngine
     import com.aestasit.ssh.SshOptions
@@ -23,7 +23,7 @@ To create a simple instance of the engine with default options you can just use 
 
 ### Basic usage
 
-The entry point for using the DSL is `remoteSession` method, which accepts an SSH URL and a closure with Groovy or DSL code:
+The entry point for using the DSL is the `remoteSession` method, which accepts an SSH URL and a closure with Groovy or DSL code:
 
     engine.remoteSession('user2:654321@localhost:2222') {
       exec 'rm -rf /tmp/*'  
@@ -33,9 +33,72 @@ The entry point for using the DSL is `remoteSession` method, which accepts an SS
 
 More examples and explanations can be found in the following sections.
 
+### Remote connections
+
+The `remoteSession` method accepts an SSH URL and a closure, for example: 
+
+    engine.remoteSession("user:password@localhost:22") {
+      ...
+    }
+
+Inside the closure you can execute remote commands, access remote file content, upload and download files, create tunnels. 
+
+If your connection settings were set with the help of default configuration (see "Configuration options" section), 
+then you can omit URL parameter: 
+
+    engine.remoteSession {
+      ...
+    }
+
+You can also override the defaults in each session by directly assigning `host`, `username`, `password` and `port` properties:
+
+    engine.remoteSession {
+
+      host = 'localhost'
+      username = 'user2'
+      password = '654321'
+      port = 2222
+    
+      ...
+    
+    }
+
+Also you can assign SSH URL to the `url` property instead:
+
+    engine.remoteSession {
+    
+      url = 'user2:654321@localhost:2222'
+    
+      ...
+    
+    }
+
+Actual connection to the remote host will be made upon first command or file access, and, naturally, connection will be 
+automatically closed after code block finishes. But you can explicitly call `connect` or `disconnect` methods to control this:
+
+    engine.remoteSession {
+    
+      // explicitly call connect 
+      connect()     
+      
+      // do some stuff
+      ...
+    
+      // explicitly disconnect
+      disconnect()
+    
+      // explicitly connect again
+      connect()     
+    
+      ...
+     
+    }
+    
+In next section, we will see how to execute remote commands.    
+
 ### Executing commands
 
-The simplest way to execute a command within a remote session is by using exec method that just takes a command string:
+The simplest way to execute a command within a remote session is by using `exec` method that just takes a command string:
 
     engine.remoteSession {
       exec 'ls -la'
@@ -53,10 +116,10 @@ to hide commands output you can use the following syntax:
 
     exec(command: 'ls –la', showOutput: false)
 
-Parameter names match the ones specified in "Configuration options" section for the global `execOptions`, and all 
+Parameter names match the ones specified in "Configuration options" section for the `execOptions`, and all 
 can be used to override default settings for specific commands.
 
-In the same way you can also define common parameters for a block of commands passed as an array:
+In the same way, you can also define common parameters for a block of commands passed as an array:
 
     exec(showOutput: false, command: [
      'ls -la', 
@@ -64,13 +127,13 @@ In the same way you can also define common parameters for a block of commands pa
     ])
 
 Also you can get access to command output, exit code and exception thrown during command execution. This can be useful 
-for implementing logic based on result returned by remote command and/or parsing the output. For example,
+for implementing logic based on a result returned by the remote command and/or parsing of the output. For example,
 
     def result = exec(command: '/usr/bin/mycmd', faileOnError: false, showOutput: false)
     if (result.exitStatus == 1) {
       result.output.eachLine { line ->
         if (line.contains('WARNING')) {
-          throw new GradleException("Warning!!!")
+          throw new RuntimeException("Warning!!!")
         }
       }
     }
@@ -172,7 +235,7 @@ example, deploy a web application or send some HTTP command to remote server:
       if (result == 'OK') {
         println "Cache is flushed!"
       } else {
-        throw new GradleException(result)
+        throw new RuntimeException(result)
       }
     }
 
@@ -184,9 +247,39 @@ Also you can define local port yourself in the following way:
       ...
     }
 
+### Configuration options
+
+The following list gives an overview of the available configuration options:
+
+ - `defaultHost`, `defaultUser`, `defaultPassword`, `defaultPort` (defaults to 22) - Default host, user name, password or port to use in remote connection in case they are not specified in some other way (through `url`, `host`, `port`, `user` or `password` properties inside `remoteSession` method).
+ - `defaultKeyFile` - Default key file to use in remote connection in case it is not specified through keyFile property inside remoteSession method. Key file is an alternative mechanism to using passwords.
+ - `failOnError` (defaults to true) - If set to true, failed remote commands and file operations will fail the build.
+ - `verbose` (defaults to false) - If set to true, library produces more debug output.
+ 
+The `sshOptions` may also contain a nested `execOptions` structure, which defines remote command execution (see 
+"Executing commands" section) options. It has the following properties:
+
+ - `showOutput` (defaults to true) - If set to true, remote command output is printed.
+ - `showCommand` (defaults to true) - If set to true, remote command is printed.
+ - `maxWait` (defaults to 0) - Number of milliseconds to wait for command to finish. If it is set to 0, then library will wait forever.
+ - `succeedOnExitStatus` (defaults to 0) - Exit code that indicates commands success. If command returns different exit code, then build will fail.
+ - `outputFile` - File, to which to send command's output. 
+ - `appendFile` (defaults to false) - If outputFile is specified, then this option indicates if data should be appended or file should be created from scratch.
+ - `failOnError` (defaults to true) - If set to true, failed remote commands will fail the build.
+ - `verbose` (defaults to false) - If set to true, library produces more debug output.
+ - `prefix` - String to prepend to each executed command, for example, "`sudo`".
+ - `suffix` - String to append to each executed command, for example, "`>> output.log`".
+
+There is also a nested `scpOptions` structure, which defines remote file copying (see "File uploading/downloading" 
+section) options. It has the following properties:
+
+ - `failOnError` (defaults to true) - If set to true, failed file operations will fail the build.
+ - `showProgress` (defaults to false) - If set to true, library shows additional information regarding file upload/download progress.
+ - `verbose` (defaults to false) - If set to true, library produces more debug output.
+
 ### Populating SshOptions
 
-A more verbose example of creating `SshOptions` object (demonstrating all available options) can be found below: 
+A more verbose example of creating `SshOptions` object (demonstrating most of available options) can be found below: 
 
     import com.aestasit.ssh.log.SysOutLogger
 
@@ -220,3 +313,5 @@ A more verbose example of creating `SshOptions` object (demonstrating all availa
       }
       
     }
+
+        
