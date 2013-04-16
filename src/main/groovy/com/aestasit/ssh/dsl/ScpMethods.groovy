@@ -203,7 +203,7 @@ class ScpMethods {
   }
 
   private SftpProgressMonitor newMonitor() {
-    return new LoggerProgressMonitor(logger)
+    new LoggerProgressMonitor(logger)
   }
 
 }

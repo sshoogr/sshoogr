@@ -117,27 +117,27 @@ class SessionDelegate {
     this.changed = changed
   }
 
-  public void setHost(String host) {
+  def void setHost(String host) {
     this.changed = changed || (this.host == host)
     this.host = host
   }
 
-  public void setUser(String user) {
+  def void setUser(String user) {
     this.changed = changed || (this.username == user)
     this.username = user
   }
 
-  public void setPassword(String password) {
+  def void setPassword(String password) {
     this.changed = changed || (this.password = password)
     this.password = password
   }
 
-  public void setPort(int port) {
+  def void setPort(int port) {
     this.changed = changed || (this.port = port)
     this.port = port
   }
 
-  public void setKeyFile(File keyFile) {
+  def void setKeyFile(File keyFile) {
     this.changed = changed || (this.keyFile = keyFile)
     this.keyFile = keyFile
   }
@@ -153,7 +153,7 @@ class SessionDelegate {
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   def RemoteFile remoteFile(String destination) {
-    return new RemoteFile(this, destination)
+    new RemoteFile(this, destination)
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////

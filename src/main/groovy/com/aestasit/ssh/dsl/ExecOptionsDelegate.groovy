@@ -13,6 +13,6 @@ class ExecOptionsDelegate extends ExecOptions {
   def String command
 
   def getExecOptions() {
-    return this
+    this
   }
 }

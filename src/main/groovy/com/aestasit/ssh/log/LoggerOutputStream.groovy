@@ -3,7 +3,7 @@ package com.aestasit.ssh.log
 
 
 /**
- * Output stream implementation that streams all output to logging system. 
+ * Output stream implementation that streams all output to logging system.
  *
  * @author Andrey Adamovich
  *
@@ -26,19 +26,19 @@ class LoggerOutputStream extends OutputStream {
     }
   }
 
-  public void write(int chr) throws IOException {
+  def void write(int chr) throws IOException {
     out.write(chr)
   }
 
-  public void write(byte[] buf, int start, int end) throws IOException {
+  def void write(byte[] buf, int start, int end) throws IOException {
     out.write(buf, start, end)
   }
 
-  public void flush() throws IOException {
+  def void flush() throws IOException {
     out.flush()
   }
 
-  public void close() throws IOException {
+  def void close() throws IOException {
     out.close()
   }
 }

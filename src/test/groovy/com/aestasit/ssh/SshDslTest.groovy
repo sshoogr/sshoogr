@@ -91,11 +91,11 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
   }
 
   def static File getCurrentDir() {
-    return new File(".").getAbsoluteFile()
+    new File(".").getAbsoluteFile()
   }
 
   def static File getTestFile() {
-    return new File("input.file").getAbsoluteFile()
+    new File("input.file").getAbsoluteFile()
   }
 
   @AfterClass

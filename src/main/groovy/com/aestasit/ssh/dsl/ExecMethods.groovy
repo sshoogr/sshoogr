@@ -18,11 +18,11 @@ import com.jcraft.jsch.JSchException
 class ExecMethods {
 
   def CommandOutput exec(String cmd) {
-    return doExec(cmd, new ExecOptions(options.execOptions))
+    doExec(cmd, new ExecOptions(options.execOptions))
   }
 
   def CommandOutput exec(Collection cmds) {
-    return doExec(cmds, new ExecOptions(options.execOptions))
+    doExec(cmds, new ExecOptions(options.execOptions))
   }
 
   def CommandOutput exec(Closure cl) {
@@ -32,11 +32,11 @@ class ExecMethods {
     if (!cl.delegate.command) {
       new SshException('Remote command is not specified!')
     }
-    return doExec(cl.delegate.command, new ExecOptions(options.execOptions, cl.delegate.execOptions))
+    doExec(cl.delegate.command, new ExecOptions(options.execOptions, cl.delegate.execOptions))
   }
 
   def CommandOutput exec(Map execOptions) {
-    return doExec(execOptions.command, new ExecOptions(options.execOptions, execOptions))
+    doExec(execOptions.command, new ExecOptions(options.execOptions, execOptions))
   }
 
   def prefix(String prefix, Closure cl) {
@@ -62,13 +62,13 @@ class ExecMethods {
     cmds.each { cmd ->
       commandOutput = doExec(cmd, new ExecOptions(options.execOptions, execOptions))
     }
-    return commandOutput
+    commandOutput
   }
 
   private CommandOutput doExec(String cmd, ExecOptions options) {
     connect()
-    return catchExceptions(options) {
-      return awaitTermination(executeCommand(cmd, options), options)
+    catchExceptions(options) {
+      awaitTermination(executeCommand(cmd, options), options)
     }
   }
 
@@ -95,7 +95,7 @@ class ExecMethods {
     channel.extOutputStream = output
     channel.setPty(true)
     channel.connect()
-    return new ChannelData(channel: channel, output: savedOutput)
+    new ChannelData(channel: channel, output: savedOutput)
   }
 
   class ChannelData {
