@@ -8,8 +8,8 @@ package com.aestasit.ssh.dsl
  */
 class RemoteFile {
 
-  private SessionDelegate delegate
-  private String destination
+  private final SessionDelegate delegate
+  private final String destination
 
   RemoteFile(SessionDelegate delegate, String destination) {
     this.delegate = delegate

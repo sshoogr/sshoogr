@@ -11,9 +11,9 @@ import com.jcraft.jsch.JSch
  */
 class SshDslEngine {
 
-  private JSch jsch
-  private Properties config
-  private SshOptions options
+  private final JSch jsch
+  private final Properties config
+  private final SshOptions options
   private SessionDelegate delegate
 
   SshDslEngine(SshOptions options)  {

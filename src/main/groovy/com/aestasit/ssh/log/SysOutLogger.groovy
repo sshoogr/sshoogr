@@ -1,19 +1,22 @@
 package com.aestasit.ssh.log
 
+/**
+ * Standard system output logger.
+ *
+ * @author Andrey Adamovich
+ *
+ */
 class SysOutLogger implements Logger {
 
-  public void info(String message) {
-    println "$message"    
+  def void info(String message) {
+    println "$message"
   }
 
-  @Override
-  public void warn(String message) {
-    println "WARN: $message"    
+  def void warn(String message) {
+    println "WARN: $message"
   }
 
-  @Override
-  public void debug(String message) {
-    println "DEBUG: $message"    
+  def void debug(String message) {
+    println "DEBUG: $message"
   }
-
 }

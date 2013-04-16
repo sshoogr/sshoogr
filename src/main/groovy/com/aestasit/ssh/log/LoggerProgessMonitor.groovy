@@ -11,7 +11,7 @@ import com.jcraft.jsch.SftpProgressMonitor
  */
 class LoggerProgressMonitor implements SftpProgressMonitor {
 
-  private Logger logger
+  private final Logger logger
   private int max = 1
   private int current = 0
 
@@ -26,7 +26,7 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
 
   boolean count(long count) {
     current += count
-    int percent = (current / max * 100) as int
+    // int percent = (current / max * 100) as int
     // TODO: logging settings
     logger.info("${current} bytes transfered")
     true

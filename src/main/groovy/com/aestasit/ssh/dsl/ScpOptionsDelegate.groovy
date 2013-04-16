@@ -11,8 +11,8 @@ import com.aestasit.ssh.ScpOptions
  */
 class ScpOptionsDelegate extends ScpOptions {
 
-  private FileSetDelegate source = new FileSetDelegate()
-  private FileSetDelegate target = new FileSetDelegate()
+  private final FileSetDelegate source = new FileSetDelegate()
+  private final FileSetDelegate target = new FileSetDelegate()
 
   def from(Closure cl) {
     cl.delegate = source

@@ -74,14 +74,15 @@ class ExecMethods {
 
   private ChannelData executeCommand(String cmd, ExecOptions options) {
     session.timeout = options.maxWait
+    def actualCommand = cmd
     if (options.prefix) {
-      cmd = "${options.prefix} ${cmd}"
+      actualCommand = "${options.prefix} ${actualCommand}"
     }
     if (options.suffix) {
-      cmd = "${cmd} ${options.suffix}"
+      actualCommand = "${actualCommand} ${options.suffix}"
     }
     if (options.showCommand) {
-      logger.info("> " + cmd)
+      logger.info("> " + actualCommand)
     }
     ChannelExec channel = (ChannelExec) session.openChannel("exec")
     def savedOutput = new ByteArrayOutputStream()
@@ -90,7 +91,7 @@ class ExecMethods {
       def systemOutput = new LoggerOutputStream(logger)
       output = new TeeOutputStream(savedOutput, systemOutput)
     }
-    channel.command = cmd
+    channel.command = actualCommand
     channel.outputStream = output
     channel.extOutputStream = output
     channel.setPty(true)

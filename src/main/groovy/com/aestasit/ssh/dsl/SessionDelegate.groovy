@@ -22,18 +22,18 @@ class SessionDelegate {
   private static final int RETRY_DELAY = 1000
   private static final Pattern SSH_URL = ~/^(([^:\@]+)(:([^\@]+))\@)?([^:]+)(:(\d+))?$/
 
-  private String     host     = null
-  private int        port     = DEFAULT_SSH_PORT
-  private String     username = null
-  private File       keyFile  = null
-  private String     password = null
-  private boolean    changed  = false
+  private String     host           = null
+  private int        port           = DEFAULT_SSH_PORT
+  private String     username       = null
+  private File       keyFile        = null
+  private String     password       = null
+  private boolean    changed        = false
 
-  private Session    session  = null
-  private JSch       jsch     = null
-  private SshOptions options  = null
+  private Session          session  = null
+  private final JSch       jsch     = null
+  private final SshOptions options  = null
 
-  protected Logger logger     = null
+  protected Logger logger           = null
 
   SessionDelegate(JSch jsch, SshOptions options) {
     this.jsch = jsch
@@ -84,7 +84,7 @@ class SessionDelegate {
   }
 
   def disconnect() {
-    if ((session != null) && session.connected) {
+    if (session?.connected) {
       try {
         session.disconnect()
       } catch (Exception e) {

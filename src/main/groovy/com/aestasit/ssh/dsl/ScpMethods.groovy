@@ -1,4 +1,4 @@
-package com.aestasit.ssh.dsl;
+package com.aestasit.ssh.dsl
 
 import static com.aestasit.ssh.dsl.FileSetType.*
 import static org.apache.commons.io.FilenameUtils.*

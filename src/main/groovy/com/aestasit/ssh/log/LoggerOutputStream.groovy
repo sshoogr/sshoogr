@@ -10,10 +10,9 @@ package com.aestasit.ssh.log
  */
 class LoggerOutputStream extends OutputStream {
 
-  private PipedInputStream inp
-  private PipedOutputStream out
-  private BufferedReader reader
-  private Logger logger
+  private final PipedInputStream inp
+  private final PipedOutputStream out
+  private final BufferedReader reader
 
   LoggerOutputStream(Logger logger) {
     inp = new PipedInputStream()
