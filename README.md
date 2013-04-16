@@ -9,7 +9,7 @@ The `groovy-ssh-dsl` is a **Groovy**-based **DSL** library for working with remo
 - copying files and directories
 - creating tunnels in a simple and concise way.
 
-The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) to support the quickly growing of the company's operations and hosting department.
+The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) to support the quickly growing company's operations and hosting department.
 
 ## Usage
 
