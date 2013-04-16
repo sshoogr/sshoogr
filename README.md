@@ -2,10 +2,10 @@
 
 ## Overview
 
-The `groovy-ssh-dsl` is a Groovy-based DSL library for working with remote SSH servers. The DSL allows connecting, 
+The `groovy-ssh-dsl` is a **Groovy**-based **DSL** library for working with remote **SSH** servers. The **DSL** allows connecting, 
 executing remote commands, coping files and directories, creating tunnels in a simple and concise way.
 
-The library was jointly developed by *Aestas/IT* (http://aestasit.com) and *NetCompany A/S* (http://www.netcompany.com/) 
+The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) 
 to support quickly growing operations and hosting department.
 
 ## Usage
@@ -23,7 +23,7 @@ To create a simple instance of the engine with default options you can just use 
 
 ### Basic usage
 
-The entry point for using the DSL is the `remoteSession` method, which accepts an SSH URL and a closure with Groovy or DSL code:
+The entry point for using the **DSL** is the `remoteSession` method, which accepts an **SSH** **URL** and a closure with **Groovy** or **DSL** code:
 
     engine.remoteSession('user2:654321@localhost:2222') {
       exec 'rm -rf /tmp/*'  
@@ -35,7 +35,7 @@ More examples and explanations can be found in the following sections.
 
 ### Remote connections
 
-The `remoteSession` method accepts an SSH URL and a closure, for example: 
+The `remoteSession` method accepts an **SSH** **URL** and a closure, for example: 
 
     engine.remoteSession("user:password@localhost:22") {
       ...
@@ -44,7 +44,7 @@ The `remoteSession` method accepts an SSH URL and a closure, for example:
 Inside the closure you can execute remote commands, access remote file content, upload and download files, create tunnels. 
 
 If your connection settings were set with the help of default configuration (see "Configuration options" section), 
-then you can omit URL parameter: 
+then you can omit **URL** parameter: 
 
     engine.remoteSession {
       ...
@@ -63,7 +63,7 @@ You can also override the defaults in each session by directly assigning `host`,
     
     }
 
-Also you can assign SSH URL to the `url` property instead:
+Also you can assign **SSH** **URL** to the `url` property instead:
 
     engine.remoteSession {
     
@@ -228,7 +228,7 @@ machine, then you can create a tunnel to that server by using `tunnel` method:
 
 All code executed within the closure passed to the tunnel method will have access to server tunnel running on `localhost` 
 and randomly selected `localPort`, which is passed as a parameter to the closure. Inside that tunnel code you can, for 
-example, deploy a web application or send some HTTP command to remote server:
+example, deploy a web application or send some **HTTP** command to remote server:
 
     tunnel('1.2.3.4', 8080) { int localPort ->
       def result = new URL("http://localhost:${localPort}/flushCache").text
@@ -313,5 +313,4 @@ A more verbose example of creating `SshOptions` object (demonstrating most of av
       }
       
     }
-
         
