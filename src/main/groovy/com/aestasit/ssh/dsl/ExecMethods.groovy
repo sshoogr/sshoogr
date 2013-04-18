@@ -177,7 +177,9 @@ class ExecMethods {
       if (options.failOnError) {
         throw new SshException(msg)
       } else {
-        logger.warn(msg)
+        if (options.showOutput) {
+          logger.warn(msg)
+        }
       }
     }
   }

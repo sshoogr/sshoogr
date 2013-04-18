@@ -76,6 +76,8 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
       reuseConnection = true
       trustUnknownHosts = true
 
+      verbose = true
+
       execOptions.with {
         showOutput = true
         failOnError = false
@@ -85,7 +87,6 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
         appendFile = true
       }
 
-      scpOptions.with { verbose = true }
     }
     engine = new SshDslEngine(options)
   }

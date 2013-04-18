@@ -20,6 +20,7 @@ class SshOptions extends CommonOptions {
   boolean reuseConnection          = false
   File defaultKeyFile              = null
   Logger logger                    = null
+  def Boolean verbose              = false
 
   // SSH command execution options.
   ExecOptions execOptions          = new ExecOptions()

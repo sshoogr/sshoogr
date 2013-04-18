@@ -150,7 +150,7 @@ class ScpMethods {
   }
 
   private void remoteEachFileRecurse(String remoteDir, ChannelSftp channel, Closure cl) {
-    if (options.scpOptions.verbose) {
+    if (options.verbose) {
       logger.info("> Getting file list from ${remoteDir} directory")
     }
     Vector<LsEntry> entries = channel.ls(separatorsToUnix(remoteDir))
@@ -162,7 +162,7 @@ class ScpMethods {
         }
       } else if (entry.attrs.isLink()) {
         def linkPath = channel.readlink(childPath)
-        if (options.scpOptions.verbose) {
+        if (options.verbose) {
           logger.info("> Skipping symlink: ${linkPath}")
         }
       } else {
@@ -172,7 +172,7 @@ class ScpMethods {
   }
 
   private void doPut(ChannelSftp channel, File srcFile, String dst) {
-    if (options.scpOptions.verbose) {
+    if (options.verbose) {
       logger.info("> ${srcFile.canonicalPath} => ${dst}")
     }
     def monitor = options.scpOptions.showProgress ? newMonitor() : null
@@ -182,7 +182,7 @@ class ScpMethods {
   }
 
   private void doGet(ChannelSftp channel, String srcFile, File dstFile) {
-    if (options.scpOptions.verbose) {
+    if (options.verbose) {
       logger.info("> ${srcFile} => ${dstFile.canonicalPath}")
     }
     def monitor = options.scpOptions.showProgress ? newMonitor() : null
