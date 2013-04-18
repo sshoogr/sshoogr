@@ -19,7 +19,7 @@ import com.jcraft.jsch.Session
 class SessionDelegate {
 
   private static final int DEFAULT_SSH_PORT = 22
-  private static final Pattern SSH_URL = ~/^(([^:\@]+)(:([^\@]+))\@)?([^:]+)(:(\d+))?$/
+  private static final Pattern SSH_URL = ~/^(([^:\@]+)(:([^\@]+))?\@)?([^:]+)(:(\d+))?$/
 
   private String     host           = null
   private int        port           = DEFAULT_SSH_PORT

@@ -98,6 +98,10 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
     new File("input.file").getAbsoluteFile()
   }
 
+  def static File getTestKey() {
+    new File("dummy.pem").getAbsoluteFile()
+  }
+
   @AfterClass
   def static void destroyServer() {
     MockSshServer.stopSshd()
@@ -125,6 +129,15 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
       exec 'rm -rf /tmp/test.file'
       scp testFile, '/tmp/test.file'
 
+    }
+  }
+
+  @Test
+  def void testPasswordlessLogin() throws Exception {
+    engine.remoteSession {
+      url = 'user2@localhost:2233'
+      keyFile = getTestKey()
+      exec 'whoami'
     }
   }
 
