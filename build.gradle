@@ -19,7 +19,7 @@ sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
 
 dependencies {
-  groovy localGroovy()
+  compile localGroovy()
   compile 'org.slf4j:slf4j-api:1.7.2'
   compile 'commons-io:commons-io:1.4'
   compile 'com.jcraft:jsch:0.1.49'
