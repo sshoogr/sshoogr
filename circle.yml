@@ -1,0 +1,10 @@
+dependencies:
+pre:
+- "[[ -d ~/gradle-1.6 ]] || (curl -L -o ~/gradle.zip http://services.gradle.org/distributions/gradle-1.6-bin.zip && unzip -d ~ ~/gradle.zip)"
+
+cache_directories:
+- "~/gradle-1.6"
+
+test:
+override:
+- "~/gradle-1.6/bin/gradle test"
