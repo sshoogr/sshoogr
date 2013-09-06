@@ -15,8 +15,8 @@ The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **N
 
 The easiest way to use `gradle-ssh-dsl` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
 
-   @GrabResolver(name='oss', root='https://oss.sonatype.org/content/repositories/snapshots/')
-   @Grab('com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT')
+    @GrabResolver(name='oss', root='https://oss.sonatype.org/content/repositories/snapshots/')
+    @Grab('com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT')
 
 ### Creating a SshDslEngine instance
 
