@@ -139,7 +139,7 @@ In the same way, you can also define common parameters for a block of commands p
 Also you can get access to command output, exit code and exception thrown during command execution. This can be useful
 for implementing logic based on a result returned by the remote command and/or parsing of the output. For example,
 
-    def result = exec(command: '/usr/bin/mycmd', faileOnError: false, showOutput: false)
+    def result = exec(command: '/usr/bin/mycmd', failOnError: false, showOutput: false)
     if (result.exitStatus == 1) {
       result.output.eachLine { line ->
         if (line.contains('WARNING')) {
