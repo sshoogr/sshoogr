@@ -13,10 +13,15 @@ The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **N
 
 ## Usage
 
+The easiest way to use `gradle-ssh-dsl` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
+
+    @GrabResolver(name='oss', root='https://oss.sonatype.org/content/repositories/snapshots/')
+    @Grab('com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT')
+
 ### Creating a SshDslEngine instance
 
 The main library's classes are `SshDslEngine` and `SshOptions`, which need to be imported before the library can be used:
-
+    
     import com.aestasit.ssh.dsl.SshDslEngine
     import com.aestasit.ssh.SshOptions
 
@@ -134,7 +139,7 @@ In the same way, you can also define common parameters for a block of commands p
 Also you can get access to command output, exit code and exception thrown during command execution. This can be useful
 for implementing logic based on a result returned by the remote command and/or parsing of the output. For example,
 
-    def result = exec(command: '/usr/bin/mycmd', faileOnError: false, showOutput: false)
+    def result = exec(command: '/usr/bin/mycmd', failOnError: false, showOutput: false)
     if (result.exitStatus == 1) {
       result.output.eachLine { line ->
         if (line.contains('WARNING')) {
