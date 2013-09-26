@@ -13,7 +13,7 @@ apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
 
 group = 'com.aestasit.ssh'
-version = '0.8.1-SNAPSHOT'
+version = '0.8.2-SNAPSHOT'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'

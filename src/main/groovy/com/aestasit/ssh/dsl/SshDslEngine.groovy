@@ -39,7 +39,8 @@ class SshDslEngine {
     }
   }
 
-  private void executeSession(Closure cl, Object context, Closure configure) {
+  private executeSession(Closure cl, Object context, Closure configure) {
+    def result = null
     if (cl != null) {
       if (!options.reuseConnection || delegate == null) {
         delegate = new SessionDelegate(jsch, options)
@@ -49,16 +50,17 @@ class SshDslEngine {
       }
       cl.delegate = delegate
       cl.resolveStrategy = Closure.DELEGATE_FIRST
-      cl(context)
+      result = cl(context)
       if ((!options.reuseConnection) &&
-      (delegate.session != null) &&
-      delegate.session.connected) {
+          (delegate.session != null) &&
+           delegate.session.connected) {
         try {
           delegate.session.disconnect()
         } catch (Exception e) {
         }
       }
     }
+    result
   }
 }
 
