@@ -19,15 +19,15 @@ class ExecMethods {
 
   private static final int RETRY_DELAY = 1000
 
-  def CommandOutput exec(String cmd) {
+  CommandOutput exec(String cmd) {
     doExec(cmd, new ExecOptions(options.execOptions))
   }
 
-  def CommandOutput exec(Collection cmds) {
+  CommandOutput exec(Collection cmds) {
     doExec(cmds, new ExecOptions(options.execOptions))
   }
 
-  def CommandOutput exec(Closure cl) {
+  CommandOutput exec(Closure cl) {
     cl.delegate = new ExecOptionsDelegate()
     cl.resolveStrategy = Closure.DELEGATE_FIRST
     cl()
@@ -37,26 +37,30 @@ class ExecMethods {
     doExec(cl.delegate.command, new ExecOptions(options.execOptions, cl.delegate.execOptions))
   }
 
-  def CommandOutput exec(Map execOptions) {
+  CommandOutput exec(Map execOptions) {
     doExec(execOptions.command, new ExecOptions(options.execOptions, execOptions))
   }
 
   def prefix(String prefix, Closure cl) {
+    def result = null
     def originalPrefix = options.execOptions.prefix
     options.execOptions.prefix = prefix
     cl.delegate = this
     cl.resolveStrategy = Closure.DELEGATE_FIRST
-    cl()
+    result = cl()
     options.execOptions.prefix = originalPrefix
+    result
   }
 
   def suffix(String prefix, Closure cl) {
+    def result = null
     def originalSuffix = options.execOptions.suffix
     options.execOptions.prefix = suffix
     cl.delegate = this
     cl.resolveStrategy = Closure.DELEGATE_FIRST
-    cl()
+    result = cl()
     options.execOptions.suffix = originalSuffix
+    result
   }
 
   private CommandOutput doExec(Collection cmds, ExecOptions execOptions) {
