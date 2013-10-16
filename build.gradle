@@ -2,15 +2,19 @@
 buildscript {
   repositories { mavenCentral() }
   dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' }
+  dependencies { classpath 'org.ajoberstar:gradle-git:0.6.3' }
 }
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
+apply plugin: 'eclipse'
 apply plugin: 'cobertura'
+apply plugin: 'github-pages'
 
 apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
+apply from: 'docs.gradle'
 
 group = 'com.aestasit.ssh'
 version = '0.8.2-SNAPSHOT'
@@ -34,3 +38,6 @@ configurations {
   all*.exclude module: 'slf4j-simple'
 }
 
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.8'
+}
