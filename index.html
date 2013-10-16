@@ -1,0 +1,420 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Sshoogr by aestasit</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Sshoogr</h1>
+        <p>A Groovy-based DSL for working with remote SSH servers.</p>
+
+        <p class="view"><a href="https://github.com/aestasit/sshoogr">View the Project on GitHub <small>aestasit/sshoogr</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/aestasit/sshoogr/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/aestasit/sshoogr/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/aestasit/sshoogr">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="groovy-ssh-dsl" class="anchor" href="#groovy-ssh-dsl"><span class="octicon octicon-link"></span></a>groovy-ssh-dsl</h1>
+
+<h2>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>The <code>groovy-ssh-dsl</code> is a <strong>Groovy</strong>-based <strong>DSL</strong> library for working with remote servers through <strong>SSH</strong>. The <strong>DSL</strong> allows:</p>
+
+<ul>
+<li>connecting</li>
+<li>executing remote commands</li>
+<li>copying files and directories</li>
+<li>creating tunnels in a simple and concise way.</li>
+</ul><p>The library was jointly developed by <strong>Aestas/IT</strong> (<a href="http://aestasit.com">http://aestasit.com</a>) and <strong>NetCompany A/S</strong> (<a href="http://www.netcompany.com/">http://www.netcompany.com/</a>) to support the quickly growing company's operations and hosting department.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>The easiest way to use <code>gradle-ssh-dsl</code> in a <strong>Groovy</strong> script is by importing the dependency using <a href="http://groovy.codehaus.org/Grape">Grape</a>.</p>
+
+<pre><code>@GrabResolver(name='oss', root='https://oss.sonatype.org/content/repositories/snapshots/')
+@Grab('com.aestasit.gradle:gradle-ssh-plugin:0.8-SNAPSHOT')
+</code></pre>
+
+<h3>
+<a name="creating-a-sshdslengine-instance" class="anchor" href="#creating-a-sshdslengine-instance"><span class="octicon octicon-link"></span></a>Creating a SshDslEngine instance</h3>
+
+<p>The main library's classes are <code>SshDslEngine</code> and <code>SshOptions</code>, which need to be imported before the library can be used:</p>
+
+<pre><code>import com.aestasit.ssh.dsl.SshDslEngine
+import com.aestasit.ssh.SshOptions
+</code></pre>
+
+<p>To create a simple instance of the engine with the default options you can just use the following instruction:</p>
+
+<pre><code>def engine = new SshDslEngine(new SshOptions())
+</code></pre>
+
+<h3>
+<a name="basic-usage" class="anchor" href="#basic-usage"><span class="octicon octicon-link"></span></a>Basic usage</h3>
+
+<p>The entry point for using the <strong>DSL</strong> is the <code>remoteSession</code> method, which accepts an <strong>SSH</strong> <strong>URL</strong> and a closure with <strong>Groovy</strong> or <strong>DSL</strong> code:</p>
+
+<pre><code>engine.remoteSession('user2:654321@localhost:2222') {
+  exec 'rm -rf /tmp/*'
+  exec 'touch /var/lock/my.pid'
+  remoteFile('/var/my.conf').text = "enabled=true"
+}
+</code></pre>
+
+<p>For more examples, please refer to the following sections.</p>
+
+<h3>
+<a name="remote-connections" class="anchor" href="#remote-connections"><span class="octicon octicon-link"></span></a>Remote connections</h3>
+
+<p>The <code>remoteSession</code> method accepts an <strong>SSH</strong> <strong>URL</strong> and a closure, for example:</p>
+
+<pre><code>engine.remoteSession("user:password@localhost:22") {
+  ...
+}
+</code></pre>
+
+<p>Inside the closure you can execute remote commands, access remote file content, upload and download files, create tunnels.</p>
+
+<p>If your connection settings were set with the help of default configuration (see "Configuration options" section),
+then you can omit the <strong>URL</strong> parameter:</p>
+
+<pre><code>engine.remoteSession {
+  ...
+}
+</code></pre>
+
+<p>Furthermore, it is possible to override the default values in each session by directly assigning <code>host</code>, <code>username</code>, <code>password</code> and <code>port</code> properties:</p>
+
+<pre><code>engine.remoteSession {
+
+  host = 'localhost'
+  username = 'user2'
+  password = '654321'
+  port = 2222
+
+  ...
+
+}
+</code></pre>
+
+<p>The <strong>SSH</strong>'s <strong>URL</strong> can be also assigned from withing the remote session declaration, like so:</p>
+
+<pre><code>engine.remoteSession {
+
+  url = 'user2:654321@localhost:2222'
+
+  ...
+
+}
+</code></pre>
+
+<p>The actual connection to the remote host will be executed upon the first command or file access, and, naturally, the connection will be
+automatically closed after the code block terminates.</p>
+
+<p>You can explicitly call <code>connect</code> or <code>disconnect</code> methods to control this behavior:</p>
+
+<pre><code>engine.remoteSession {
+
+  // explicitly call connect
+  connect()
+
+  // do some stuff
+  ...
+
+  // explicitly disconnect
+  disconnect()
+
+  // explicitly connect again
+  connect()
+
+  ...
+
+}
+</code></pre>
+
+<p>In the next section, we will see how to execute remote commands.</p>
+
+<h3>
+<a name="executing-commands" class="anchor" href="#executing-commands"><span class="octicon octicon-link"></span></a>Executing commands</h3>
+
+<p>The simplest way to execute a command within a remote session is by using the <code>exec</code> method that just takes a command string:</p>
+
+<pre><code>engine.remoteSession {
+  exec 'ls -la'
+}
+</code></pre>
+
+<p>You can also pass a list of commands in an array:</p>
+
+<pre><code>exec([
+ 'ls -la',
+ 'date'
+])
+</code></pre>
+
+<p>The <code>exec</code> behavior can also be controlled with additional named parameters given to the method. For example, in order
+to hide commands output, you can use the following syntax:</p>
+
+<pre><code>exec(command: 'ls –la', showOutput: false)
+</code></pre>
+
+<p>The additional Parameter names are specified in the "Configuration options" section for the <code>execOptions</code>. They can all
+be used to override default settings for specific commands.</p>
+
+<p>In the same way, you can also define common parameters for a block of commands passed as an array:</p>
+
+<pre><code>exec(showOutput: false, command: [
+ 'ls -la',
+ 'date'
+])
+</code></pre>
+
+<p>Also you can get access to command output, exit code and exception thrown during command execution. This can be useful
+for implementing logic based on a result returned by the remote command and/or parsing of the output. For example,</p>
+
+<pre><code>def result = exec(command: '/usr/bin/mycmd', failOnError: false, showOutput: false)
+if (result.exitStatus == 1) {
+  result.output.eachLine { line -&gt;
+    if (line.contains('WARNING')) {
+      throw new RuntimeException("Warning!!!")
+    }
+  }
+}
+</code></pre>
+
+<p>Two additional methods that you can use around your commands are <code>prefix</code> and <code>suffix</code>. They are similar to using the <code>prefix</code>
+and <code>suffix</code> options in <code>execOptions</code> or named parameters to <code>exec</code> method.</p>
+
+<pre><code>prefix("sudo") {
+  exec 'ls -la'
+  exec 'df -h'
+}
+</code></pre>
+
+<p>And with <code>suffix</code>:</p>
+
+<pre><code>suffix("&gt;&gt; output.log") {
+  exec 'ls -la'
+  exec 'df -h'
+  exec 'date'
+  exec 'facter'
+}
+</code></pre>
+
+<p> </p>
+
+<h3>
+<a name="file-uploadingdownloading" class="anchor" href="#file-uploadingdownloading"><span class="octicon octicon-link"></span></a>File uploading/downloading</h3>
+
+<p>The simplest way to modify a remote text file content is by using <code>remoteFile</code> method, which returns a remote
+file object instance, and assign some string to the <code>text</code> property:</p>
+
+<pre><code>remoteFile('/etc/yum.repos.d/puppet.repo').text = '''
+  [puppet]
+  name=Puppet Labs Packages
+  baseurl=http://yum.puppetlabs.com/el/$releasever/products/$basearch/
+  enabled=0
+  gpgcheck=0
+'''
+</code></pre>
+
+<p>Each line of the input string will be trimmed before it's copied to the remote file.
+For text file downloading you can just read the <code>text</code> property:</p>
+
+<pre><code>println remoteFile('/etc/yum.repos.d/puppet.repo').text
+</code></pre>
+
+<p>Uploading of a single file can be done in the following way:</p>
+
+<pre><code>scp "$buildDir/test.file", '/tmp/test.file'
+</code></pre>
+
+<p>This method only works for file uploading (from local environment to remote). You can also write the example above
+in a more verbose form with the help of closures:</p>
+
+<pre><code>scp {
+  from { localFile "$buildDir/test.file" }
+  into { remoteFile '/tmp/test.file' }
+}
+</code></pre>
+
+<p>A whole directory can be uploaded by using the <code>remoteDir</code> and <code>localDir</code> methods of <code>scp</code>.</p>
+
+<pre><code>scp {
+  from { localDir "$buildDir/application" }
+  into { remoteDir '/var/bea/domain/application' }
+}
+</code></pre>
+
+<p>In similar fashion, you can download directories and files:</p>
+
+<pre><code>scp {
+  from { remoteDir '/etc/nginx' }
+  into { localDir "$buildDir/nginx" }
+}
+</code></pre>
+
+<p>You can also copy multiple sources into multiple targets:</p>
+
+<pre><code>scp {
+  from {
+    localDir "$buildDir/doc"
+    localFile "$buildDir/readme.txt"
+    localFile "$buildDir/license/license.txt"
+  }
+  into {
+    remoteDir '/var/server/application'
+    remoteDir '/repo/company/application'
+  }
+}
+</code></pre>
+
+<p>During any upload/download operation, local and remote directories will be created automatically.</p>
+
+<h3>
+<a name="tunneling" class="anchor" href="#tunneling"><span class="octicon octicon-link"></span></a>Tunneling</h3>
+
+<p>If inside your build script you need to get access to a remote server that is not visible directly from the local
+machine, then you can create a tunnel to that server by using the <code>tunnel</code> method:</p>
+
+<pre><code>tunnel('1.2.3.4', 8080) { int localPort -&gt;
+  ...
+}
+</code></pre>
+
+<p>All code executed within the closure passed to the tunnel method will have access to a server tunnel running on <code>localhost</code>
+and randomly selected <code>localPort</code>, which is passed as a parameter to the closure. Inside that tunnel code you can, for
+example, deploy a web application or send some <strong>HTTP</strong> command to remote server:</p>
+
+<pre><code>tunnel('1.2.3.4', 8080) { int localPort -&gt;
+  def result = new URL("http://localhost:${localPort}/flushCache").text
+  if (result == 'OK') {
+    println "Cache is flushed!"
+  } else {
+    throw new RuntimeException(result)
+  }
+}
+</code></pre>
+
+<p>The tunnel will be closed upon closure completion.
+Also you can define a local port yourself in the following way:</p>
+
+<pre><code>tunnel(7070, '1.2.3.4', 8080) {
+  def result = new URL("http://localhost:7070/flushCache").text
+  ...
+}
+</code></pre>
+
+<h3>
+<a name="configuration-options" class="anchor" href="#configuration-options"><span class="octicon octicon-link"></span></a>Configuration options</h3>
+
+<p>The following list gives an overview of the available configuration options:</p>
+
+<ul>
+<li>
+<code>defaultHost</code>, <code>defaultUser</code>, <code>defaultPassword</code>, <code>defaultPort</code> (defaults to 22) - Default host, user name, password or port to use in remote connection in case they are not specified in some other way (through <code>url</code>, <code>host</code>, <code>port</code>, <code>user</code> or <code>password</code> properties inside the <code>remoteSession</code> method).</li>
+<li>
+<code>defaultKeyFile</code> - Default key file to use in remote connection in case it is not specified through the <code>keyFile</code> property inside the <code>remoteSession</code> method.</li>
+<li>
+<code>failOnError</code> (defaults to true) - If set to true, failed remote commands and file operations will throw an exception.</li>
+<li>
+<code>verbose</code> (defaults to false) - If set to true, the library produces more debug output.</li>
+</ul><p>The <code>sshOptions</code> may also contain a nested <code>execOptions</code> structure, which defines remote command execution (see
+"Executing commands" section) options. It has the following properties:</p>
+
+<ul>
+<li>
+<code>showOutput</code> (defaults to true) - If set to true, remote command output is printed.</li>
+<li>
+<code>showCommand</code> (defaults to true) - If set to true, remote command is printed.</li>
+<li>
+<code>maxWait</code> (defaults to 0) - Number of milliseconds to wait for command to finish. If it is set to 0, then library will wait forever.</li>
+<li>
+<code>succeedOnExitStatus</code> (defaults to 0) - Exit code that indicates commands success. If command returns different exit code, then build will fail.</li>
+<li>
+<code>outputFile</code> - File, to which to send command's output.</li>
+<li>
+<code>appendFile</code> (defaults to false) - If outputFile is specified, then this option indicates if data should be appended or file should be created from scratch.</li>
+<li>
+<code>failOnError</code> (defaults to true) - If set to true, failed remote commands will fail the build.</li>
+<li>
+<code>verbose</code> (defaults to false) - If set to true, library produces more debug output.</li>
+<li>
+<code>prefix</code> - String to prepend to each executed command, for example, "<code>sudo</code>".</li>
+<li>
+<code>suffix</code> - String to append to each executed command, for example, "<code>&gt;&gt; output.log</code>".</li>
+</ul><p>There is also a nested <code>scpOptions</code> structure, which defines remote file copying options (see "File uploading/downloading"
+section). It has the following properties:</p>
+
+<ul>
+<li>
+<code>failOnError</code> (defaults to true) - If set to true, failed file operations will fail the build.</li>
+<li>
+<code>showProgress</code> (defaults to false) - If set to true, library shows additional information regarding file upload/download progress.</li>
+<li>
+<code>verbose</code> (defaults to false) - If set to true, library produces more debug output.</li>
+</ul><h3>
+<a name="populating-sshoptions" class="anchor" href="#populating-sshoptions"><span class="octicon octicon-link"></span></a>Populating SshOptions</h3>
+
+<p>A more verbose example of creating a <code>SshOptions</code> object can be found below:</p>
+
+<pre><code>import com.aestasit.ssh.log.SysOutLogger
+
+...
+
+options = new SshOptions()
+options.with {
+
+  logger = new SysOutLogger()
+
+  defaultHost = '127.0.0.1'
+  defaultUser = 'user1'
+  defaultPassword = '123456'
+  defaultPort = 2233
+
+  reuseConnection = true
+  trustUnknownHosts = true
+
+  execOptions.with {
+    showOutput = true
+    failOnError = false
+    succeedOnExitStatus = 0
+    maxWait = 30000
+    outputFile = new File("output.file")
+    appendFile = true
+  }
+
+  scpOptions.with {
+    verbose = true
+    showProgress = true
+  }
+
+}
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/aestasit">aestasit</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
