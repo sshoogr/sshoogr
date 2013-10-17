@@ -1,4 +1,20 @@
 
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+  classifier = 'javadoc'
+  from 'build/docs/groovydoc'
+}
+
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+artifacts {
+  archives jar
+  archives groovydocJar
+  archives sourcesJar
+}
+
 githubPages {                                        
   repoUri = "https://github.com/aestasit/${githubProjectName}.git"
   pages {
