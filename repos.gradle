@@ -1,4 +1,5 @@
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 repositories {
   mavenCentral()
@@ -6,18 +7,21 @@ repositories {
   maven { url ossReleaseRepositoryUrl }
 }
 
+signing {
+  sign configurations.archives
+}
+
 uploadArchives {
   repositories.mavenDeployer {
-    if (project.version.endsWith('-SNAPSHOT')) {
-      name = "snapshots" 
+    if (project.version.endsWith('-SNAPSHOT')) { 
       repository(url: ossSnapshotRepositoryUrl) {
         authentication(userName: ossSnapshotRepositoryUserName, password: ossSnapshotRepositoryPassword)
       }
     } else {
-      name = "releases"
       repository(url: ossReleaseRepositoryUrl) {
         authentication(userName: ossReleaseRepositoryUserName, password: ossReleaseRepositoryPassword)
       }
+      beforeDeployment { deployment -> signing.signPom(deployment) }
     }
     pom.project {
       name pomProjectTitle
