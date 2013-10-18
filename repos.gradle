@@ -7,11 +7,11 @@ repositories {
   maven { url ossReleaseRepositoryUrl }
 }
 
-if (!project.version.endsWith('-SNAPSHOT')) { 
-  signing {
-    sign configurations.archives
-  }
+signing {
+  sign configurations.archives
 }
+
+signArchives.onlyIf { !project.version.endsWith('-SNAPSHOT') }
 
 uploadArchives {
   repositories.mavenDeployer {
