@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.aestasit.ssh
+package com.aestasit.ssh;
 
 /**
  * Generic exception to be thrown in exceptional situations.
@@ -22,13 +22,15 @@ package com.aestasit.ssh
  * @author Andrey Adamovich
  *
  */
-class SshException extends RuntimeException {
+public class SshException extends RuntimeException {
+
+  private static final long serialVersionUID = 6622654048925830665L;
 
   SshException(String message, Throwable cause) {
-    super(message, cause)
+    super(message, cause);
   }
 
   SshException(String message) {
-    super(message)
+    super(message);
   }
 }
