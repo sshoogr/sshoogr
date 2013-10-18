@@ -1,5 +1,5 @@
+
 apply plugin: 'maven'
-apply plugin: 'signing'
 
 repositories {
   mavenCentral()
@@ -7,11 +7,12 @@ repositories {
   maven { url ossReleaseRepositoryUrl }
 }
 
-signing {
-  sign configurations.archives
+if (!project.version.endsWith('-SNAPSHOT')) {
+  apply plugin: 'signing'
+  signing {
+    sign configurations.archives
+  }
 }
-
-signArchives.onlyIf { !project.version.endsWith('-SNAPSHOT') }
 
 uploadArchives {
   repositories.mavenDeployer {

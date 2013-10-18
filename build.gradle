@@ -1,4 +1,7 @@
 
+group = 'com.aestasit.infrastructure.sshoogr'
+version = '0.9-SNAPSHOT'
+
 buildscript {
   repositories { mavenCentral() }
   dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' }
@@ -15,9 +18,6 @@ apply plugin: 'github-pages'
 apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
 apply from: 'docs.gradle'
-
-group = 'com.aestasit.ssh'
-version = '0.8.2-SNAPSHOT'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
