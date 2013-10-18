@@ -29,7 +29,7 @@ dependencies {
   compile 'com.jcraft:jsch:0.1.49'
   testCompile 'junit:junit:4.11'
   testCompile 'ch.qos.logback:logback-classic:1.+'
-  testCompile 'com.aestasit.ssh:groovy-sshd-mock:0.3-SNAPSHOT'
+  testCompile 'com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3-SNAPSHOT'
 }
 
 configurations {
