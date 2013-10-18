@@ -2,14 +2,22 @@ apply plugin: 'maven'
 
 repositories {
   mavenCentral()
-  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  maven { url ossSnapshotRepositoryUrl }
+  maven { url ossReleaseRepositoryUrl }
 }
 
 uploadArchives {
   repositories.mavenDeployer {
-    name = "snapshots" 
-    repository(url: ossSnapshotRepositoryUrl) {
-      authentication(userName: ossSnapshotRepositoryUserName, password: ossSnapshotRepositoryPassword)
+    if (project.version.endsWith('-SNAPSHOT')) {
+      name = "snapshots" 
+      repository(url: ossSnapshotRepositoryUrl) {
+        authentication(userName: ossSnapshotRepositoryUserName, password: ossSnapshotRepositoryPassword)
+      }
+    } else {
+      name = "releases"
+      repository(url: ossReleaseRepositoryUrl) {
+        authentication(userName: ossReleaseRepositoryUserName, password: ossReleaseRepositoryPassword)
+      }
     }
     pom.project {
       name pomProjectTitle
