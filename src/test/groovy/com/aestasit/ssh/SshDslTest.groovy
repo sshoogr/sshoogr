@@ -37,44 +37,46 @@ class SshDslTest {
 
   @BeforeClass
   def static void createServer() {
-
-    // Create command expectations.
-    MockSshServer.command('^ls.*$') { inp, out, err, callback, env ->
-      out << '''total 20
+    MockSshServer.with {
+      
+      // Create command expectations.
+      command('^ls.*$') { inp, out, err, callback, env ->
+        out << '''total 20
 drwxr-xr-x 3 1100 1100 4096 Aug  7 16:52 .
 drwxr-xr-x 8 1100 1100 4096 Aug  1 17:53 ..
 drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
 '''
-      callback.onExit(0)
+        callback.onExit(0)
+      }
+
+      command('^whoami.*$') { inp, out, err, callback, env ->
+        out << "root\n"
+        callback.onExit(0)
+      }
+
+      command('^du.*$') { inp, out, err, callback, env ->
+        out << "100\n"
+        callback.onExit(0)
+      }
+
+      command('^rm.*$') { inp, out, err, callback, env ->
+        out << "/tmp/test.file\n"
+        callback.onExit(0)
+      }
+
+      command('timeout') { inp, out, err, callback, env ->
+        sleep(2000)
+        callback.onExit(0)
+      }
+
+      // Create file expectations.
+      dir('.')
+      dir('/tmp')
+
+      // Start server
+      startSshd(2233)
+      
     }
-
-    MockSshServer.command('^whoami.*$') { inp, out, err, callback, env ->
-      out << "root\n"
-      callback.onExit(0)
-    }
-
-    MockSshServer.command('^du.*$') { inp, out, err, callback, env ->
-      out << "100\n"
-      callback.onExit(0)
-    }
-
-    MockSshServer.command('^rm.*$') { inp, out, err, callback, env ->
-      out << "/tmp/test.file\n"
-      callback.onExit(0)
-    }
-
-    MockSshServer.command('timeout') { inp, out, err, callback, env ->
-      sleep(2000)
-      callback.onExit(0)
-    }
-
-    // Create file expectations.
-    MockSshServer.dir('.')
-    MockSshServer.dir('/tmp')
-
-    // Start server
-    MockSshServer.startSshd(2233)
-
   }
 
   @BeforeClass
