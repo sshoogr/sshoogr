@@ -4,7 +4,6 @@ apply plugin: 'maven'
 repositories {
   mavenCentral()
   maven { url ossSnapshotRepositoryUrl }
-  maven { url ossReleaseRepositoryUrl }
 }
 
 if (!project.version.endsWith('-SNAPSHOT')) {
