@@ -36,7 +36,7 @@ dependencies {
   compile 'commons-io:commons-io:1.4'
   compile 'com.jcraft:jsch:0.1.49'
   testCompile 'junit:junit:4.11'
-  testCompile 'com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3'
+  testCompile 'com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3-SNAPSHOT'
 }
 
 configurations {
