@@ -4,9 +4,9 @@
 
 The `sshoogr` is a **Groovy**-based **DSL** library for working with remote servers through **SSH**. The **DSL** allows:
 
-- connecting
-- executing remote commands
-- copying files and directories
+- connecting,
+- executing remote commands,
+- copying files and directories,
 - creating tunnels in a simple and concise way.
 
 The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) to support the quickly growing company's operations and hosting department.
