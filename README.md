@@ -18,8 +18,6 @@ The easiest way to use `sshoogr` in a **Groovy** script is by importing the depe
     @Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.4')
     import static com.aestasit.ssh.DefaulSsh.*
 
-### Basic usage
-
 The entry point for using the **DSL** is the `remoteSession` method, which accepts an **SSH** **URL** and a closure with **Groovy** or **DSL** code:
 
     remoteSession('user2:654321@localhost:2222') {
@@ -28,7 +26,7 @@ The entry point for using the **DSL** is the `remoteSession` method, which accep
       remoteFile('/var/my.conf').text = "enabled=true"
     }
 
-For more examples, please refer to the following sections.
+For more use cases, please refer to the following sections or to the `examples` folder in this repository.
 
 ### Remote connections
 
