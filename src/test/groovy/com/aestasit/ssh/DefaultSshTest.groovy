@@ -29,7 +29,12 @@ import org.junit.Test
 class DefaultSshTest extends BaseSshTest {
 
   @Test
-  def void testRemoteFile() throws Exception {
+  def void testStaticMethods() throws Exception {
+    execOptions {
+      maxWait = 30000
+      outputFile = new File("output.file")
+      appendFile = true
+    }
     remoteSession('user2:654321@localhost:2233') {
       exec 'whoami'
       exec 'du -s'
