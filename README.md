@@ -276,7 +276,7 @@ section). It has the following properties:
 
 ### Advanced usage
 
-#### Creating a SshDslEngine instance
+#### Creating a `SshDslEngine` instance
 
 If you need to embed `sshoogr` into your own **DSL** or another library you may need to use internal classes instead of default static methods. The main library's classes are `SshDslEngine` and `SshOptions`, which need to be imported before the library can be used:
     
@@ -289,7 +289,7 @@ To create a simple instance of the engine with the default options you can just 
     
 The `engine` instance gives access to the `remoteSession` method.     
 
-#### Populating SshOptions
+#### Populating `SshOptions`
 
 A more verbose example of creating a `SshOptions` object can be found below:
 
