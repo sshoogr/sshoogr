@@ -26,7 +26,7 @@ import com.aestasit.ssh.log.Logger
 import com.aestasit.ssh.log.SysOutLogger
 
 /**
- * 
+ * Default "static" implementation of SSH DSL to be used inside plain Groovy scripts.
  * 
  * @author Andrey Adamovich
  *
