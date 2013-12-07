@@ -1,8 +1,8 @@
-# groovy-ssh-dsl
+# Sshoogr
 
 ## Overview
 
-The `groovy-ssh-dsl` is a **Groovy**-based **DSL** library for working with remote servers through **SSH**. The **DSL** allows:
+The `sshoogr` is a **Groovy**-based **DSL** library for working with remote servers through **SSH**. The **DSL** allows:
 
 - connecting
 - executing remote commands
@@ -11,28 +11,18 @@ The `groovy-ssh-dsl` is a **Groovy**-based **DSL** library for working with remo
 
 The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) to support the quickly growing company's operations and hosting department.
 
-## Usage
+### Using sshoogr in Groovy scripts
 
-The easiest way to use `gradle-ssh-dsl` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
+The easiest way to use `sshoogr` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
 
-    @Grab('com.aestasit.gradle:gradle-ssh-plugin:0.9.3')
-
-### Creating a SshDslEngine instance
-
-The main library's classes are `SshDslEngine` and `SshOptions`, which need to be imported before the library can be used:
-    
-    import com.aestasit.ssh.dsl.SshDslEngine
-    import com.aestasit.ssh.SshOptions
-
-To create a simple instance of the engine with the default options you can just use the following instruction:
-
-    def engine = new SshDslEngine(new SshOptions())
+    @Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.4')
+    import static com.aestasit.ssh.DefaulSsh.*
 
 ### Basic usage
 
 The entry point for using the **DSL** is the `remoteSession` method, which accepts an **SSH** **URL** and a closure with **Groovy** or **DSL** code:
 
-    engine.remoteSession('user2:654321@localhost:2222') {
+    remoteSession('user2:654321@localhost:2222') {
       exec 'rm -rf /tmp/*'
       exec 'touch /var/lock/my.pid'
       remoteFile('/var/my.conf').text = "enabled=true"
@@ -44,7 +34,7 @@ For more examples, please refer to the following sections.
 
 The `remoteSession` method accepts an **SSH** **URL** and a closure, for example:
 
-    engine.remoteSession("user:password@localhost:22") {
+    remoteSession("user:password@localhost:22") {
       ...
     }
 
@@ -53,13 +43,13 @@ Inside the closure you can execute remote commands, access remote file content, 
 If your connection settings were set with the help of default configuration (see "Configuration options" section),
 then you can omit the **URL** parameter:
 
-    engine.remoteSession {
+    remoteSession {
       ...
     }
 
 Furthermore, it is possible to override the default values in each session by directly assigning `host`, `username`, `password` and `port` properties:
 
-    engine.remoteSession {
+    remoteSession {
 
       host = 'localhost'
       username = 'user2'
@@ -72,7 +62,7 @@ Furthermore, it is possible to override the default values in each session by di
 
 The **SSH**'s **URL** can be also assigned from withing the remote session declaration, like so:
 
-    engine.remoteSession {
+    remoteSession {
 
       url = 'user2:654321@localhost:2222'
 
@@ -85,7 +75,7 @@ automatically closed after the code block terminates.
 
 You can explicitly call `connect` or `disconnect` methods to control this behavior:
 
-    engine.remoteSession {
+    remoteSession {
 
       // explicitly call connect
       connect()
@@ -109,7 +99,7 @@ In the next section, we will see how to execute remote commands.
 
 The simplest way to execute a command within a remote session is by using the `exec` method that just takes a command string:
 
-    engine.remoteSession {
+    remoteSession {
       exec 'ls -la'
     }
 
@@ -163,7 +153,6 @@ And with `suffix`:
       exec 'date'
       exec 'facter'
     }
-
  
 ### File uploading/downloading
 
@@ -248,7 +237,7 @@ example, deploy a web application or send some **HTTP** command to remote server
     }
 
 The tunnel will be closed upon closure completion.
-Also you can define a local port yourself in the following way:
+Also, you can define a local port yourself in the following way:
 
     tunnel(7070, '1.2.3.4', 8080) {
       def result = new URL("http://localhost:7070/flushCache").text
@@ -285,7 +274,22 @@ section). It has the following properties:
  - `showProgress` (defaults to false) - If set to true, library shows additional information regarding file upload/download progress.
  - `verbose` (defaults to false) - If set to true, library produces more debug output.
 
-### Populating SshOptions
+### Advanced usage
+
+#### Creating a SshDslEngine instance
+
+If you need to embed `sshoogr` into your own **DSL** or another library you may need to use internal classes instead of default static methods. The main library's classes are `SshDslEngine` and `SshOptions`, which need to be imported before the library can be used:
+    
+    import com.aestasit.ssh.dsl.SshDslEngine
+    import com.aestasit.ssh.SshOptions
+
+To create a simple instance of the engine with the default options you can just use the following instruction:
+
+    def engine = new SshDslEngine(new SshOptions())
+    
+The `engine` instance gives access to the `remoteSession` method.     
+
+#### Populating SshOptions
 
 A more verbose example of creating a `SshOptions` object can be found below:
 
@@ -322,6 +326,4 @@ A more verbose example of creating a `SshOptions` object can be found below:
 
     }
 
-
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/aestasit/sshoogr/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
