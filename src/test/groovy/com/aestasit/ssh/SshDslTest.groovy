@@ -22,7 +22,6 @@ import org.junit.Test
 
 import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.SysOutLogger
-import com.aestasit.ssh.mocks.MockSshServer
 
 /**
  * SSH DSL test case that verifies different DSL syntax use cases.
@@ -30,54 +29,10 @@ import com.aestasit.ssh.mocks.MockSshServer
  * @author Andrey Adamovich
  *
  */
-class SshDslTest {
+class SshDslTest extends BaseSshTest {
 
   static SshOptions options
   static SshDslEngine engine
-
-  @BeforeClass
-  def static void createServer() {
-    MockSshServer.with {
-      
-      // Create command expectations.
-      command('^ls.*$') { inp, out, err, callback, env ->
-        out << '''total 20
-drwxr-xr-x 3 1100 1100 4096 Aug  7 16:52 .
-drwxr-xr-x 8 1100 1100 4096 Aug  1 17:53 ..
-drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
-'''
-        callback.onExit(0)
-      }
-
-      command('^whoami.*$') { inp, out, err, callback, env ->
-        out << "root\n"
-        callback.onExit(0)
-      }
-
-      command('^du.*$') { inp, out, err, callback, env ->
-        out << "100\n"
-        callback.onExit(0)
-      }
-
-      command('^rm.*$') { inp, out, err, callback, env ->
-        out << "/tmp/test.file\n"
-        callback.onExit(0)
-      }
-
-      command('timeout') { inp, out, err, callback, env ->
-        sleep(2000)
-        callback.onExit(0)
-      }
-
-      // Create file expectations.
-      dir('.')
-      dir('/tmp')
-
-      // Start server
-      startSshd(2233)
-      
-    }
-  }
 
   @BeforeClass
   def static void defineOptions() {
@@ -107,23 +62,6 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
 
     }
     engine = new SshDslEngine(options)
-  }
-
-  def static File getCurrentDir() {
-    new File(".").getAbsoluteFile()
-  }
-
-  def static File getTestFile() {
-    new File("input.file").getAbsoluteFile()
-  }
-
-  def static File getTestKey() {
-    new File("dummy.pem").getAbsoluteFile()
-  }
-
-  @AfterClass
-  def static void destroyServer() {
-    MockSshServer.stopSshd()
   }
 
   @Test

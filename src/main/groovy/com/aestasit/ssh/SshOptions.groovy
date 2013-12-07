@@ -29,14 +29,14 @@ class SshOptions extends CommonOptions {
   // SSH connection options.
   String defaultHost               = null
   String defaultUser               = null
+  File defaultKeyFile              = null
   String defaultPassword           = null
   int defaultPort                  = 22
   boolean trustUnknownHosts        = false
   boolean reuseConnection          = false
-  File defaultKeyFile              = null
+  boolean verbose                  = false
   Logger logger                    = null
-  def Boolean verbose              = false
-
+  
   // SSH command execution options.
   ExecOptions execOptions          = new ExecOptions()
 

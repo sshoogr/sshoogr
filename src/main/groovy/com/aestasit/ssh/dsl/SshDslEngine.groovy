@@ -38,6 +38,7 @@ class SshDslEngine {
     this.config = new Properties()
     config.put("StrictHostKeyChecking", "no")
     config.put("HashKnownHosts",  "yes")
+    config.put("PreferredAuthentications", "publickey,keyboard-interactive,password")
     jsch.config = config
   }
 
