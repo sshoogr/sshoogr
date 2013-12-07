@@ -1,4 +1,4 @@
-# Sshoogr
+# sshoogr
 
 ## Overview
 
@@ -11,7 +11,7 @@ The `sshoogr` is a **Groovy**-based **DSL** library for working with remote serv
 
 The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) to support the quickly growing company's operations and hosting department.
 
-### Using sshoogr in Groovy scripts
+### Using `sshoogr` in Groovy scripts
 
 The easiest way to use `sshoogr` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
 
