@@ -34,14 +34,11 @@ remoteSession("${sshUser}:${sshPassword}@${sshHost}:22") {
       remoteFile("/var/www/svn/${repo}/hooks/pre-revprop-change").text = "#!/bin/sh${LF}exit 0;"
       exec "chmod 755 /var/www/svn/${repo}/hooks/pre-revprop-change"
       exec "chown -R apache:apache /var/www/svn/${repo}"
-      def proc = "svnrdump load --username ${svnUser} --password ${svnPassword} http://localhost:${svnPort}/repos/${repo}".execute()
-      proc.consumeProcessOutput(System.out, System.err)
-      proc.withWriter { Writer writer ->
-        new File("dumps/${repo}.dmp").eachLine { String line ->
-          writer << "${line}\n"
-        }
-      }
-      proc.waitFor()
+      def read = "cat dumps/${repo}.dmp".execute()
+      def write = "svnrdump load --username ${svnUser} --password ${svnPassword} http://localhost:${svnPort}/repos/${repo}".execute()
+      write.consumeProcessOutput(System.out, System.err)
+      read | write
+      write.waitFor()
     }
   }
 }
