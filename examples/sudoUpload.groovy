@@ -4,18 +4,17 @@
  */
 
 @GrabResolver(name='snapshot', root='http://oss.sonatype.org/content/groups/public')
-@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.6-SNAPSHOT')
+@Grab( group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.7-SNAPSHOT', changing = true)
 import static com.aestasit.ssh.DefaultSsh.*
 
-def sshUser = 'pi'
-def sshPassword = 'raspberry'
-def sshHost = '192.168.1.5'
-
-scpOptions {
+options.scpOptions {
   uploadToDirectory = '/tmp'
 }
 
-remoteSession("${sshUser}:${sshPassword}@${sshHost}:22") {
+remoteSession {
+  user = 'ec2-user'
+  keyFile = new File('secret.pem')
+  host = 'ec2-54-216-184-163.eu-west-1.compute.amazonaws.com'
   scp {
     into { remoteDir("/usr/bin") }
     from { localFile('./sudoUpload.groovy/') }

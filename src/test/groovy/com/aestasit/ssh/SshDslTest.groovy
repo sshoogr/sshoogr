@@ -65,7 +65,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testDefaultSettings() throws Exception {
+  void testDefaultSettings() throws Exception {
     engine.remoteSession {
       exec 'whoami'
       exec 'du -s'
@@ -75,7 +75,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testUrlAndOverriding() throws Exception {
+  void testUrlAndOverriding() throws Exception {
     // Test overriding default connection settings through URL.
     engine.remoteSession {
 
@@ -90,7 +90,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testPasswordlessLogin() throws Exception {
+  void testPasswordlessLogin() throws Exception {
     engine.remoteSession {
       url = 'user2@localhost:2233'
       keyFile = getTestKey()
@@ -99,7 +99,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testMethodOverriding() throws Exception {
+  void testMethodOverriding() throws Exception {
     // Test overriding default connection settings through method parameter.
     engine.remoteSession('user2:654321@localhost:2233') {
 
@@ -112,7 +112,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testPropertyOverriding() throws Exception {
+  void testPropertyOverriding() throws Exception {
     // Test overriding default connection settings through delegate parameters.
     engine.remoteSession {
 
@@ -130,7 +130,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testOutputScripting() throws Exception {
+  void testOutputScripting() throws Exception {
     // Test saving the output and setting exec parameters through a builder.
     engine.remoteSession {
       println ">>>>> COMMAND: whoami"
@@ -141,14 +141,14 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testFailOnError() throws Exception {
+  void testFailOnError() throws Exception {
     engine.remoteSession {
       exec(command: 'abcd', failOnError: false)
     }
   }
 
   @Test
-  def void testTimeout() throws Exception {
+  void testTimeout() throws Exception {
     try {
       engine.remoteSession {
         exec(command: 'timeout', maxWait: 1000)
@@ -159,13 +159,13 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testExecClosure() throws Exception {
+  void testExecClosure() throws Exception {
     // Test closure based builder for exec.
     engine.remoteSession { exec { command = 'whoami' } }
   }
 
   @Test
-  def void testCopy() throws Exception {
+  void testCopy() throws Exception {
     engine.remoteSession {
       scp {
         from {
@@ -177,7 +177,20 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testMultiExec() throws Exception {
+  void testSudoCopy() throws Exception {
+    engine.remoteSession {
+      scp {
+        uploadToDirectory = '/tmp'
+        from {
+          localDir new File(getCurrentDir(), 'test-settings')
+        }
+        into { remoteDir '/etc/puppet' }
+      }
+    }
+  }
+
+  @Test
+  void testMultiExec() throws Exception {
     engine.remoteSession {
       exec([
         'ls -la',
@@ -191,7 +204,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testPrefix() throws Exception {
+  void testPrefix() throws Exception {
     engine.remoteSession {
       prefix('sudo') {
         exec([
@@ -203,7 +216,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  def void testRemoteFile() throws Exception {
+  void testRemoteFile() throws Exception {
     engine.remoteSession {
       remoteFile('/etc/init.conf').text = 'content'
     }

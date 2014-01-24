@@ -80,10 +80,11 @@ class ScpMethods {
     
     // Check if upload should go through an intermediate directory and append its path to all target paths.
     if (scpOptions.uploadToDirectory) {
-      logger.debug("Working with relative path: $relativePath")
-      createRemoteDirectory(scpOptions.uploadToDirectory, channel)
-      remoteDirs = remoteDirs.collect { separatorsToUnix(concat(scpOptions.uploadToDirectory, it)) }
-      remoteFiles = remoteFiles.collect { separatorsToUnix(concat(scpOptions.uploadToDirectory, it)) }
+      logger.debug("Uploading through: ${scpOptions.uploadToDirectory}")
+      def uploadDirectory = separatorsToUnix(normalize(scpOptions.uploadToDirectory))
+      createRemoteDirectory(uploadDirectory, channel)
+      remoteDirs = remoteDirs.collect { uploadDirectory + separatorsToUnix(normalizeNoEndSeparator(it)) }
+      remoteFiles = remoteFiles.collect { uploadDirectory + separatorsToUnix(normalizeNoEndSeparator(it)) }
     }
     
     // Create remote directories.
@@ -126,9 +127,9 @@ class ScpMethods {
     // Move files to their final destination using predefined command.
     if (scpOptions.uploadToDirectory && scpOptions.postUploadCommand) {
       (remoteDirs + remoteFiles).each { String copiedPath ->
-        def actualPath = relativePath(scpOptions.uploadToDirectory, copiedPath)
+        def actualPath = '/' + relativePath(scpOptions.uploadToDirectory, copiedPath)
         exec {
-          command = postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', actualPath)
+          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', actualPath)
         }
       }
     }

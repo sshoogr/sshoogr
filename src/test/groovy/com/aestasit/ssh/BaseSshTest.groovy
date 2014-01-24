@@ -60,6 +60,11 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
         callback.onExit(0)
       }
 
+      command('^sudo.*$') { inp, out, err, callback, env ->
+        out << "OK\n"
+        callback.onExit(0)
+      }
+
       command('timeout') { inp, out, err, callback, env ->
         sleep(2000)
         callback.onExit(0)
