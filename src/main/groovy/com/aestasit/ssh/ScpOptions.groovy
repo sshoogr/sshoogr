@@ -24,5 +24,9 @@ package com.aestasit.ssh
  */
 class ScpOptions extends CommonOptions {
 
-  def Boolean showProgress     = true
+  Boolean showProgress     = true
+  
+  String uploadToDirectory = null
+  String postUploadCommand = 'sudo cp -R %from% %to% ; sudo rm -rf %from%'
+    
 }

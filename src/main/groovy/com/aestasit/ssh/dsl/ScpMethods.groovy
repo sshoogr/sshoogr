@@ -73,12 +73,22 @@ class ScpMethods {
 
   private void upload(ScpOptionsDelegate options, ChannelSftp channel) {
 
+    def remoteDirs = options.target.remoteDirs
+    def remoteFiles = options.target.remoteFiles
+    
+    // Check if upload should go through an intermediate directory and append its path to all target paths.
+    if (options.uploadToDirectory) {
+      createRemoteDirectory(options.uploadToDirectory, channel)
+      remoteDirs = remoteDirs.collect { separatorsToUnix(concat(options.uploadToDirectory, it)) }
+      remoteFiles = remoteFiles.collect { separatorsToUnix(concat(options.uploadToDirectory, it)) }
+    }
+    
     // Create remote directories.
-    options.target.remoteFiles.each { String dstFile ->
+    remoteFiles.each { String dstFile ->
       def dstDir = getPath(dstFile)
       createRemoteDirectory(dstDir, channel)
     }
-    options.target.remoteDirs.each { String dstFile ->
+    remoteDirs.each { String dstFile ->
       createRemoteDirectory(dstFile, channel)
     }
 
@@ -89,7 +99,7 @@ class ScpMethods {
         sourcePath.eachFileRecurse { File childPath ->
           def relativePath = relativePath(sourcePath, childPath)
           logger.debug("Working with relative path: $relativePath")
-          options.target.remoteDirs.each { String dstDir ->
+          remoteDirs.each { String dstDir ->
             if (childPath.isDirectory()) {
               def dstParentDir = separatorsToUnix(concat(dstDir, relativePath))
               createRemoteDirectory(dstParentDir, channel)
@@ -98,18 +108,28 @@ class ScpMethods {
               doPut(channel, childPath.canonicalFile, dstPath)
             }
           }
-        }
+        }        
       } else {
-        options.target.remoteDirs.each { String dstDir ->
+        remoteDirs.each { String dstDir ->
           def dstPath = separatorsToUnix(concat(dstDir, sourcePath.name))
           doPut(channel, sourcePath, dstPath)
         }
-        options.target.remoteFiles.each { String dstFile ->
+        remoteFiles.each { String dstFile ->
           doPut(channel, sourcePath, dstFile)
-        }
+        }        
       }
     }
 
+    // Move files to their final destination using predefined command.
+    if (options.uploadToDirectory && options.postUploadCommand) {
+      (remoteDirs + remoteFiles).each { String copiedPath ->
+        def actualPath = relativePath(options.uploadToDirectory, copiedPath)
+        exec {
+          command = postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', actualPath)
+        }
+      }
+    }
+    
   }
 
   private void download(ScpOptionsDelegate options, ChannelSftp channel) {

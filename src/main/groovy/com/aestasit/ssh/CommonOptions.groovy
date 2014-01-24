@@ -24,5 +24,5 @@ package com.aestasit.ssh
  */
 abstract class CommonOptions {
 
-  def Boolean failOnError      = true
+  Boolean failOnError      = true
 }

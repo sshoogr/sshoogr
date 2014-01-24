@@ -24,16 +24,16 @@ package com.aestasit.ssh
  */
 class ExecOptions extends CommonOptions {
 
-  def Boolean showOutput       = true
-  def Boolean showCommand      = true
-  def Long maxWait             = 0
+  Boolean showOutput       = true
+  Boolean showCommand      = true
+  Long maxWait             = 0
 
-  def Long succeedOnExitStatus = 0
-  def File outputFile          = null
-  def Boolean appendFile       = false
+  Long succeedOnExitStatus = 0
+  File outputFile          = null
+  Boolean appendFile       = false
 
-  def String prefix            = null
-  def String suffix            = null
+  String prefix            = null
+  String suffix            = null
 
   ExecOptions() {
   }
