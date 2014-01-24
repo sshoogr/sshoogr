@@ -1,6 +1,6 @@
 
 group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.9-SNAPSHOT'
+version = '0.9.10-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }

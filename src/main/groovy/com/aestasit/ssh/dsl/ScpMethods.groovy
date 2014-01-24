@@ -37,12 +37,17 @@ import com.jcraft.jsch.ChannelSftp.LsEntry
 class ScpMethods {
 
   def scp(String sourceFile, String dst) {
-    scp(new File(sourceFile), dst, options.scpOptions)
+    scp(new File(sourceFile), dst)
   }
 
   def scp(File sourceFile, String dst) {
     sftpChannel { ChannelSftp channel ->
-      doPut(channel, sourceFile, dst, options.scpOptions)
+      ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
+      copySpec.with {
+        from { localFile(sourceFile) }
+        into { remoteDir(dst) }  
+      }
+      upload(copySpec, channel)
     }
   }
 
@@ -185,7 +190,6 @@ class ScpMethods {
   }
 
   private void createRemoteDirectory(String dstFile, ChannelSftp channel) {
-    logger.debug("Creating remote directory: $dstFile")
     boolean dirExists = true
     try {
       channel.lstat(dstFile)
@@ -193,6 +197,7 @@ class ScpMethods {
       dirExists = false
     }
     if (!dirExists) {
+      logger.debug("Creating remote directory: $dstFile")
       channel.mkdir(dstFile)
     }
   }
