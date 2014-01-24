@@ -4,11 +4,12 @@
  */
 
 @GrabResolver(name='snapshot', root='http://oss.sonatype.org/content/groups/public')
-@Grab( group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.7-SNAPSHOT', changing = true)
+@Grab( group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.9-SNAPSHOT', changing = true)
 import static com.aestasit.ssh.DefaultSsh.*
 
 options.scpOptions {
   uploadToDirectory = '/tmp'
+  postUploadCommand = 'sudo cp -R %from%/* %to% ; sudo rm -rf %from%'
 }
 
 remoteSession {
@@ -19,5 +20,6 @@ remoteSession {
     into { remoteDir("/usr/bin") }
     from { localFile('./sudoUpload.groovy/') }
   }
+  remoteFile('/usr/bin/sudoUpload.groovy').text = 'It works!!!'
 }
 

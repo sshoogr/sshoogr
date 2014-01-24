@@ -27,7 +27,7 @@ class ScpOptions extends CommonOptions {
   Boolean showProgress     = true
 
   String uploadToDirectory = null
-  String postUploadCommand = 'sudo cp -R %from% %to% ; sudo rm -rf %from%'
+  String postUploadCommand = 'sudo cp -R %from%/* %to% ; sudo rm -rf %from%'
 
   ScpOptions() {
   }

@@ -18,8 +18,7 @@ package com.aestasit.ssh.dsl
 
 import static com.aestasit.ssh.dsl.FileSetType.*
 import static org.apache.commons.io.FilenameUtils.*
-
-import org.omg.CORBA.UNKNOWN
+import static org.apache.commons.codec.digest.DigestUtils.*
 
 import com.aestasit.ssh.ScpOptions
 import com.aestasit.ssh.SshException
@@ -79,12 +78,21 @@ class ScpMethods {
     def scpOptions = new ScpOptions(options.scpOptions, copySpec)
     
     // Check if upload should go through an intermediate directory and append its path to all target paths.
+    def uploadMap = [:]
     if (scpOptions.uploadToDirectory) {
       logger.debug("Uploading through: ${scpOptions.uploadToDirectory}")
       def uploadDirectory = separatorsToUnix(normalize(scpOptions.uploadToDirectory))
       createRemoteDirectory(uploadDirectory, channel)
-      remoteDirs = remoteDirs.collect { uploadDirectory + separatorsToUnix(normalizeNoEndSeparator(it)) }
-      remoteFiles = remoteFiles.collect { uploadDirectory + separatorsToUnix(normalizeNoEndSeparator(it)) }
+      remoteDirs = remoteDirs.collect { String path ->
+        def uploadPath = uploadDirectory + '/' + md5Hex(path)
+        uploadMap[uploadPath] = path
+        uploadPath
+      }
+      remoteFiles = remoteFiles.collect {  String path ->
+        def uploadPath = uploadDirectory + '/' + md5Hex(path)
+        uploadMap[uploadPath] = path
+        uploadPath
+      }
     }
     
     // Create remote directories.
@@ -129,7 +137,7 @@ class ScpMethods {
       (remoteDirs + remoteFiles).each { String copiedPath ->
         def actualPath = '/' + relativePath(scpOptions.uploadToDirectory, copiedPath)
         exec {
-          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', actualPath)
+          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedPath])
         }
       }
     }

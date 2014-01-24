@@ -1,6 +1,6 @@
 
 group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.7-SNAPSHOT'
+version = '0.9.9-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }
@@ -34,6 +34,7 @@ dependencies {
   compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
   compile "ch.qos.logback:logback-classic:${logbackVersion}"
   compile 'commons-io:commons-io:1.4'
+  compile 'commons-codec:commons-codec:1.9'
   compile 'com.jcraft:jsch:0.1.50'
   testCompile 'junit:junit:4.11'
   testCompile 'com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3'
