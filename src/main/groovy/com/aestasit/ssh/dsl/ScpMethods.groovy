@@ -93,10 +93,8 @@ class ScpMethods {
         uploadMap[uploadPath] = path
         uploadPath
       }
-      remoteFiles = remoteFiles.collect {  String path ->
-        def uploadPath = uploadDirectory + '/' + md5Hex(path)
-        uploadMap[uploadPath] = path
-        uploadPath
+      if (remoteFiles.size() > 0) {
+        throw new SshException("Coping directly to remote file is not supported when uploading through a directiry!")
       }
     }
     
@@ -139,7 +137,7 @@ class ScpMethods {
 
     // Move files to their final destination using predefined command.
     if (scpOptions.uploadToDirectory && scpOptions.postUploadCommand) {
-      (remoteDirs + remoteFiles).each { String copiedPath ->
+      remoteDirs.each { String copiedPath ->
         def actualPath = '/' + relativePath(scpOptions.uploadToDirectory, copiedPath)
         exec {
           command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedPath])
