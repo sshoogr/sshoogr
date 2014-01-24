@@ -21,6 +21,7 @@ import static org.apache.commons.io.FilenameUtils.*
 
 import org.omg.CORBA.UNKNOWN
 
+import com.aestasit.ssh.ScpOptions
 import com.aestasit.ssh.SshException
 import com.aestasit.ssh.log.LoggerProgressMonitor
 import com.jcraft.jsch.ChannelSftp
@@ -37,31 +38,31 @@ import com.jcraft.jsch.ChannelSftp.LsEntry
 class ScpMethods {
 
   def scp(String sourceFile, String dst) {
-    scp(new File(sourceFile), dst)
+    scp(new File(sourceFile), dst, options.scpOptions)
   }
 
   def scp(File sourceFile, String dst) {
     sftpChannel { ChannelSftp channel ->
-      doPut(channel, sourceFile, dst)
+      doPut(channel, sourceFile, dst, options.scpOptions)
     }
   }
 
   def scp(Closure cl) {
-    ScpOptionsDelegate options = new ScpOptionsDelegate()
-    cl.delegate = options
+    ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
+    cl.delegate = copySpec
     cl.resolveStrategy = Closure.DELEGATE_FIRST
     cl()
-    validateOptions(options)
+    validateCopySpec(copySpec)
     sftpChannel { ChannelSftp channel ->
-      if (options.source.type == LOCAL) {
-        upload(options, channel)
-      } else if (options.source.type == REMOTE) {
-        download(options, channel)
+      if (copySpec.source.type == LOCAL) {
+        upload(copySpec, channel)
+      } else if (copySpec.source.type == REMOTE) {
+        download(copySpec, channel)
       }
     }
   }
 
-  private void validateOptions(ScpOptionsDelegate options) {
+  private void validateCopySpec(ScpOptionsDelegate options) {
     if (options.source.type == null || options.source.type == UNKNOWN ||
     options.target.type == null || options.target.type == UNKNOWN) {
       throw new SshException("Either scp source (from) or target (into) is of unkown type!")
@@ -71,16 +72,18 @@ class ScpMethods {
     }
   }
 
-  private void upload(ScpOptionsDelegate options, ChannelSftp channel) {
+  private void upload(ScpOptionsDelegate copySpec, ChannelSftp channel) {
 
-    def remoteDirs = options.target.remoteDirs
-    def remoteFiles = options.target.remoteFiles
+    def remoteDirs = copySpec.target.remoteDirs
+    def remoteFiles = copySpec.target.remoteFiles
+    def scpOptions = new ScpOptions(options.scpOptions, copySpec)
     
     // Check if upload should go through an intermediate directory and append its path to all target paths.
-    if (options.uploadToDirectory) {
-      createRemoteDirectory(options.uploadToDirectory, channel)
-      remoteDirs = remoteDirs.collect { separatorsToUnix(concat(options.uploadToDirectory, it)) }
-      remoteFiles = remoteFiles.collect { separatorsToUnix(concat(options.uploadToDirectory, it)) }
+    if (scpOptions.uploadToDirectory) {
+      logger.debug("Working with relative path: $relativePath")
+      createRemoteDirectory(scpOptions.uploadToDirectory, channel)
+      remoteDirs = remoteDirs.collect { separatorsToUnix(concat(scpOptions.uploadToDirectory, it)) }
+      remoteFiles = remoteFiles.collect { separatorsToUnix(concat(scpOptions.uploadToDirectory, it)) }
     }
     
     // Create remote directories.
@@ -93,7 +96,7 @@ class ScpMethods {
     }
 
     // Upload local files and directories.
-    def allLocalFiles = options.source.localFiles + options.source.localDirs
+    def allLocalFiles = copySpec.source.localFiles + copySpec.source.localDirs
     allLocalFiles.each { File sourcePath ->
       if (sourcePath.isDirectory()) {
         sourcePath.eachFileRecurse { File childPath ->
@@ -105,25 +108,25 @@ class ScpMethods {
               createRemoteDirectory(dstParentDir, channel)
             } else {
               def dstPath = separatorsToUnix(concat(dstDir, relativePath))
-              doPut(channel, childPath.canonicalFile, dstPath)
+              doPut(channel, childPath.canonicalFile, dstPath, scpOptions)
             }
           }
         }        
       } else {
         remoteDirs.each { String dstDir ->
           def dstPath = separatorsToUnix(concat(dstDir, sourcePath.name))
-          doPut(channel, sourcePath, dstPath)
+          doPut(channel, sourcePath, dstPath, scpOptions)
         }
         remoteFiles.each { String dstFile ->
-          doPut(channel, sourcePath, dstFile)
+          doPut(channel, sourcePath, dstFile, scpOptions)
         }        
       }
     }
 
     // Move files to their final destination using predefined command.
-    if (options.uploadToDirectory && options.postUploadCommand) {
+    if (scpOptions.uploadToDirectory && scpOptions.postUploadCommand) {
       (remoteDirs + remoteFiles).each { String copiedPath ->
-        def actualPath = relativePath(options.uploadToDirectory, copiedPath)
+        def actualPath = relativePath(scpOptions.uploadToDirectory, copiedPath)
         exec {
           command = postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', actualPath)
         }
@@ -132,30 +135,30 @@ class ScpMethods {
     
   }
 
-  private void download(ScpOptionsDelegate options, ChannelSftp channel) {
+  private void download(ScpOptionsDelegate copySpec, ChannelSftp channel) {
 
     // Download remote files.
-    options.source.remoteFiles.each { String srcFile ->
-      options.target.localDirs.each { File dstDir ->
+    copySpec.source.remoteFiles.each { String srcFile ->
+      copySpec.target.localDirs.each { File dstDir ->
         dstDir.mkdirs()
-        doGet(channel, srcFile, new File(dstDir.canonicalPath, getName(srcFile)))
+        doGet(channel, srcFile, new File(dstDir.canonicalPath, getName(srcFile)), new ScpOptions(options.scpOptions, copySpec))
       }
-      options.target.localFiles.each { File dstFile ->
+      copySpec.target.localFiles.each { File dstFile ->
         dstFile.parentFile.mkdirs()
-        doGet(channel, srcFile, dstFile)
+        doGet(channel, srcFile, dstFile, new ScpOptions(options.scpOptions, copySpec))
       }
     }
 
     // Download remote directories.
-    options.source.remoteDirs.each { String srcDir ->
+    copySpec.source.remoteDirs.each { String srcDir ->
       remoteEachFileRecurse(srcDir, channel) { String srcFile ->
-        options.target.localDirs.each { File dstDir ->
+        copySpec.target.localDirs.each { File dstDir ->
           def dstFile = new File(dstDir.canonicalPath, relativePath(srcDir, srcFile))
           dstFile.parentFile.mkdirs()
-          doGet(channel, srcFile, new File(dstDir.canonicalPath, relativePath(srcDir, srcFile)))
+          doGet(channel, srcFile, new File(dstDir.canonicalPath, relativePath(srcDir, srcFile)), new ScpOptions(options.scpOptions, copySpec))
         }
       }
-      options.target.localFiles.each { File dstFile ->
+      copySpec.target.localFiles.each { File dstFile ->
         logger.warn("Can't copy remote directory ($srcDir) to a local file (${dstFile.path})!")
       }
     }
@@ -207,21 +210,21 @@ class ScpMethods {
     }
   }
 
-  private void doPut(ChannelSftp channel, File srcFile, String dst) {
+  private void doPut(ChannelSftp channel, File srcFile, String dst, ScpOptions scpOptions) {
     if (options.verbose) {
       logger.info("> ${srcFile.canonicalPath} => ${dst}")
     }
-    def monitor = options.scpOptions.showProgress ? newMonitor() : null
+    def monitor = scpOptions.showProgress ? newMonitor() : null
     srcFile.withInputStream { input ->
       channel.put(input, dst, monitor)
     }
   }
 
-  private void doGet(ChannelSftp channel, String srcFile, File dstFile) {
+  private void doGet(ChannelSftp channel, String srcFile, File dstFile, ScpOptions scpOptions) {
     if (options.verbose) {
       logger.info("> ${srcFile} => ${dstFile.canonicalPath}")
     }
-    def monitor = options.scpOptions.showProgress ? newMonitor() : null
+    def monitor = scpOptions.showProgress ? newMonitor() : null
     dstFile.withOutputStream { output ->
       channel.get(srcFile, output, monitor)
     }

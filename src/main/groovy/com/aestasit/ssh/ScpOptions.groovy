@@ -25,8 +25,29 @@ package com.aestasit.ssh
 class ScpOptions extends CommonOptions {
 
   Boolean showProgress     = true
-  
+
   String uploadToDirectory = null
   String postUploadCommand = 'sudo cp -R %from% %to% ; sudo rm -rf %from%'
-    
+
+  ScpOptions() {
+  }
+
+  ScpOptions(ScpOptions opt1) {
+    this.failOnError         = setValue(opt1?.failOnError, true)
+    this.showProgress        = setValue(opt1?.showProgress, true)
+    this.uploadToDirectory   = setValue(opt1?.uploadToDirectory, null)
+    this.postUploadCommand   = setValue(opt1?.postUploadCommand, null)
+  }
+
+  ScpOptions(ScpOptions opt1, ScpOptions opt2) {
+    this(opt1, opt2?.properties)
+  }
+
+  ScpOptions(ScpOptions opt1, Map opt2) {
+    this.failOnError         = setValue(opt2?.failOnError, opt1?.failOnError, true)
+    this.showProgress        = setValue(opt2?.showProgress, opt1?.showProgress, true)
+    this.uploadToDirectory   = setValue(opt2?.uploadToDirectory, opt1?.uploadToDirectory, null)
+    this.postUploadCommand   = setValue(opt2?.postUploadCommand, opt1?.postUploadCommand, null)
+  }
+  
 }

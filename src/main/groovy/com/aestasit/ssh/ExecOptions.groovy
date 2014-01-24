@@ -66,11 +66,4 @@ class ExecOptions extends CommonOptions {
     this.suffix              = setValue(opt2?.suffix, opt1?.suffix, null)
   }
 
-  def setValue(val1, dflt) {
-    val1 != null ? val1 : dflt
-  }
-
-  def setValue(val2, val1, dflt) {
-    setValue(val2, setValue(val1, dflt))
-  }
 }

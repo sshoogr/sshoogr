@@ -11,7 +11,7 @@ def sshUser = 'pi'
 def sshPassword = 'raspberry'
 def sshHost = '192.168.1.5'
 
-options.scpOptions {
+scpOptions {
   uploadToDirectory = '/tmp'
 }
 
