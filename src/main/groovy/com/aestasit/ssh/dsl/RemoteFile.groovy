@@ -47,11 +47,16 @@ class RemoteFile {
 
   def void setText(String text) {
     File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
-    text.eachLine { line -> tempFile << "${line.trim()}\n" }
+    text.eachLine { line -> 
+      tempFile << "${line.trim()}\n" 
+    }
     try {
-      delegate.scp(tempFile, destination)
+      delegate.scp {
+        from { localFile(tempFile) }
+        into { remoteFile(destination) }
+      }
     } finally {
       tempFile.delete()
-    }
+    } 
   }
 }
