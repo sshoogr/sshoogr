@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Aestas/IT
+ * Copyright (C) 2011-2014 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,27 +132,27 @@ class SessionDelegate {
     this.changed = changed
   }
 
-  def void setHost(String host) {
+  void setHost(String host) {
     this.changed = changed || (this.host == host)
     this.host = host
   }
 
-  def void setUser(String user) {
+  void setUser(String user) {
     this.changed = changed || (this.username == user)
     this.username = user
   }
 
-  def void setPassword(String password) {
+  void setPassword(String password) {
     this.changed = changed || (this.password = password)
     this.password = password
   }
 
-  def void setPort(int port) {
+  void setPort(int port) {
     this.changed = changed || (this.port = port)
     this.port = port
   }
 
-  def void setKeyFile(File keyFile) {
+  void setKeyFile(File keyFile) {
     this.changed = changed || (this.keyFile = keyFile)
     this.keyFile = keyFile
   }
@@ -167,7 +167,7 @@ class SessionDelegate {
   //
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  def RemoteFile remoteFile(String destination) {
+  RemoteFile remoteFile(String destination) {
     new RemoteFile(this, destination)
   }
 

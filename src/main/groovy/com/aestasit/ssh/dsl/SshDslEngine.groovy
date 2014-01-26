@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Aestas/IT
+ * Copyright (C) 2011-2014 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ class SshDslEngine {
 
   private executeSession(Closure cl, Object context, Closure configure) {
     def result = null
-    if (cl != null) {
+    if (cl) {
       if (!options.reuseConnection || delegate == null) {
         delegate = new SessionDelegate(jsch, options)
       }
@@ -69,8 +69,7 @@ class SshDslEngine {
       cl.resolveStrategy = Closure.DELEGATE_FIRST
       result = cl(context)
       if ((!options.reuseConnection) &&
-          (delegate.session != null) &&
-           delegate.session.connected) {
+          (delegate.session?.connected) {
         try {
           delegate.session.disconnect()
         } catch (Exception e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Aestas/IT
+ * Copyright (C) 2011-2014 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ package com.aestasit.ssh.dsl
  */
 class CommandOutput {
 
-  def int exitStatus
-  def String output
-  def Throwable exception
+  int exitStatus
+  String output
+  Throwable exception
 
   CommandOutput(int exitStatus, String output) {
     this.exitStatus = exitStatus

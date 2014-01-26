@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Aestas/IT
+ * Copyright (C) 2011-2014 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.aestasit.ssh.ExecOptions
  */
 class ExecOptionsDelegate extends ExecOptions {
 
-  def String command
+  String command
 
   def getExecOptions() {
     this

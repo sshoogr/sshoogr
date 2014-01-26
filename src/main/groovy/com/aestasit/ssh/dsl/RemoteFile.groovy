@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 Aestas/IT
+ * Copyright (C) 2011-2014 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class RemoteFile {
     this.destination = destination
   }
 
-  def String getText() {
+  String getText() {
     File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
     try {
       delegate.scp {
@@ -45,7 +45,7 @@ class RemoteFile {
     }
   }
 
-  def void setText(String text) {
+  void setText(String text) {
     File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
     text.eachLine { line -> 
       tempFile << "${line.trim()}\n" 
