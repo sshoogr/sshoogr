@@ -94,7 +94,7 @@ class ScpMethods {
         uploadPath
       }
       remoteFiles = remoteFiles.collect { String dstPath ->
-        def dstDir = getPath(dstPath)
+        def dstDir = getFullPathNoEndSeparator(dstPath)
         def dstName = new File(dstPath).name
         def uploadPath = uploadDirectory + '/' + md5Hex(dstDir) + '/' + dstName
         uploadMap[uploadPath] = dstDir
@@ -104,11 +104,11 @@ class ScpMethods {
     
     // Create remote directories.
     remoteFiles.each { String dstFile ->
-      def dstDir = getPath(dstFile)
+      def dstDir = getFullPathNoEndSeparator(dstFile)
       createRemoteDirectory(dstDir, channel)
     }
-    remoteDirs.each { String dstFile ->
-      createRemoteDirectory(dstFile, channel)
+    remoteDirs.each { String dstDir ->
+      createRemoteDirectory(dstDir, channel)
     }
 
     // Upload local files and directories.
@@ -142,14 +142,12 @@ class ScpMethods {
     // Move files to their final destination using predefined command.
     if (scpOptions.uploadToDirectory && scpOptions.postUploadCommand) {
       remoteDirs.each { String copiedPath ->
-        def actualPath = '/' + relativePath(scpOptions.uploadToDirectory, copiedPath)
         exec {
           command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedPath])
         }
       }
       remoteFiles.each { String copiedFilePath ->
-        def copiedPath = getPath(copiedFilePath)
-        def actualPath = '/' + relativePath(scpOptions.uploadToDirectory, copiedPath)
+        def copiedPath = getFullPathNoEndSeparator(copiedFilePath)
         exec {
           command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedFilePath])
         }

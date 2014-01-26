@@ -4,8 +4,12 @@
  */
 
 @GrabResolver(name='snapshot', root='http://oss.sonatype.org/content/groups/public')
-@Grab( group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.11-SNAPSHOT', changing = true)
+@Grab( group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.14-SNAPSHOT', changing = true)
 import static com.aestasit.ssh.DefaultSsh.*
+
+options.execOptions {
+  prefix = 'sudo '
+}
 
 options.scpOptions {
   uploadToDirectory = '/tmp'
@@ -15,7 +19,7 @@ options.scpOptions {
 remoteSession {
   user = 'ec2-user'
   keyFile = new File('secret.pem')
-  host = 'ec2-54-216-184-163.eu-west-1.compute.amazonaws.com'
+  host = 'ec2-176-34-83-31.eu-west-1.compute.amazonaws.com'
   connect()
   println "====================================================="
   scp {
@@ -51,6 +55,5 @@ remoteSession {
       gpgcheck=0
       ${proxySettings}
     """
-
 }
 
