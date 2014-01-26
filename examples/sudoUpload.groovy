@@ -33,7 +33,24 @@ remoteSession {
   exec 'cat /usr/bin/sudoUpload.groovy'
   println "====================================================="
   remoteFile('/usr/bin/sudoUpload.groovy').text = 'It works!!!'
-  println "====================================================="
+  println "====================================================="  
   exec 'cat /usr/bin/sudoUpload.groovy'
+  println "====================================================="
+  remoteFile('/etc/yum.repos.d/puppet.repo').text = """
+      [puppet]
+      name=Puppet Labs Packages
+      baseurl=${settings.puppetProductsRepository ?: pluginSettings.repositories.puppetProducts}
+      enabled=1
+      gpgcheck=0
+      ${proxySettings}
+
+      [puppet-deps]
+      name=Puppet Dependencies
+      baseurl=${settings.puppetDependenciesRepository ?: pluginSettings.repositories.puppetDependencies}
+      enabled=1
+      gpgcheck=0
+      ${proxySettings}
+    """
+
 }
 

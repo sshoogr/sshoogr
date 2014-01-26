@@ -88,13 +88,17 @@ class ScpMethods {
       logger.debug("Uploading through: ${scpOptions.uploadToDirectory}")
       def uploadDirectory = separatorsToUnix(normalize(scpOptions.uploadToDirectory))
       createRemoteDirectory(uploadDirectory, channel)
-      remoteDirs = remoteDirs.collect { String path ->
-        def uploadPath = uploadDirectory + '/' + md5Hex(path)
-        uploadMap[uploadPath] = path
+      remoteDirs = remoteDirs.collect { String dstPath ->
+        def uploadPath = uploadDirectory + '/' + md5Hex(dstPath)
+        uploadMap[uploadPath] = dstPath
         uploadPath
       }
-      if (remoteFiles.size() > 0) {
-        throw new SshException("Coping directly to remote file is not supported when uploading through a directiry!")
+      remoteFiles = remoteFiles.collect { String dstPath ->
+        def dstDir = getPath(dstPath)
+        def dstName = new File(dstPath).name
+        def uploadPath = uploadDirectory + '/' + md5Hex(dstDir) + '/' + dstName
+        uploadMap[uploadPath] = dstDir
+        uploadPath
       }
     }
     
@@ -141,6 +145,13 @@ class ScpMethods {
         def actualPath = '/' + relativePath(scpOptions.uploadToDirectory, copiedPath)
         exec {
           command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedPath])
+        }
+      }
+      remoteFiles.each { String copiedFilePath ->
+        def copiedPath = getPath(copiedFilePath)
+        def actualPath = '/' + relativePath(scpOptions.uploadToDirectory, copiedPath)
+        exec {
+          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedFilePath])
         }
       }
     }
