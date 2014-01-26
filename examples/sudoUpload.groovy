@@ -8,13 +8,16 @@
 import static com.aestasit.ssh.DefaultSsh.*
 
 options.execOptions {
-  prefix = 'sudo '
+  prefix = 'sudo'
 }
 
 options.scpOptions {
   uploadToDirectory = '/tmp'
-  postUploadCommand = 'sudo cp -R %from%/* %to% && sudo rm -rf %from%'
+  // postUploadCommand = 'cp -R %from%/* %to% && sudo rm -rf %from%'
 }
+
+String CR = String.valueOf(Character.toChars(0x0D))
+String LF = String.valueOf(Character.toChars(0x0A))
 
 remoteSession {
   user = 'ec2-user'
@@ -43,17 +46,22 @@ remoteSession {
   remoteFile('/etc/yum.repos.d/puppet.repo').text = """
       [puppet]
       name=Puppet Labs Packages
-      baseurl=${settings.puppetProductsRepository ?: pluginSettings.repositories.puppetProducts}
+      baseurl=http://yum.puppetlabs.com/el/6x/products/x86_64/
       enabled=1
       gpgcheck=0
-      ${proxySettings}
 
       [puppet-deps]
       name=Puppet Dependencies
-      baseurl=${settings.puppetDependenciesRepository ?: pluginSettings.repositories.puppetDependencies}
+      baseurl=http://yum.puppetlabs.com/el/6x/dependencies/x86_64/
       enabled=1
       gpgcheck=0
-      ${proxySettings}
     """
+  println "====================================================="
+  exec 'yum install nano'
+  println "====================================================="
+  def hostsFileContent = remoteFile("/etc/hosts").text
+  def currentHosts = hostsFileContent.readLines()
+  remoteFile("/etc/hosts").text = currentHosts.join(LF)
+  println "====================================================="
 }
 
