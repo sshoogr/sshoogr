@@ -69,7 +69,7 @@ class SshDslEngine {
       cl.resolveStrategy = Closure.DELEGATE_FIRST
       result = cl(context)
       if ((!options.reuseConnection) &&
-          (delegate.session?.connected) {
+          delegate.session?.connected) {
         try {
           delegate.session.disconnect()
         } catch (Exception e) {
