@@ -202,6 +202,16 @@ class SshDslTest extends BaseSshTest {
       ])
     }
   }
+  
+  
+  @Test
+  void testEscaping() throws Exception {
+    engine.remoteSession {
+      exec(command: 'ls -la "\\', escapeCharacters: '"\\')
+      exec(command: 'ls -la "\\', escapeCharacters: ['"', '\\'])
+      exec(command: 'ls -la "\\', escapeCharacters: ['"', '\\'] as char[])
+    }
+  }
 
   @Test
   void testPrefix() throws Exception {

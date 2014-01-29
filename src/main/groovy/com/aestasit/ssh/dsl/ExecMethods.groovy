@@ -96,13 +96,23 @@ class ExecMethods {
 
   private ChannelData executeCommand(String cmd, ExecOptions options) {
     session.timeout = options.maxWait
-    def actualCommand = cmd
+    String actualCommand = cmd
+    if (options.escapeCharacters) {
+      if (options.escapeCharacters.contains('\\')) {
+        actualCommand = actualCommand.replace('\\', '\\\\')
+      }
+      options.escapeCharacters.each { ch ->
+        if (ch != '\\') {
+          actualCommand = actualCommand.replace(ch.toString(), '\\' + ch)
+        }
+      } 
+    }
     if (options.prefix) {
       actualCommand = "${options.prefix} ${actualCommand}"
     }
     if (options.suffix) {
       actualCommand = "${actualCommand} ${options.suffix}"
-    }
+    }    
     if (options.showCommand) {
       logger.info("> " + actualCommand)
     }

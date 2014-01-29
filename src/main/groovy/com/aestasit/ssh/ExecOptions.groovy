@@ -34,6 +34,7 @@ class ExecOptions extends CommonOptions {
 
   String prefix            = null
   String suffix            = null
+  def escapeCharacters     = null
 
   ExecOptions() {
   }
@@ -48,6 +49,7 @@ class ExecOptions extends CommonOptions {
     this.appendFile          = setValue(opt1?.appendFile, false)
     this.prefix              = setValue(opt1?.prefix, null)
     this.suffix              = setValue(opt1?.suffix, null)
+    this.escapeCharacters    = setValue(opt1?.escapeCharacters, null)    
   }
 
   ExecOptions(ExecOptions opt1, ExecOptions opt2) {
@@ -64,6 +66,7 @@ class ExecOptions extends CommonOptions {
     this.appendFile          = setValue(opt2?.appendFile, opt1?.appendFile, false)
     this.prefix              = setValue(opt2?.prefix, opt1?.prefix, null)
     this.suffix              = setValue(opt2?.suffix, opt1?.suffix, null)
+    this.escapeCharacters    = setValue(opt2?.escapeCharacters, opt1?.escapeCharacters, null)
   }
 
 }

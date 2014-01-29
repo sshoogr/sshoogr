@@ -82,7 +82,7 @@ class ScpMethods {
     def remoteFiles = copySpec.target.remoteFiles
     def scpOptions = new ScpOptions(options.scpOptions, copySpec)
     
-    // Check if upload should go through an intermediate directory and append its path to all target paths.
+    // Check if upload should go through an intermediate directory and append its path hash to all target paths.
     def uploadMap = [:]
     if (scpOptions.uploadToDirectory) {
       logger.debug("Uploading through: ${scpOptions.uploadToDirectory}")

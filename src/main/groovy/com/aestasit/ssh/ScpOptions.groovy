@@ -27,7 +27,7 @@ class ScpOptions extends CommonOptions {
   Boolean showProgress     = true
 
   String uploadToDirectory = null
-  String postUploadCommand = 'sudo cp -R %from%/* %to% && sudo rm -rf %from%'
+  String postUploadCommand = null // 'cp -R %from%/* %to% && rm -rf %from%'
 
   ScpOptions() {
   }
@@ -36,7 +36,7 @@ class ScpOptions extends CommonOptions {
     this.failOnError         = setValue(opt1?.failOnError, true)
     this.showProgress        = setValue(opt1?.showProgress, true)
     this.uploadToDirectory   = setValue(opt1?.uploadToDirectory, null)
-    this.postUploadCommand   = setValue(opt1?.postUploadCommand, 'sudo cp -R %from%/* %to% && sudo rm -rf %from%')
+    this.postUploadCommand   = setValue(opt1?.postUploadCommand, null)
   }
 
   ScpOptions(ScpOptions opt1, ScpOptions opt2) {
@@ -47,7 +47,7 @@ class ScpOptions extends CommonOptions {
     this.failOnError         = setValue(opt2?.failOnError, opt1?.failOnError, true)
     this.showProgress        = setValue(opt2?.showProgress, opt1?.showProgress, true)
     this.uploadToDirectory   = setValue(opt2?.uploadToDirectory, opt1?.uploadToDirectory, null)
-    this.postUploadCommand   = setValue(opt2?.postUploadCommand, opt1?.postUploadCommand, 'sudo cp -R %from%/* %to% && sudo rm -rf %from%')
+    this.postUploadCommand   = setValue(opt2?.postUploadCommand, opt1?.postUploadCommand, null)
   }
   
 }
