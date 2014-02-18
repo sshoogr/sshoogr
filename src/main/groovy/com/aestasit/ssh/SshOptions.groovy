@@ -30,6 +30,7 @@ class SshOptions extends CommonOptions {
   String defaultHost               = null
   String defaultUser               = null
   File defaultKeyFile              = null
+  String defaultPassPhrase         = null
   String defaultPassword           = null
   int defaultPort                  = 22
   boolean trustUnknownHosts        = false

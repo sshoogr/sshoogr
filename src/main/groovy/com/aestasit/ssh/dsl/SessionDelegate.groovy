@@ -41,6 +41,7 @@ class SessionDelegate {
   private int        port           = DEFAULT_SSH_PORT
   private String     username       = null
   private File       keyFile        = null
+  private String     passPhrase     = null
   private String     password       = null
   private boolean    changed        = false
 
@@ -58,6 +59,7 @@ class SessionDelegate {
     this.port = options.defaultPort
     this.password = options.defaultPassword
     this.keyFile = options.defaultKeyFile
+    this.passPhrase = options.defaultPassPhrase
     if (options.logger != null) {
       logger = options.logger
     } else {
@@ -82,7 +84,11 @@ class SessionDelegate {
         }
         session = jsch.getSession(username, host, port)
         if (keyFile != null) {
-          jsch.addIdentity(keyFile.absolutePath)
+          if (passPhrase) {
+            jsch.addIdentity(keyFile.absolutePath, passPhrase)
+          } else {
+            jsch.addIdentity(keyFile.absolutePath)
+          }
         }
 
         session.password = password
