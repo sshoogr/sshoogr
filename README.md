@@ -324,4 +324,3 @@ A more verbose example of creating a `SshOptions` object can be found below:
 
     }
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/aestasit/sshoogr/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
