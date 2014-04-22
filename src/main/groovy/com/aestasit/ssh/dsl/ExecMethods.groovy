@@ -126,7 +126,7 @@ class ExecMethods {
     channel.command = actualCommand
     channel.outputStream = output
     channel.extOutputStream = output
-    channel.setPty(true)
+    channel.setPty(options.usePty)
     channel.connect()
     new ChannelData(channel: channel, output: savedOutput)
   }

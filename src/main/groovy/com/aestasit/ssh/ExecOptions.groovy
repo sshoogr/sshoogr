@@ -31,6 +31,7 @@ class ExecOptions extends CommonOptions {
   Long succeedOnExitStatus = 0
   File outputFile          = null
   Boolean appendFile       = false
+  Boolean usePty           = true
 
   String prefix            = null
   String suffix            = null
@@ -47,6 +48,7 @@ class ExecOptions extends CommonOptions {
     this.succeedOnExitStatus = setValue(opt1?.succeedOnExitStatus, 0)
     this.outputFile          = setValue(opt1?.outputFile, null)
     this.appendFile          = setValue(opt1?.appendFile, false)
+    this.usePty              = setValue(opt1?.usePty, true)
     this.prefix              = setValue(opt1?.prefix, null)
     this.suffix              = setValue(opt1?.suffix, null)
     this.escapeCharacters    = setValue(opt1?.escapeCharacters, null)    
@@ -64,6 +66,7 @@ class ExecOptions extends CommonOptions {
     this.succeedOnExitStatus = setValue(opt2?.succeedOnExitStatus, opt1?.succeedOnExitStatus, 0)
     this.outputFile          = setValue(opt2?.outputFile, opt1?.outputFile, null)
     this.appendFile          = setValue(opt2?.appendFile, opt1?.appendFile, false)
+    this.usePty              = setValue(opt2?.usePty, opt1?.usePty, true)
     this.prefix              = setValue(opt2?.prefix, opt1?.prefix, null)
     this.suffix              = setValue(opt2?.suffix, opt1?.suffix, null)
     this.escapeCharacters    = setValue(opt2?.escapeCharacters, opt1?.escapeCharacters, null)
