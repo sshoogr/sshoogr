@@ -34,7 +34,7 @@ import com.aestasit.ssh.log.SysOutLogger
 class DefaultSsh {
 
   static SshOptions options = new SshOptions()
-  static SshDslEngine engine = new SshDslEngine(options)
+
   static {
     options.with {
       logger = new SysOutLogger()
@@ -48,15 +48,15 @@ class DefaultSsh {
   }
 
   static remoteSession(Closure cl) {
-    engine.remoteSession(cl)
+    new SshDslEngine(options).remoteSession(cl)
   }
 
   static remoteSession(String url, Closure cl) {
-    engine.remoteSession(url, cl)
+    new SshDslEngine(options).remoteSession(url, cl)
   }
 
   static remoteSession(String url, Map context, Closure cl) {
-    engine.remoteSession(url, context, cl)
+    new SshDslEngine(options).remoteSession(url, context, cl)
   }
 
   static execOptions(Closure cl) {
