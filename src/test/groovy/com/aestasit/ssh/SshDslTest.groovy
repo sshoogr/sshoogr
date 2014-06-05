@@ -143,9 +143,9 @@ class SshDslTest extends BaseSshTest {
 
   @Test
   void testFailed() {
-      engine.remoteSession {
-        assert exec('i should fail!').failed()
-      }
+    engine.remoteSession {
+      assert exec('i should fail!').failed()
+    }
   }
 
   @Test
