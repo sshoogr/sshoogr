@@ -233,4 +233,20 @@ class SshDslTest extends BaseSshTest {
     }
   }
 
+  @Test
+  void testOk() throws Exception {
+    engine.remoteSession {
+      assert ok('whoami')
+    }
+  }
+
+  @Test
+  void testFailed() throws Exception {
+    engine.remoteSession {
+      assert fail('mkdur dur')
+    }
+  }
+
+
+
 }
