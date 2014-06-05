@@ -16,11 +16,6 @@
 
 package com.aestasit.ssh
 
-import groovy.lang.Closure
-
-import java.io.File
-import java.util.Map
-
 import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.Logger
 import com.aestasit.ssh.log.SysOutLogger

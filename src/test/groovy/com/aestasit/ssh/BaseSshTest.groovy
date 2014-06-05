@@ -16,8 +16,6 @@
 
 package com.aestasit.ssh
 
-import java.io.File;
-
 import org.junit.AfterClass
 import org.junit.BeforeClass
 
