@@ -57,6 +57,26 @@ class ExecMethods {
     doExec(execOptions.command, new ExecOptions(options.execOptions, execOptions))
   }
 
+  /**
+   * Execute the specified command and returns a boolean to
+   * signal if the command execution was successful
+   * @param cmd a command to execute remotely
+   * @return true, if command was successful
+   */
+  boolean ok(String cmd) {
+    doExec(cmd, new ExecOptions([ failOnError: false , showOutput: false])).exitStatus == 0
+  }
+
+  /**
+   * Execute the specified command and returns a boolean to
+   * signal if the command execution was unsuccessful
+   * @param cmd a command to execute remotely
+   * @return true, if command was unsuccessful
+   */
+  boolean fail(String cmd) {
+    !ok(cmd)
+  }
+
   def prefix(String prefix, Closure cl) {
     def result = null
     def originalPrefix = options.execOptions.prefix
