@@ -10,3 +10,9 @@ bin
 .gradle
 .DS_Store
 build
+
+# IDE files
+
+.idea
+out
+*.iml

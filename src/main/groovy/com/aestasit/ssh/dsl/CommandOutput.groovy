@@ -38,4 +38,9 @@ class CommandOutput {
     this.output = output
     this.exception = exception
   }
+
+  boolean failed() {
+      this.exitStatus != 0
+  }
+
 }
