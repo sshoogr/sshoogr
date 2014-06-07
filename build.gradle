@@ -5,7 +5,7 @@ version = '0.9.16-SNAPSHOT'
 buildscript {
   repositories { mavenCentral() }
   dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' }
-  dependencies { classpath 'org.ajoberstar:gradle-git:0.6.3' }
+  dependencies { classpath 'org.ajoberstar:gradle-git:0.8.0' }
 }
 
 apply plugin: 'groovy'
@@ -21,6 +21,10 @@ apply from: 'docs.gradle'
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
+
+compileGroovy {
+  options.compilerArgs << '-Xlint:-options'
+}
 
 configure(allprojects) {
   ext.groovyVersion  = '2.1.8'
@@ -47,5 +51,5 @@ configurations {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.8'
+  gradleVersion = '1.12'
 }
