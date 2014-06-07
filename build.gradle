@@ -1,6 +1,6 @@
 
 group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.16'
+version = '0.9.17-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }
@@ -64,7 +64,7 @@ task wrapper(type: Wrapper) {
 }
 
 task integration(type:Test) {
-  description = "Run integration tests (located in src/integrationTest/...)."
+  description = "Run integration tests (located in src/integrationTest/groovy)."
   testClassesDir = project.sourceSets.integrationTest.output.classesDir
   classpath = project.sourceSets.integrationTest.runtimeClasspath
 }

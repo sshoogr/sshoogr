@@ -60,6 +60,7 @@ class ExecMethods {
   /**
    * Execute the specified command and returns a boolean to
    * signal if the command execution was successful
+   * 
    * @param cmd a command to execute remotely
    * @return true, if command was successful
    */
@@ -70,6 +71,7 @@ class ExecMethods {
   /**
    * Execute the specified command and returns a boolean to
    * signal if the command execution was unsuccessful
+   * 
    * @param cmd a command to execute remotely
    * @return true, if command was unsuccessful
    */
