@@ -5,7 +5,7 @@ import com.aestasit.ssh.log.SysOutLogger
 import org.junit.BeforeClass
 import org.junit.Test
 
-class FileTest {
+class RemoteFileTest {
 
   static SshOptions options
   static SshDslEngine engine
