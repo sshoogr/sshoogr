@@ -44,12 +44,33 @@ dependencies {
   testCompile 'com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3'
 }
 
+sourceSets {
+
+  integrationTest {
+
+    compileClasspath += main.output + test.output
+    runtimeClasspath += main.output + test.output
+  }
+}
+
 configurations {
   all*.exclude group: 'commons-logging'
   all*.exclude group: 'log4j'
   all*.exclude module: 'slf4j-simple'
+
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+
 }
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.12'
+}
+
+
+
+task integration(type:Test){
+  description = "Run integration tests (located in src/integrationTest/...)."
+  testClassesDir = project.sourceSets.integrationTest.output.classesDir
+  classpath = project.sourceSets.integrationTest.runtimeClasspath
 }

@@ -68,6 +68,11 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
         callback.onExit(0)
       }
 
+      command('^touch.*$') { inp, out, err, callback, env ->
+	out << "/tmp/test.file\n"
+	callback.onExit(0)
+      }
+
       // Create file expectations.
       dir('.')
       dir('/tmp')
