@@ -142,7 +142,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testFailed() {
+  void testFailedStatus() {
     engine.remoteSession {
       assert exec('i should fail!').failed()
     }
@@ -253,7 +253,5 @@ class SshDslTest extends BaseSshTest {
       assert fail('mkdur dur')
     }
   }
-
-
 
 }
