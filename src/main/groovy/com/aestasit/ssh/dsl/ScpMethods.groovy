@@ -251,10 +251,11 @@ class ScpMethods {
     }
   }
 
-  private void sftpChannel(Closure cl) {
+  public void sftpChannel(Closure cl) {
     connect()
     ChannelSftp channel = (ChannelSftp) session.openChannel("sftp")
     channel.connect()
+
     try {
       cl(channel)
     } finally {

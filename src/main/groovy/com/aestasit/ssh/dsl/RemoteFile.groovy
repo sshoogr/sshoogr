@@ -16,6 +16,8 @@
 
 package com.aestasit.ssh.dsl
 
+import com.jcraft.jsch.ChannelSftp
+import com.jcraft.jsch.SftpATTRS
 /**
  * This class represents a remote file and it gives some methods to access file's content.
  *
@@ -59,4 +61,59 @@ class RemoteFile {
       tempFile.delete()
     } 
   }
+
+  void touch() {
+    delegate.exec(command: 'touch ' + this.destination, failOnError: true, showOutput: true)
+
+  }
+
+  String getOwner() {
+    int uid
+    delegate.sftpChannel { ChannelSftp channel ->
+      SftpATTRS attr = channel.stat( this.destination)
+      uid =  attr.getUId()
+    }
+
+    delegate.exec("getent passwd ${uid} | cut -d: -f1").output.trim()
+  }
+
+  void setOwner(String user) {
+    def out = delegate.exec ('id -u ' + user)
+    def uid  = out.output.toInteger()
+    delegate.sftpChannel { ChannelSftp channel ->
+      channel.chown(uid, this.destination)
+    }
+  }
+
+  String getGroup() {
+
+  }
+
+  void setGroup(String group) {
+
+  }
+
+  void setOwnerAndGroup(String user, String group) {
+
+  }
+
+  void setPermissions(int mask) {
+
+    delegate.sftpChannel { ChannelSftp channel ->
+      // Convert the mask from octal to decimal
+      // ChannelSftp requires decimal format
+      channel.chmod(Integer.parseInt(mask.toString(),8), this.destination)
+    }
+  }
+
+  int getPermissions() {
+    int mask
+    delegate.sftpChannel { ChannelSftp channel ->
+      SftpATTRS attr = channel.stat( this.destination)
+      // Convert back to octal
+      mask = Integer.toOctalString(attr.getPermissions()).toInteger()-10000
+    }
+    mask
+  }
+
 }
