@@ -78,23 +78,36 @@ class RemoteFile {
   }
 
   void setOwner(String user) {
-    def out = delegate.exec ('id -u ' + user)
-    def uid  = out.output.toInteger()
-    delegate.sftpChannel { ChannelSftp channel ->
-      channel.chown(uid, this.destination)
+    def uid = getUid(user)
+    if (uid) {
+      delegate.sftpChannel { ChannelSftp channel ->
+        channel.chown(uid, this.destination)
+      }
+    } else {
+      // TODO how do we handle a custom exception?
+      // throw new NullPointerException('invalid user')
     }
   }
 
   String getGroup() {
-
+    int uid
+    delegate.sftpChannel { ChannelSftp channel ->
+      SftpATTRS attr = channel.stat( this.destination)
+      uid =  attr.getGId()
+    }
+    delegate.exec("getent group ${uid} | cut -d: -f1").output.trim()
   }
 
   void setGroup(String group) {
-
-  }
-
-  void setOwnerAndGroup(String user, String group) {
-
+    def gid = getGid(group)
+    if (gid) {
+      delegate.sftpChannel { ChannelSftp channel ->
+        channel.chgrp(gid, this.destination)
+      }
+    } else {
+      // TODO how do we handle a custom exception?
+      // throw new NullPointerException('invalid user')
+    }
   }
 
   void setPermissions(int mask) {
@@ -111,9 +124,36 @@ class RemoteFile {
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat( this.destination)
       // Convert back to octal
-      mask = Integer.toOctalString(attr.getPermissions()).toInteger()-10000
+      mask = Integer.toOctalString(attr.getPermissions()).toInteger()-100000
     }
     mask
+  }
+
+  /**
+   * Get the uid of a user
+   * @param user user
+   * @return an Integer representing the uid
+   * or null if the user is not found
+   */
+  private Integer getUid(String user) {
+    resolveId(delegate.exec("id -u ${user}"))
+  }
+  /**
+   * Get the gid of a group
+   * @param group group name
+   * @return an Integer representing the gid
+   * or null if the group is not found
+   */
+  private Integer getGid(String group) {
+    resolveId(delegate.exec("getent group ${group} | cut -d: -f3"))
+  }
+
+  private Integer resolveId(out) {
+
+    if (out.output.isInteger()) {
+      return  out.output.toInteger()
+    }
+    return null
   }
 
 }
