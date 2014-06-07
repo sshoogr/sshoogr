@@ -5,7 +5,7 @@ version = '0.9.16'
 buildscript {
   repositories { mavenCentral() }
   dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' }
-  dependencies { classpath 'org.ajoberstar:gradle-git:0.8.0' }
+  dependencies { classpath 'org.ajoberstar:gradle-git:0.6.5' }
 }
 
 apply plugin: 'groovy'
