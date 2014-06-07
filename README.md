@@ -285,7 +285,7 @@ To create a simple instance of the engine with the default options you can just 
 
     def engine = new SshDslEngine(new SshOptions())
     
-The `engine` instance gives access to the `remoteSession` method.     
+The `engine` instance gives access to the `remoteSession` method.
 
 #### Populating `SshOptions`
 
