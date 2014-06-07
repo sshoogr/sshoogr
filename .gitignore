@@ -11,7 +11,10 @@ bin
 .DS_Store
 build
 
+
 # IDE files
 *.iml
 *.ipr
 *.iws
+.idea
+out
