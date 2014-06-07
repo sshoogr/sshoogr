@@ -22,4 +22,8 @@ githubPages {
       into 'docs/groovydoc'
     }
   }
+  credentials {
+    username = project.'github.credentials.username'
+    password = project.'github.credentials.password'
+  }
 }
