@@ -15,7 +15,7 @@ The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **N
 
 The easiest way to use `sshoogr` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
 
-    @Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.15')
+    @Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.16')
     import static com.aestasit.ssh.DefaultSsh.*
 
 The entry point for using the **DSL** is the `remoteSession` method, which accepts an **SSH** **URL** and a closure with **Groovy** or **DSL** code:
