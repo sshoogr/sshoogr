@@ -1,5 +1,5 @@
 /*
- * This script connects to remote serverm which hosts Nexus server. It zips a list of repositories 
+ * This script connects to remote server, which hosts Nexus server. It zips a list of repositories 
  * and downloads zipped file locally.
  *
  */
