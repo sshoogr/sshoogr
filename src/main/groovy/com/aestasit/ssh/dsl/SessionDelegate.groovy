@@ -16,6 +16,8 @@
 
 package com.aestasit.ssh.dsl
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 import java.util.regex.Pattern
 
 import com.aestasit.ssh.SshException
@@ -139,27 +141,27 @@ class SessionDelegate {
   }
 
   void setHost(String host) {
-    this.changed = changed || (this.host == host)
+    this.changed = changed || (this.host != host)
     this.host = host
   }
 
   void setUser(String user) {
-    this.changed = changed || (this.username == user)
+    this.changed = changed || (this.username != user)
     this.username = user
   }
 
   void setPassword(String password) {
-    this.changed = changed || (this.password = password)
+    this.changed = changed || (this.password != password)
     this.password = password
   }
 
   void setPort(int port) {
-    this.changed = changed || (this.port = port)
+    this.changed = changed || (this.port != port)
     this.port = port
   }
 
   void setKeyFile(File keyFile) {
-    this.changed = changed || (this.keyFile = keyFile)
+    this.changed = changed || (this.keyFile != keyFile)
     this.keyFile = keyFile
   }
 
@@ -187,11 +189,11 @@ class SessionDelegate {
   //
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  def su(String password, Closure cl) {
+  def su(String password, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     su("root", password, cl)
   }
 
-  def su(String username, String password, Closure cl) {
+  def su(String username, String password, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     exec {
       command = "su $username $password"
       failOnError = true
@@ -217,7 +219,7 @@ class SessionDelegate {
   //
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  def tunnel(int localPort, String remoteHost, int remotePort, Closure cl) {
+  def tunnel(int localPort, String remoteHost, int remotePort, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     connect()
     session.setPortForwardingL(localPort, remoteHost, remotePort)
     cl.delegate = this
@@ -225,7 +227,7 @@ class SessionDelegate {
     cl()
   }
 
-  def tunnel(String remoteHost, int remotePort, Closure cl) {
+  def tunnel(String remoteHost, int remotePort, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     connect()
     int localPort = findFreePort()
     session.setPortForwardingL(localPort, remoteHost, remotePort)

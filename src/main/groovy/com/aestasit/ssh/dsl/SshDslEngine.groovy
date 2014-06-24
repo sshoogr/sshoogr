@@ -16,6 +16,8 @@
 
 package com.aestasit.ssh.dsl
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 import com.aestasit.ssh.SshOptions
 import com.jcraft.jsch.JSch
 
@@ -42,21 +44,21 @@ class SshDslEngine {
     jsch.config = config
   }
 
-  def remoteSession(Closure cl) {
+  def remoteSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, null, null)
   }
 
-  def remoteSession(String url, Closure cl) {
+  def remoteSession(String url, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     remoteSession(url, null, cl)
   }
 
-  def remoteSession(String url, Map context, Closure cl) {
+  def remoteSession(String url, Map context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, context) { SessionDelegate sessionDelegate ->
       sessionDelegate.url = url
     }
   }
 
-  private executeSession(Closure cl, Object context, Closure configure) {
+  private executeSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl, Object context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure configure) {
     def result = null
     if (cl) {
       if (!options.reuseConnection || delegate == null) {

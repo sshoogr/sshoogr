@@ -16,6 +16,8 @@
 
 package com.aestasit.ssh
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 import com.aestasit.ssh.log.Logger
 
 /**
@@ -41,7 +43,7 @@ class SshOptions extends CommonOptions {
   // SSH command execution options.
   ExecOptions execOptions          = new ExecOptions()
 
-  def execOptions(Closure cl) {
+  def execOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptions) Closure cl) {
     cl.delegate = execOptions
     cl.resolveStrategy = Closure.DELEGATE_FIRST
     cl()
@@ -50,7 +52,7 @@ class SshOptions extends CommonOptions {
   // SCP options.
   ScpOptions scpOptions            = new ScpOptions()
 
-  def scpOptions(Closure cl) {
+  def scpOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptions) Closure cl) {
     cl.delegate = scpOptions
     cl.resolveStrategy = Closure.DELEGATE_FIRST
     cl()

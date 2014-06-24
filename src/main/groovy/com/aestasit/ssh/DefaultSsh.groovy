@@ -16,6 +16,9 @@
 
 package com.aestasit.ssh
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
+import com.aestasit.ssh.dsl.SessionDelegate
 import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.Logger
 import com.aestasit.ssh.log.SysOutLogger
@@ -42,19 +45,19 @@ class DefaultSsh {
     }
   }
 
-  static remoteSession(Closure cl) {
+  static remoteSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     new SshDslEngine(options).remoteSession(cl)
   }
 
-  static remoteSession(String url, Closure cl) {
+  static remoteSession(String url, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     new SshDslEngine(options).remoteSession(url, cl)
   }
 
-  static remoteSession(String url, Map context, Closure cl) {
+  static remoteSession(String url, Map context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     new SshDslEngine(options).remoteSession(url, context, cl)
   }
 
-  static execOptions(Closure cl) {
+  static execOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptions) Closure cl) {
     options.execOptions(cl)
   }
 
@@ -66,7 +69,7 @@ class DefaultSsh {
     options.getScpOptions()
   }
 
-  def scpOptions(Closure cl) {
+  def scpOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptions) Closure cl) {
     options.scpOptions(cl)
   }
 

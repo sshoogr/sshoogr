@@ -19,6 +19,7 @@ package com.aestasit.ssh.dsl
 import static com.aestasit.ssh.dsl.FileSetType.*
 import static org.apache.commons.io.FilenameUtils.*
 import static org.apache.commons.codec.digest.DigestUtils.*
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 import com.aestasit.ssh.ScpOptions
 import com.aestasit.ssh.SshException
@@ -51,7 +52,7 @@ class ScpMethods {
     }
   }
 
-  def scp(Closure cl) {
+  def scp(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptionsDelegate) Closure cl) {
     ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
     cl.delegate = copySpec
     cl.resolveStrategy = Closure.DELEGATE_FIRST

@@ -16,6 +16,8 @@
 
 package com.aestasit.ssh.dsl
 
+import static groovy.lang.Closure.DELEGATE_FIRST
+
 import org.apache.commons.io.output.TeeOutputStream
 
 import com.aestasit.ssh.ExecOptions
@@ -43,7 +45,7 @@ class ExecMethods {
     doExec(cmds, new ExecOptions(options.execOptions))
   }
 
-  CommandOutput exec(Closure cl) {
+  CommandOutput exec(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptionsDelegate) Closure cl) {
     cl.delegate = new ExecOptionsDelegate()
     cl.resolveStrategy = Closure.DELEGATE_FIRST
     cl()
@@ -79,7 +81,7 @@ class ExecMethods {
     !ok(cmd)
   }
 
-  def prefix(String prefix, Closure cl) {
+  def prefix(String prefix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     def result = null
     def originalPrefix = options.execOptions.prefix
     options.execOptions.prefix = prefix
@@ -90,7 +92,7 @@ class ExecMethods {
     result
   }
 
-  def suffix(String prefix, Closure cl) {
+  def suffix(String prefix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     def result = null
     def originalSuffix = options.execOptions.suffix
     options.execOptions.prefix = suffix
