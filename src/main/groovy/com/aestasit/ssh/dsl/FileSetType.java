@@ -23,5 +23,5 @@ package com.aestasit.ssh.dsl;
  * 
  */
 public enum FileSetType {
-  UNKNOWN, LOCAL, REMOTE;
+  UNKNOWN, LOCAL, REMOTE
 }

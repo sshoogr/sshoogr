@@ -26,11 +26,11 @@ abstract class CommonOptions {
 
   Boolean failOnError      = true
   
-  def setValue(val1, dflt) {
+  static setValue(val1, dflt) {
     val1 != null ? val1 : dflt
   }
 
-  def setValue(val2, val1, dflt) {
+  static setValue(val2, val1, dflt) {
     setValue(val2, setValue(val1, dflt))
   }
 }

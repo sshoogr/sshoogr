@@ -16,18 +16,18 @@
 
 package com.aestasit.ssh.dsl
 
-import static com.aestasit.ssh.dsl.FileSetType.*
-import static org.apache.commons.io.FilenameUtils.*
-import static org.apache.commons.codec.digest.DigestUtils.*
-import static groovy.lang.Closure.DELEGATE_FIRST
-
 import com.aestasit.ssh.ScpOptions
 import com.aestasit.ssh.SshException
 import com.aestasit.ssh.log.LoggerProgressMonitor
 import com.jcraft.jsch.ChannelSftp
+import com.jcraft.jsch.ChannelSftp.LsEntry
 import com.jcraft.jsch.SftpException
 import com.jcraft.jsch.SftpProgressMonitor
-import com.jcraft.jsch.ChannelSftp.LsEntry
+
+import static com.aestasit.ssh.dsl.FileSetType.*
+import static groovy.lang.Closure.DELEGATE_FIRST
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex
+import static org.apache.commons.io.FilenameUtils.*
 
 /**
  * Mix-in class for SessionDelegate implementing SCP functionality.
@@ -35,8 +35,8 @@ import com.jcraft.jsch.ChannelSftp.LsEntry
  * @author Andrey Adamovich
  *
  */
-class ScpMethods {
-
+class ScpMethods {  
+  
   def scp(String sourceFile, String dst) {
     scp(new File(sourceFile), dst)
   }
@@ -55,7 +55,7 @@ class ScpMethods {
   def scp(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptionsDelegate) Closure cl) {
     ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
     cl.delegate = copySpec
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl()
     validateCopySpec(copySpec)
     sftpChannel { ChannelSftp channel ->
@@ -67,10 +67,10 @@ class ScpMethods {
     }
   }
 
-  private void validateCopySpec(ScpOptionsDelegate options) {
+  static private void validateCopySpec(ScpOptionsDelegate options) {
     if (options.source.type == null || options.source.type == UNKNOWN ||
     options.target.type == null || options.target.type == UNKNOWN) {
-      throw new SshException("Either scp source (from) or target (into) is of unkown type!")
+      throw new SshException("Either scp source (from) or target (into) is of unknown type!")
     }
     if (options.source.type == options.target.type) {
       throw new SshException("Scp source (from) and target (into) shouldn't be both local or both remote!")
@@ -84,7 +84,7 @@ class ScpMethods {
     def scpOptions = new ScpOptions(options.scpOptions, copySpec)
     
     // Check if upload should go through an intermediate directory and append its path hash to all target paths.
-    def uploadMap = [:]
+    Map<String, String> uploadMap = [:] as Map<String, String>
     if (scpOptions.uploadToDirectory) {
       logger.debug("Uploading through: ${scpOptions.uploadToDirectory}")
       def uploadDirectory = separatorsToUnix(normalize(scpOptions.uploadToDirectory))
@@ -187,11 +187,11 @@ class ScpMethods {
 
   }
 
-  private String relativePath(File parent, File child) {
+  static private String relativePath(File parent, File child) {
     separatorsToUnix(child.canonicalPath.replace(parent.canonicalPath, '')).replaceAll('^/', '')
   }
 
-  private String relativePath(String parent, String child) {
+  static private String relativePath(String parent, String child) {
     normalizeNoEndSeparator(child)
         .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
         .replace(File.separatorChar.toString(), '/')

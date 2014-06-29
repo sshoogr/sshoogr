@@ -16,16 +16,16 @@
 
 package com.aestasit.ssh.dsl
 
-import static groovy.lang.Closure.DELEGATE_FIRST
-
-import java.util.regex.Pattern
-
 import com.aestasit.ssh.SshException
 import com.aestasit.ssh.SshOptions
 import com.aestasit.ssh.log.Logger
 import com.aestasit.ssh.log.Slf4jLogger
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
+
+import java.util.regex.Pattern
+
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * Closure delegate that is used to collect all SSH options and give access to other DSL delegates.
@@ -37,7 +37,7 @@ import com.jcraft.jsch.Session
 class SessionDelegate {
 
   private static final int DEFAULT_SSH_PORT = 22
-  private static final Pattern SSH_URL = ~/^(([^:\@]+)(:([^\@]+))?\@)?([^:]+)(:(\d+))?$/
+  private static final Pattern SSH_URL = ~/^(([^:@]+)(:([^@]+))?@)?([^:]+)(:(\d+))?$/
 
   private String     host           = null
   private int        port           = DEFAULT_SSH_PORT
@@ -48,8 +48,8 @@ class SessionDelegate {
   private boolean    changed        = false
 
   private Session          session  = null
-  private final JSch       jsch     = null
-  private final SshOptions options  = null
+  private final JSch       jsch
+  private final SshOptions options
 
   protected Logger logger           = null
 
@@ -69,7 +69,7 @@ class SessionDelegate {
     }
   }
 
-  def connect() {
+  void connect() {
     try  {
       if (session == null || !session.connected || changed) {
 
@@ -106,7 +106,7 @@ class SessionDelegate {
     }
   }
 
-  def disconnect() {
+  void disconnect() {
     if (session?.connected) {
       try {
         session.disconnect()
@@ -119,12 +119,12 @@ class SessionDelegate {
     }
   }
 
-  def reconnect() {
+  void reconnect() {
     disconnect()
     connect()
   }
 
-  def setUrl(String url) {
+  void setUrl(String url) {
     def matcher = SSH_URL.matcher(url)
     if (matcher.matches()) {
       setHost(matcher.group(5))
@@ -179,6 +179,109 @@ class SessionDelegate {
     new RemoteFile(this, destination)
   }
 
+  RemoteFile remoteFile(String destination, Closure cl) {
+    
+  }
+    
+  RemoteFile remoteDir(String destination) {
+  
+  }
+
+  RemoteFile remoteDir(String destination, Closure cl) {
+  
+  }
+
+  boolean mkdir(String destination) {
+  
+  }
+
+  boolean mkdir(Closure cl) {
+  
+  }
+
+  boolean remkdir(String destination) {
+  
+  }
+
+  boolean remkdir(Closure cl) {
+  
+  }
+
+  boolean delete(String destination) {
+    
+  }
+  
+  boolean touch(String destination) {
+    
+  }
+
+  // get facts
+  // isUbuntu, isRedhat, isCentOS
+  // remoteDate()
+  // remoteTimestamp()
+
+  // get environment variables
+  // remoteEnv
+  
+  // file/dir listing
+  // remoteFile().eachFile { RemoteFile ->
+  // 
+  // }
+    
+  // command output stream??
+  
+  def $(String name) {
+    
+  }
+  
+  // add define blocks
+  // defineFact('currentDirEmpty', 'ls -la | wc -l', BOOLEAN, NOT_CACHED)
+  // if ($('currentDirEmpty')) {
+  //   
+  // }
+  // defineFact('abc') {
+  // 
+  //   return 'true'
+  // }
+  // defineBlock('ensureRunning') { String service ->
+  //   exec "/sbin/service $service start"
+  // }
+  // run 'ensureRunning', 'httpd'
+  //
+  // defineResource('service') {
+  //   parameter 'enabled', Boolean, true
+  //   exists {
+  //     exec "/sbin/service $('name') status"
+  //   }
+  //   create {
+  //     exec "/sbin/service $('name') start"
+  //   }
+  //   valid {
+  //     exec "/sbin/service $('name') status"
+  //   }
+  //   ensure {
+  //     exec "/sbin/service $('name') start"
+  //   }
+  //   remove {
+  //     
+  //   }
+  // }
+  // resource('service', 'httpd') {
+  //   enable = true
+  // }
+  // removeResource('service', 'httpd') 
+  // 
+  
+  // add rollback 
+  // TransactionResult transaction(Closure cl) {
+  //  
+  // }.onComplete {
+  //
+  // }.onFailure {
+  //
+  // }
+  
+  
   ////////////////////////////////////////////////////////////////////////////////////////////////
   //   _____ _    _
   //  / ____| |  | |
@@ -200,7 +303,7 @@ class SessionDelegate {
       showOutput = false
     }
     cl.delegate = this
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl()
     exec {
       command = "exit"
@@ -223,7 +326,7 @@ class SessionDelegate {
     connect()
     session.setPortForwardingL(localPort, remoteHost, remotePort)
     cl.delegate = this
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl()
   }
 
@@ -232,11 +335,11 @@ class SessionDelegate {
     int localPort = findFreePort()
     session.setPortForwardingL(localPort, remoteHost, remotePort)
     cl.delegate = this
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl(localPort)
   }
 
-  private int findFreePort() {
+  static private int findFreePort() {
     ServerSocket server = new ServerSocket(0)
     try {
       int port = server.getLocalPort()
@@ -246,4 +349,7 @@ class SessionDelegate {
     }
   }
 
+  Session getSession() {
+    session
+  }
 }

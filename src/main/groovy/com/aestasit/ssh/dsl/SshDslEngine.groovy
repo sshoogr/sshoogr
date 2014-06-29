@@ -16,10 +16,10 @@
 
 package com.aestasit.ssh.dsl
 
-import static groovy.lang.Closure.DELEGATE_FIRST
-
 import com.aestasit.ssh.SshOptions
 import com.jcraft.jsch.JSch
+
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * SSH DSL entry-point class that gives access to SessionDelegate instance.
@@ -52,10 +52,26 @@ class SshDslEngine {
     remoteSession(url, null, cl)
   }
 
-  def remoteSession(String url, Map context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  def remoteSession(String url, Object context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, context) { SessionDelegate sessionDelegate ->
       sessionDelegate.url = url
     }
+  }
+
+  void remoteSessions(List<String> urls, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+    urls?.each { String url ->
+      remoteSession(url, null, cl)
+    }
+    // TODO: Collect results
+    // TODO: Handle exceptions
+  }
+
+  def parallelSessions(List<String> urls, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+    urls?.eachParallel { String url ->
+      remoteSession(url, null, cl)
+    }
+    // TODO: Collect results
+    // TODO: Handle exceptions
   }
 
   private executeSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl, Object context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure configure) {
@@ -68,7 +84,7 @@ class SshDslEngine {
         configure(delegate)
       }
       cl.delegate = delegate
-      cl.resolveStrategy = Closure.DELEGATE_FIRST
+      cl.resolveStrategy = DELEGATE_FIRST
       result = cl(context)
       if ((!options.reuseConnection) &&
           delegate.session?.connected) {

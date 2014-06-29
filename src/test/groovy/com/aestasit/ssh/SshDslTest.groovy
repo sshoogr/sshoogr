@@ -16,12 +16,10 @@
 
 package com.aestasit.ssh
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import org.junit.Test
-
 import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.SysOutLogger
+import org.junit.BeforeClass
+import org.junit.Test
 
 /**
  * SSH DSL test case that verifies different DSL syntax use cases.
@@ -118,7 +116,7 @@ class SshDslTest extends BaseSshTest {
     engine.remoteSession {
 
       host = 'localhost'
-      username = 'user2'
+      user = 'user2'
       password = '654321'
       port = 2233
 

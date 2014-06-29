@@ -16,6 +16,8 @@
 
 package com.aestasit.ssh.log
 
+import org.slf4j.LoggerFactory
+
 /**
  * Slf4j-based logger.
  *
@@ -24,7 +26,7 @@ package com.aestasit.ssh.log
  */
 class Slf4jLogger implements Logger {
 
-  private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(getClass().getPackage().getName())
+  private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass().getPackage().getName())
 
   def void info(String message) {
     logger.info(message)

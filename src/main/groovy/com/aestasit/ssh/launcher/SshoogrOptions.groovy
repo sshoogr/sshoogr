@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-final class Sshoogr {
-  
-  static void main(String[] args) {
-    
-  } 
-  
+package com.aestasit.ssh.launcher
+
+/**
+ * Sshoogr launcher application options interface.
+ *
+ * @author Andrey Adamovich
+ *
+ */
+interface SshoogrOptions {
 }

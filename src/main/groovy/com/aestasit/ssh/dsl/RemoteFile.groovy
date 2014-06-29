@@ -18,10 +18,12 @@ package com.aestasit.ssh.dsl
 
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.SftpATTRS
+
 /**
  * This class represents a remote file and it gives some methods to access file's content.
  *
  * @author Andrey Adamovich
+ * @author Luciano Fiandesio
  *
  */
 class RemoteFile {
@@ -64,16 +66,14 @@ class RemoteFile {
 
   void touch() {
     delegate.exec(command: 'touch ' + this.destination, failOnError: true, showOutput: true)
-
   }
 
   String getOwner() {
-    int uid
+    int uid = -1
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat( this.destination)
       uid =  attr.getUId()
     }
-
     delegate.exec("getent passwd ${uid} | cut -d: -f1").output.trim()
   }
 
@@ -90,7 +90,7 @@ class RemoteFile {
   }
 
   String getGroup() {
-    int uid
+    int uid = -1
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat( this.destination)
       uid =  attr.getGId()
@@ -111,7 +111,6 @@ class RemoteFile {
   }
 
   void setPermissions(int mask) {
-
     delegate.sftpChannel { ChannelSftp channel ->
       // Convert the mask from octal to decimal
       // ChannelSftp requires decimal format
@@ -120,17 +119,18 @@ class RemoteFile {
   }
 
   int getPermissions() {
-    int mask
+    int mask = 0
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat( this.destination)
-      // Convert back to octal
-      mask = Integer.toOctalString(attr.getPermissions()).toInteger()-100000
+      // Convert back to octal.
+      mask = Integer.toOctalString(attr.getPermissions()).toInteger() - 100000
     }
     mask
   }
 
   /**
-   * Get the uid of a user
+   * Get the uid of a user.
+   * 
    * @param user user
    * @return an Integer representing the uid
    * or null if the user is not found
@@ -138,8 +138,10 @@ class RemoteFile {
   private Integer getUid(String user) {
     resolveId(delegate.exec("id -u ${user}"))
   }
+  
   /**
-   * Get the gid of a group
+   * Get the gid of a group.
+   * 
    * @param group group name
    * @return an Integer representing the gid
    * or null if the group is not found
@@ -148,12 +150,11 @@ class RemoteFile {
     resolveId(delegate.exec("getent group ${group} | cut -d: -f3"))
   }
 
-  private Integer resolveId(out) {
-
+  static private Integer resolveId(out) {
     if (out.output.isInteger()) {
       return  out.output.toInteger()
     }
-    return null
+    null
   }
 
 }

@@ -16,16 +16,15 @@
 
 package com.aestasit.ssh.dsl
 
-import static groovy.lang.Closure.DELEGATE_FIRST
-
-import org.apache.commons.io.output.TeeOutputStream
-
 import com.aestasit.ssh.ExecOptions
 import com.aestasit.ssh.SshException
 import com.aestasit.ssh.log.LoggerOutputStream
 import com.jcraft.jsch.Channel
 import com.jcraft.jsch.ChannelExec
 import com.jcraft.jsch.JSchException
+import org.apache.commons.io.output.TeeOutputStream
+
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * Mix-in class for SessionDelegate implementing EXEC functionality.
@@ -41,38 +40,48 @@ class ExecMethods {
     doExec(cmd, new ExecOptions(options.execOptions))
   }
 
-  CommandOutput exec(Collection cmds) {
+  CommandOutput exec(GString cmd) {
+    doExec(cmd?.toString(), new ExecOptions(options.execOptions))
+  }
+
+  CommandOutput exec(Collection<String> cmds) {
     doExec(cmds, new ExecOptions(options.execOptions))
   }
 
-  CommandOutput exec(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptionsDelegate) Closure cl) {
-    cl.delegate = new ExecOptionsDelegate()
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
-    cl()
-    if (!cl.delegate.command) {
-      new SshException('Remote command is not specified!')
-    }
-    doExec(cl.delegate.command, new ExecOptions(options.execOptions, cl.delegate.execOptions))
+  CommandOutput parallelExec(Collection<String> cmds) {
+    // TODO: implement
+    null
   }
 
-  CommandOutput exec(Map execOptions) {
-    doExec(execOptions.command, new ExecOptions(options.execOptions, execOptions))
+  CommandOutput exec(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptionsDelegate) Closure cl) {
+    ExecOptionsDelegate delegate = new ExecOptionsDelegate()
+    cl.delegate = delegate
+    cl.resolveStrategy = DELEGATE_FIRST
+    cl()
+    if (!delegate.command) {
+      new SshException('Remote command is not specified!')
+    }
+    doExec(delegate.command, new ExecOptions(options.execOptions, delegate.execOptions))
+  }
+
+  CommandOutput exec(Map<?, ?> execOptions) {
+    doExec(execOptions?.command?.toString(), new ExecOptions(options.execOptions, execOptions))
   }
 
   /**
    * Execute the specified command and returns a boolean to
-   * signal if the command execution was successful
+   * signal if the command execution was successful.
    * 
    * @param cmd a command to execute remotely
    * @return true, if command was successful
    */
   boolean ok(String cmd) {
-    doExec(cmd, new ExecOptions([ failOnError: false , showOutput: false])).exitStatus == 0
+    doExec(cmd, new ExecOptions(failOnError: false, showOutput: false, showCommand: false)).exitStatus == 0
   }
 
   /**
    * Execute the specified command and returns a boolean to
-   * signal if the command execution was unsuccessful
+   * signal if the command execution was unsuccessful.
    * 
    * @param cmd a command to execute remotely
    * @return true, if command was unsuccessful
@@ -82,24 +91,30 @@ class ExecMethods {
   }
 
   def prefix(String prefix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
-    def result = null
     def originalPrefix = options.execOptions.prefix
     options.execOptions.prefix = prefix
-    cl.delegate = this
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
-    result = cl()
-    options.execOptions.prefix = originalPrefix
+    def result = null
+    try {
+      cl.delegate = this
+      cl.resolveStrategy = DELEGATE_FIRST
+      result = cl()
+    } finally {
+      options.execOptions.prefix = originalPrefix
+    }
     result
   }
 
-  def suffix(String prefix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
-    def result = null
+  def suffix(String suffix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     def originalSuffix = options.execOptions.suffix
-    options.execOptions.prefix = suffix
-    cl.delegate = this
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
-    result = cl()
-    options.execOptions.suffix = originalSuffix
+    options.execOptions.suffix = suffix
+    def result = null
+    try {
+      cl.delegate = this
+      cl.resolveStrategy = DELEGATE_FIRST
+      result = cl()
+    } finally {
+      options.execOptions.suffix = originalSuffix
+    }
     result
   }
 
@@ -236,5 +251,6 @@ class ExecMethods {
         }
       }
     }
+    // TODO: missing return?
   }
 }

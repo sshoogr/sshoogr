@@ -17,6 +17,7 @@
 package com.aestasit.ssh.dsl
 
 import com.aestasit.ssh.ScpOptions
+
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
@@ -32,13 +33,21 @@ class ScpOptionsDelegate extends ScpOptions {
 
   def from(@DelegatesTo(strategy = DELEGATE_FIRST, value = FileSetDelegate) Closure cl) {
     cl.delegate = source
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl()
   }
 
   def into(@DelegatesTo(strategy = DELEGATE_FIRST, value = FileSetDelegate) Closure cl) {
     cl.delegate = target
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl()
+  }
+
+  FileSetDelegate getSource() {
+    source
+  }
+
+  FileSetDelegate getTarget() {
+    target
   }
 }

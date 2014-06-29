@@ -16,9 +16,9 @@
 
 package com.aestasit.ssh.dsl
 
-import static com.aestasit.ssh.dsl.FileSetType.*
-
 import com.aestasit.ssh.SshException
+
+import static com.aestasit.ssh.dsl.FileSetType.*
 
 /**
  * Closure delegate that is used to collect data about remote or local file collection.
@@ -76,11 +76,33 @@ class FileSetDelegate {
     }
   }
 
+  FileSetType getType() {
+    type
+  }
+
+  List<File> getLocalDirs() {
+    localDirs
+  }
+
+  List<File> getLocalFiles() {
+    localFiles
+  }
+
+  List<String> getRemoteFiles() {
+    remoteFiles
+  }
+
+  List<String> getRemoteDirs() {
+    remoteDirs
+  }
+
   private setType(FileSetType type) {
     if (this.type == UNKNOWN || this.type == type) {
       this.type = type
     } else {
       throw new SshException("File set can not contain both local and remote source or target definitions!")
     }
+
   }
+
 }

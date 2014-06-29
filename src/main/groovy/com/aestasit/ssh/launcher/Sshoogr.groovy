@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package com.aestasit.ssh;
+package com.aestasit.ssh.launcher
 
 /**
- * Generic exception to be thrown in exceptional situations.
+ * Sshoogr script launcher application.
  *
  * @author Andrey Adamovich
  *
  */
-@SuppressWarnings("ALL")
-public class SshException extends RuntimeException {
-
-  private static final long serialVersionUID = 6622654048925830665L;
-
-  public SshException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public SshException(String message) {
-    super(message);
-  }
+final class Sshoogr {
+  
+  static void main(String[] args) {
+    
+  } 
+  
 }

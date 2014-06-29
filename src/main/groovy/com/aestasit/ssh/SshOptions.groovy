@@ -16,9 +16,12 @@
 
 package com.aestasit.ssh
 
-import static groovy.lang.Closure.DELEGATE_FIRST
-
 import com.aestasit.ssh.log.Logger
+import com.aestasit.ssh.log.Slf4jLogger
+import com.aestasit.ssh.log.SysErrLogger
+import com.aestasit.ssh.log.SysOutLogger
+
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * Configuration object holding options used for global SSH plug-in configuration.
@@ -45,7 +48,7 @@ class SshOptions extends CommonOptions {
 
   def execOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptions) Closure cl) {
     cl.delegate = execOptions
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl()
   }
 
@@ -54,8 +57,20 @@ class SshOptions extends CommonOptions {
 
   def scpOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptions) Closure cl) {
     cl.delegate = scpOptions
-    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl.resolveStrategy = DELEGATE_FIRST
     cl()
+  }
+
+  static SysOutLogger systemOut() {
+    new SysOutLogger()
+  }
+
+  static SysErrLogger systemErr() {
+    new SysErrLogger()
+  }
+
+  static Slf4jLogger sf4j() {
+    new Slf4jLogger()
   }
 
 }

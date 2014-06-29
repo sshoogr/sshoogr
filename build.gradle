@@ -63,8 +63,14 @@ task wrapper(type: Wrapper) {
   gradleVersion = '1.12'
 }
 
-task integration(type:Test) {
+task integration(type: Test) {
   description = "Run integration tests (located in src/integrationTest/groovy)."
   testClassesDir = project.sourceSets.integrationTest.output.classesDir
   classpath = project.sourceSets.integrationTest.runtimeClasspath
+}
+
+idea {
+  module {
+    testSourceDirs += file('src/integrationTest/groovy')
+  }
 }

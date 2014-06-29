@@ -16,12 +16,12 @@
 
 package com.aestasit.ssh
 
-import static groovy.lang.Closure.DELEGATE_FIRST
-
 import com.aestasit.ssh.dsl.SessionDelegate
 import com.aestasit.ssh.dsl.SshDslEngine
 import com.aestasit.ssh.log.Logger
 import com.aestasit.ssh.log.SysOutLogger
+
+import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
  * Default "static" implementation of SSH DSL to be used inside plain Groovy scripts.
@@ -69,7 +69,7 @@ class DefaultSsh {
     options.getScpOptions()
   }
 
-  def scpOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptions) Closure cl) {
+  static scpOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptions) Closure cl) {
     options.scpOptions(cl)
   }
 
