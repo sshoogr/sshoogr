@@ -2,8 +2,8 @@
 <html>
 <head>
 
-<title>com.aestasit.ssh.dsl (sshoogr 0.9.17-SNAPSHOT API)</title>
-<META NAME="keywords" CONTENT="com.aestasit.ssh.dsl package">
+<title>com.aestasit.ssh.launcher (sshoogr 0.9.17-SNAPSHOT API)</title>
+<META NAME="keywords" CONTENT="com.aestasit.ssh.launcher package">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
 <link href="../../../../groovy.ico" type="image/x-icon" rel="shortcut icon">
@@ -11,7 +11,7 @@
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="com.aestasit.ssh.dsl (sshoogr 0.9.17-SNAPSHOT API)";
+    parent.document.title="com.aestasit.ssh.launcher (sshoogr 0.9.17-SNAPSHOT API)";
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -53,7 +53,7 @@ function windowTitle()
 &nbsp;PREV&nbsp;
 &nbsp;NEXT</font></td>
 <td class="NavBarCell2" bgcolor="white"><font size="-2">
-  <a href="../../../../index.html?com/aestasit/ssh/dsl/package-summary.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+  <a href="../../../../index.html?com/aestasit/ssh/launcher/package-summary.html" target="_top"><b>FRAMES</b></a>  &nbsp;
 &nbsp;<a href="package-summary.html" target="_top"><b>NO FRAMES</b></a>  &nbsp;
 &nbsp;<script type="text/javascript">
   <!--
@@ -75,7 +75,7 @@ function windowTitle()
 
 <HR>
 <H2>
-Package com.aestasit.ssh.dsl
+Package com.aestasit.ssh.launcher
 </H2>
 
 
@@ -83,6 +83,25 @@ Package com.aestasit.ssh.dsl
 <P>&nbsp;</P>
 
 
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+    <TR BGCOLOR="#90DDF7" CLASS="TableHeadingColor">
+    <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+    <B>Interface Summary</B></FONT></TH>
+    </TR>
+
+        <TR BGCOLOR="white" CLASS="TableRowColor">
+        <TD WIDTH="15%"><B><A HREF="SshoogrOptions.html" title="class in com/aestasit/ssh/launcher">SshoogrOptions</A></B></TD>
+        <TD>Sshoogr launcher application options interface.</TD>
+        </TR>
+
+</TABLE>
+&nbsp;
+<P>
+<DL>
+</DL>
+<hr>
+    
 
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -92,53 +111,8 @@ Package com.aestasit.ssh.dsl
     </TR>
 
         <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="CommandOutput.html" title="class in com/aestasit/ssh/dsl">CommandOutput</A></B></TD>
-        <TD>This class holds data for remote command execution result.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="ExecMethods.html" title="class in com/aestasit/ssh/dsl">ExecMethods</A></B></TD>
-        <TD>Mix-in class for SessionDelegate implementing EXEC functionality.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="ExecMethods.ChannelData.html" title="class in com/aestasit/ssh/dsl">ExecMethods.ChannelData</A></B></TD>
-        <TD></TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="ExecOptionsDelegate.html" title="class in com/aestasit/ssh/dsl">ExecOptionsDelegate</A></B></TD>
-        <TD>Closure delegate that is used to collect all EXEC (remote command execution) options including command itself.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="FileSetDelegate.html" title="class in com/aestasit/ssh/dsl">FileSetDelegate</A></B></TD>
-        <TD>Closure delegate that is used to collect data about remote or local file collection.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="RemoteFile.html" title="class in com/aestasit/ssh/dsl">RemoteFile</A></B></TD>
-        <TD>This class represents a remote file and it gives some methods to access file's content.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="ScpMethods.html" title="class in com/aestasit/ssh/dsl">ScpMethods</A></B></TD>
-        <TD>Mix-in class for SessionDelegate implementing SCP functionality.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="ScpOptionsDelegate.html" title="class in com/aestasit/ssh/dsl">ScpOptionsDelegate</A></B></TD>
-        <TD>Closure delegate that is used to collect all SCP (remote file copying) options.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="SessionDelegate.html" title="class in com/aestasit/ssh/dsl">SessionDelegate</A></B></TD>
-        <TD>Closure delegate that is used to collect all SSH options and give access to other DSL delegates.</TD>
-        </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="SshDslEngine.html" title="class in com/aestasit/ssh/dsl">SshDslEngine</A></B></TD>
-        <TD>SSH DSL entry-point class that gives access to SessionDelegate instance.</TD>
+        <TD WIDTH="15%"><B><A HREF="Sshoogr.html" title="class in com/aestasit/ssh/launcher">Sshoogr</A></B></TD>
+        <TD>Sshoogr script launcher application.</TD>
         </TR>
 
 </TABLE>
@@ -149,25 +123,6 @@ Package com.aestasit.ssh.dsl
 <hr>
     
 
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-    <TR BGCOLOR="#90DDF7" CLASS="TableHeadingColor">
-    <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-    <B>Enum Summary</B></FONT></TH>
-    </TR>
-
-        <TR BGCOLOR="white" CLASS="TableRowColor">
-        <TD WIDTH="15%"><B><A HREF="FileSetType.html" title="class in com/aestasit/ssh/dsl">FileSetType</A></B></TD>
-        <TD>File set type enumeration.</TD>
-        </TR>
-
-</TABLE>
-&nbsp;
-<P>
-<DL>
-</DL>
-<hr>
-    
 
 
 
