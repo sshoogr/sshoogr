@@ -179,40 +179,46 @@ class SessionDelegate {
     new RemoteFile(this, destination)
   }
 
-  RemoteFile remoteFile(String destination, Closure cl) {
-    
-  }
-    
   RemoteFile remoteDir(String destination) {
-  
+    new RemoteFile(this, destination)
   }
 
-  RemoteFile remoteDir(String destination, Closure cl) {
-  
-  }
+  // TODO: Allow remote file manipulation through closure.
+  // RemoteFile remoteFile(String destination, Closure cl) {
+  //
+  // }
+  //
+  // RemoteFile remoteDir(String destination, Closure cl) {
+  //
+  // }
 
   boolean mkdir(String destination) {
-  
-  }
-
-  boolean mkdir(Closure cl) {
-  
+    // TODO: improve error handling
+    exec "mkdir -p ${destination}"
   }
 
   boolean remkdir(String destination) {
-  
+    delete(destination)
+    mkdir(destination)
   }
 
-  boolean remkdir(Closure cl) {
-  
-  }
+  // TODO: Allow setting parameters (permissions, owner etc.) for remote directory creation through closure.
+  // boolean mkdir(Closure cl) {
+  //
+  // }
+  //
+  // boolean remkdir(Closure cl) {
+  //
+  // }
 
   boolean delete(String destination) {
-    
+    // TODO: improve error handling
+    exec "rm -rf ${destination}"
   }
   
   boolean touch(String destination) {
-    
+    // TODO: improve error handling
+    exec "touch ${destination}"
   }
 
   // get facts
@@ -230,9 +236,9 @@ class SessionDelegate {
     
   // command output stream??
   
-  def $(String name) {
-    
-  }
+  // def $(String name) {
+  //
+  // }
   
   // add define blocks
   // defineFact('currentDirEmpty', 'ls -la | wc -l', BOOLEAN, NOT_CACHED)
