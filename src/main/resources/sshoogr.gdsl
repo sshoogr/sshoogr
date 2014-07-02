@@ -1,0 +1,21 @@
+contributor(
+    context(
+        scope: scriptScope(),
+        filetypes: ['sshoogr']
+    )
+) {
+  findClass('com.aestasit.ssh.dsl.SessionDelegate').methods.each { m ->
+    add(m)
+  }
+}
+
+contributor(
+    context(
+        scope: closureScope(isArgument: true)
+    )
+) {
+  def call = enclosingCall("remoteSession")
+  if (call) {
+    delegatesTo(findClass('com.aestasit.ssh.dsl.SessionDelegate'))
+  }
+}
