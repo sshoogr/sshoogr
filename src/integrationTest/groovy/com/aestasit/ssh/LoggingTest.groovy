@@ -16,5 +16,5 @@
 
 package com.aestasit.ssh
 
-class SudoTest extends BaseIntegrationTest {
+class LoggingTest extends BaseIntegrationTest {
 }
