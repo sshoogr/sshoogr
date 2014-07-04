@@ -24,7 +24,7 @@ import com.aestasit.ssh.log.SysOutLogger
 import static groovy.lang.Closure.DELEGATE_FIRST
 
 /**
- * Configuration object holding options used for global SSH plug-in configuration.
+ * Configuration object holding options used for DSL configuration.
  *
  * @author Andrey Adamovich
  *

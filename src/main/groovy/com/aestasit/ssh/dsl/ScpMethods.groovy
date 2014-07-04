@@ -57,6 +57,10 @@ class ScpMethods {
     cl.delegate = copySpec
     cl.resolveStrategy = DELEGATE_FIRST
     cl()
+    scp(copySpec)
+  }
+
+  def scp(ScpOptionsDelegate copySpec) {
     validateCopySpec(copySpec)
     sftpChannel { ChannelSftp channel ->
       if (copySpec.source.type == LOCAL) {
