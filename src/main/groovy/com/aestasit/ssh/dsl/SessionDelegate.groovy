@@ -128,11 +128,15 @@ class SessionDelegate {
     def matcher = SSH_URL.matcher(url)
     if (matcher.matches()) {
       setHost(matcher.group(5))
-      setPort(matcher.group(7).toInteger())
+      if (matcher.group(7)) {
+        setPort(matcher.group(7).toInteger())
+      } else {
+        setPort(DEFAULT_SSH_PORT)
+      }
       setUser(matcher.group(2))
       setPassword(matcher.group(4))
     } else {
-      throw new SshException("Unknown URL format: " + url)
+      throw new MalformedURLException("Unknown URL format: " + url)
     }
   }
 
