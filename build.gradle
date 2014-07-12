@@ -29,7 +29,7 @@ compileGroovy {
 configure(allprojects) {
   ext.groovyVersion  = '2.1.8'
   ext.slf4jVersion   = '1.7.5'
-  ext.logbackVersion = '1.0.13'
+  ext.logbackVersion = '1.1.2'
 }
 
 dependencies {
