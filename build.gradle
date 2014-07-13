@@ -4,7 +4,7 @@ version = '0.9.17-SNAPSHOT'
 
 buildscript {
   repositories { mavenCentral() }
-  dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' }
+  dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.2.4' }
   dependencies { classpath 'org.ajoberstar:gradle-git:0.8.0' }
 }
 
