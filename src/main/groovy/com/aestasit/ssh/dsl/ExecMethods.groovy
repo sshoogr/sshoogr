@@ -17,6 +17,7 @@
 package com.aestasit.ssh.dsl
 
 import com.aestasit.ssh.ExecOptions
+import com.aestasit.ssh.QuotingUtil;
 import com.aestasit.ssh.SshException
 import com.aestasit.ssh.log.LoggerOutputStream
 import com.jcraft.jsch.Channel
@@ -35,6 +36,31 @@ import static groovy.lang.Closure.DELEGATE_FIRST
 class ExecMethods {
 
   private static final int RETRY_DELAY = 1000
+
+  CommandOutput execCmd(String... cmd){
+	  execCmd(Arrays.asList(cmd))
+  }
+
+  CommandOutput execCmd(Collection cmd) {
+      doExec(cmd2Cmdline(cmd), new ExecOptions(options.execOptions))
+  }
+
+  CommandOutput execCmd(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptionsDelegate) Closure cl) {
+    cl.delegate = new ExecOptionsDelegate()
+    cl.resolveStrategy = Closure.DELEGATE_FIRST
+    cl()
+    if (!cl.delegate.command) {
+      new SshException('Remote command is not specified!')
+    }
+    doExec(cmd2Cmdline(cl.delegate.command),
+      new ExecOptions(options.execOptions, cl.delegate.execOptions))
+  }
+
+  CommandOutput execCmd(Map execOptions) {
+      doExec(cmd2Cmdline(execOptions.command),
+          new ExecOptions(options.execOptions, execOptions))
+  }
+
 
   CommandOutput exec(String cmd) {
     doExec(cmd, new ExecOptions(options.execOptions))
@@ -71,7 +97,7 @@ class ExecMethods {
   /**
    * Execute the specified command and returns a boolean to
    * signal if the command execution was successful.
-   * 
+   *
    * @param cmd a command to execute remotely
    * @return true, if command was successful
    */
@@ -82,7 +108,7 @@ class ExecMethods {
   /**
    * Execute the specified command and returns a boolean to
    * signal if the command execution was unsuccessful.
-   * 
+   *
    * @param cmd a command to execute remotely
    * @return true, if command was unsuccessful
    */
@@ -144,14 +170,14 @@ class ExecMethods {
         if (ch != '\\') {
           actualCommand = actualCommand.replace(ch.toString(), '\\' + ch)
         }
-      } 
+      }
     }
     if (options.prefix) {
       actualCommand = "${options.prefix} ${actualCommand}"
     }
     if (options.suffix) {
       actualCommand = "${actualCommand} ${options.suffix}"
-    }    
+    }
     if (options.showCommand) {
       logger.info("> " + actualCommand)
     }
@@ -252,5 +278,9 @@ class ExecMethods {
       }
     }
     // TODO: missing return?
+  }
+
+  private static String cmd2Cmdline(Collection cmd) {
+	  return cmd.collect {QuotingUtil.quoteUNIXArgument(it)}.join(' ')
   }
 }

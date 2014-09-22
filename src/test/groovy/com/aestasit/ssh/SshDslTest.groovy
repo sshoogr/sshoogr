@@ -140,6 +140,14 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
+  void testExecCmd() {
+    engine.remoteSession {
+        String msg = 'ok'
+        assert execCmd('perl', '-e', 'if (1) { print "ok" }').output == msg
+    }
+  }
+
+  @Test
   void testFailedStatus() {
     engine.remoteSession {
       assert exec('i should fail!').failed()

@@ -23,7 +23,7 @@ import com.aestasit.ssh.mocks.MockSshServer
 
 /**
  * Base class for SSH functionality testing.
- * 
+ *
  * @author Andrey Adamovich
  *
  */
@@ -32,7 +32,7 @@ abstract class BaseSshTest {
   @BeforeClass
   def static void createServer() {
     MockSshServer.with {
-      
+
       // Create command expectations.
       command('^ls.*$') { inp, out, err, callback, env ->
         out << '''total 20
@@ -46,6 +46,16 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
       command('^whoami.*$') { inp, out, err, callback, env ->
         out << "root\n"
         callback.onExit(0)
+      }
+
+      command('perl -e \'if (1) { print "ok" }\'') {inp, out, err, callback, env ->
+        out << 'ok'
+        callback.onExit(0)
+      }
+
+      command('^perl -e .*$') {inp, out, err, callback, env ->
+          out << "-bash: syntax error near unexpected token `('\n"
+          callback.onExit(2)
       }
 
       command('^du.*$') { inp, out, err, callback, env ->
@@ -79,7 +89,7 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
 
       // Start server
       startSshd(2233)
-      
+
     }
   }
 
