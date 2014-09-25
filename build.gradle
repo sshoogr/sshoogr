@@ -26,12 +26,6 @@ compileGroovy {
   options.compilerArgs << '-Xlint:-options'
 }
 
-configure(allprojects) {
-  ext.groovyVersion  = '2.1.8'
-  ext.slf4jVersion   = '1.7.5'
-  ext.logbackVersion = '1.1.2'
-}
-
 dependencies {
   compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
   compile "org.slf4j:slf4j-api:${slf4jVersion}"
