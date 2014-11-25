@@ -1,4 +1,4 @@
-com.aestasit.ssh
-com.aestasit.ssh.dsl
-com.aestasit.ssh.launcher
-com.aestasit.ssh.log
+com.aestasit.infrastructure.ssh
+com.aestasit.infrastructure.ssh.dsl
+com.aestasit.infrastructure.ssh.launcher
+com.aestasit.infrastructure.ssh.log
