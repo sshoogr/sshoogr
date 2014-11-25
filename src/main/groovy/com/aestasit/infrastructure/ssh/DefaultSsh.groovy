@@ -41,7 +41,9 @@ class DefaultSsh {
         showOutput = true
         showCommand = true
       }
-      scpOptions.with { showProgress = true }
+      scpOptions.with {
+        showProgress = true
+      }
     }
   }
 

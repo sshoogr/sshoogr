@@ -17,6 +17,7 @@
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.ScpOptions
+import groovy.transform.InheritConstructors
 
 import static groovy.lang.Closure.DELEGATE_FIRST
 
@@ -26,6 +27,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  * @author Andrey Adamovich
  *
  */
+@InheritConstructors
 class ScpOptionsDelegate extends ScpOptions {
 
   private final FileSetDelegate source = new FileSetDelegate()

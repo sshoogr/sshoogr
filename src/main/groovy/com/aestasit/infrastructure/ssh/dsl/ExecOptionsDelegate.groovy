@@ -17,6 +17,7 @@
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.ExecOptions
+import groovy.transform.InheritConstructors
 
 /**
  * Closure delegate that is used to collect all EXEC (remote command execution) options including command itself.
@@ -24,6 +25,7 @@ import com.aestasit.infrastructure.ssh.ExecOptions
  * @author Andrey Adamovich
  *
  */
+@InheritConstructors
 class ExecOptionsDelegate extends ExecOptions {
 
   String command

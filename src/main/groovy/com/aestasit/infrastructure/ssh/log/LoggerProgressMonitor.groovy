@@ -43,7 +43,7 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
     current += count
     // int percent = (current / max * 100) as int
     // TODO: logging settings
-    logger.info("${current} bytes transfered")
+    logger.info("${current} bytes transferred")
     true
   }
 

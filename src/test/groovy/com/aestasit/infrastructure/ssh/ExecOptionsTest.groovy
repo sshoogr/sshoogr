@@ -28,10 +28,21 @@ import org.junit.Test
 class ExecOptionsTest {
 
   @Test
-  public void testCtrs() throws Exception {
+  public void testExecCtrs() throws Exception {
     def defaultOpts = new ExecOptions()
     assert defaultOpts.failOnError
+    assert defaultOpts.showOutput
     def opts = new ExecOptions(defaultOpts, [ failOnError: false ] )
     assert !opts.failOnError
   }
+
+  @Test
+  public void testScpCtrs() throws Exception {
+    ScpOptions defaultOpts = new ScpOptions()
+    assert defaultOpts.failOnError
+    assert defaultOpts.showProgress
+    ScpOptions opts = new ScpOptions(defaultOpts, [ showProgress: false ] )
+    assert !opts.showProgress
+  }
+
 }

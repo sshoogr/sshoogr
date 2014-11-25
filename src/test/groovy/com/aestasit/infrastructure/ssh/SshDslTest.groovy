@@ -292,24 +292,33 @@ class SshDslTest extends BaseSshTest {
     }
   }
 
-  private void printThreadNames(String message) {
-    println message
-    Thread.allStackTraces.each { Thread t, StackTraceElement[] ste ->
-      println t.name
-    }
-  }
-
   @Test
   void testExecMapValidation() throws Exception {
     engine.remoteSession {
       try {
-        exec commands: "whoami"
-        fail("Should not accept commands parameter")
+        exec commandS: "whoami"
+        fail("Should not accept missing command parameter")
       } catch(SshException e) {
         assert e.message == "The 'command' parameter is not specified!"
       }
       exec command: "whoami"
     }
+  }
+
+  @Test
+  void testOptionsOverride() throws Exception {
+    String output = captureOutput {
+      engine.remoteSession {
+        scp {
+          showProgress = false
+          from {
+            localDir new File(getCurrentDir(), 'test-settings')
+          }
+          into { remoteDir '/tmp/puppet' }
+        }
+      }
+    }
+    assert !output.contains('bytes transferred')
   }
 
 }

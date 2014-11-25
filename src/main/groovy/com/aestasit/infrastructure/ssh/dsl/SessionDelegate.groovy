@@ -61,7 +61,7 @@ class SessionDelegate {
 
   SessionDelegate(JSch jsch, SshOptions options) {
     this.jsch = jsch
-    this.options = options
+    this.options = options // TODO: we should clone this object to allow per session settings.
     this.host = options.defaultHost
     this.username = options.defaultUser
     this.port = options.defaultPort
@@ -185,13 +185,17 @@ class SessionDelegate {
   //
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
+  def scpOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptions) Closure cl) {
+    options.scpOptions(cl)
+  }
+
   def scp(String sourceFile, String dst) {
     scp(new File(sourceFile), dst)
   }
 
   def scp(File sourceFile, String dst) {
     sftpChannel { ChannelSftp channel ->
-      ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
+      ScpOptionsDelegate copySpec = new ScpOptionsDelegate(options.scpOptions)
       copySpec.with {
         from { localFile(sourceFile) }
         into { remoteDir(dst) }
@@ -201,7 +205,7 @@ class SessionDelegate {
   }
 
   def scp(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptionsDelegate) Closure cl) {
-    ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
+    ScpOptionsDelegate copySpec = new ScpOptionsDelegate(options.scpOptions)
     cl.delegate = copySpec
     cl.resolveStrategy = DELEGATE_FIRST
     cl()
@@ -479,6 +483,10 @@ class SessionDelegate {
 
   private static final int RETRY_DELAY = 1000
 
+  def execOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptions) Closure cl) {
+    options.execOptions(cl)
+  }
+
   CommandOutput exec(String cmd) {
     doExec(cmd, new ExecOptions(options.execOptions))
   }
@@ -492,7 +500,7 @@ class SessionDelegate {
   }
 
   CommandOutput exec(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptionsDelegate) Closure cl) {
-    ExecOptionsDelegate delegate = new ExecOptionsDelegate()
+    ExecOptionsDelegate delegate = new ExecOptionsDelegate(options.execOptions)
     cl.delegate = delegate
     cl.resolveStrategy = DELEGATE_FIRST
     cl()

@@ -99,4 +99,25 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
     new File("dummy.pem").getAbsoluteFile()
   }
 
+  String captureOutput(Closure cl) {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    PrintStream ps = new PrintStream(baos)
+    PrintStream old = System.out
+    System.out = ps
+    try {
+      cl()
+    } finally {
+      System.out.flush()
+      System.out = old
+    }
+    println baos.toString()
+    baos.toString()
+  }
+
+  void printThreadNames(String message) {
+    println message
+    Thread.allStackTraces.each { Thread t, StackTraceElement[] ste ->
+      println t.name
+    }
+  }
 }
