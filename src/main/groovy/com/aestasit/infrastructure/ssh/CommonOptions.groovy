@@ -26,11 +26,11 @@ abstract class CommonOptions {
 
   Boolean failOnError        = true
 
-  static setValue(val1, dflt) {
+  static <T> T setValue(T val1, T dflt) {
     val1 != null ? val1 : dflt
   }
 
-  static setValue(val2, val1, dflt) {
+  static <T> T setValue(T val2, T val1, T dflt) {
     setValue(val2, setValue(val1, dflt))
   }
 }

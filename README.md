@@ -15,8 +15,8 @@ The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **N
 
 The easiest way to use `sshoogr` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
 
-    @Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.16')
-    import static com.aestasit.ssh.DefaultSsh.*
+    @Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.18')
+    import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 
 The entry point for using the **DSL** is the `remoteSession` method, which accepts an **SSH** **URL** and a closure with **Groovy** or **DSL** code:
 
@@ -278,8 +278,8 @@ section). It has the following properties:
 
 If you need to embed `sshoogr` into your own **DSL** or another library you may need to use internal classes instead of default static methods. The main library's classes are `SshDslEngine` and `SshOptions`, which need to be imported before the library can be used:
     
-    import com.aestasit.ssh.dsl.SshDslEngine
-    import com.aestasit.ssh.SshOptions
+    import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
+    import com.aestasit.infrastructure.ssh.SshOptions
 
 To create a simple instance of the engine with the default options you can just use the following instruction:
 
@@ -291,7 +291,7 @@ The `engine` instance gives access to the `remoteSession` method.
 
 A more verbose example of creating a `SshOptions` object can be found below:
 
-    import com.aestasit.ssh.log.SysOutLogger
+    import com.aestasit.infrastructure.ssh.log.SysOutLogger
 
     ...
 

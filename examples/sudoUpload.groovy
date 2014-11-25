@@ -4,7 +4,7 @@
  */
 
 @GrabResolver(name='snapshot', root='http://oss.sonatype.org/content/groups/public')
-@Grab( group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.14-SNAPSHOT', changing = true)
+@Grab( group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.18-SNAPSHOT', changing = true)
 import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 
 options.execOptions {

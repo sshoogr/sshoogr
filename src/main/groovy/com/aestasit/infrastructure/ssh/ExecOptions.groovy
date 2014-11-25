@@ -58,13 +58,13 @@ class ExecOptions extends CommonOptions {
     this(opt1, opt2?.properties)
   }
 
-  ExecOptions(ExecOptions opt1, Map opt2) {
+  ExecOptions(ExecOptions opt1, Map<String, ?> opt2) {
     this.failOnError         = setValue(opt2?.failOnError, opt1?.failOnError, true)
     this.showOutput          = setValue(opt2?.showOutput, opt1?.showOutput, true)
     this.showCommand         = setValue(opt2?.showCommand, opt1?.showCommand, true)
-    this.maxWait             = setValue(opt2?.maxWait, opt1?.maxWait, 0)
-    this.succeedOnExitStatus = setValue(opt2?.succeedOnExitStatus, opt1?.succeedOnExitStatus, 0)
-    this.outputFile          = setValue(opt2?.outputFile, opt1?.outputFile, null)
+    this.maxWait             = setValue(opt2?.maxWait as Long, opt1?.maxWait, 0L)
+    this.succeedOnExitStatus = setValue(opt2?.succeedOnExitStatus as Long, opt1?.succeedOnExitStatus, 0L)
+    this.outputFile          = setValue(opt2?.outputFile as File, opt1?.outputFile, null)
     this.appendFile          = setValue(opt2?.appendFile, opt1?.appendFile, false)
     this.usePty              = setValue(opt2?.usePty, opt1?.usePty, true)
     this.prefix              = setValue(opt2?.prefix, opt1?.prefix, null)
