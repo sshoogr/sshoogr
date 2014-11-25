@@ -16,6 +16,7 @@
 
 package com.aestasit.ssh.dsl
 
+import com.aestasit.ssh.SshException
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.SftpATTRS
 
@@ -33,6 +34,9 @@ class RemoteFile {
 
   RemoteFile(SessionDelegate delegate, String destination) {
     this.delegate = delegate
+    if (!destination || !destination.trim()) {
+      throw new SshException("Remote file destination is not set!")
+    }
     this.destination = destination
   }
 
