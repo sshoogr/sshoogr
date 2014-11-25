@@ -38,9 +38,14 @@ class SshDslEngine {
     this.options = options
     this.jsch = new JSch()
     this.config = new Properties()
-    config.put("StrictHostKeyChecking", "no")
-    config.put("HashKnownHosts",  "yes")
-    config.put("PreferredAuthentications", "publickey,keyboard-interactive,password")
+    config.put("StrictHostKeyChecking", options.trustUnknownHosts ? "no" : "yes")
+    if (!options.jschProperties.containsKey("HashKnownHosts")) {
+      config.put("HashKnownHosts", "yes")
+    }
+    if (!options.jschProperties.containsKey("PreferredAuthentications")) {
+      config.put("PreferredAuthentications", "publickey,keyboard-interactive,password")
+    }
+    config.putAll(options.jschProperties)
     jsch.config = config
   }
 
@@ -56,22 +61,6 @@ class SshDslEngine {
     executeSession(cl, context) { SessionDelegate sessionDelegate ->
       sessionDelegate.url = url
     }
-  }
-
-  void remoteSessions(List<String> urls, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
-    urls?.each { String url ->
-      remoteSession(url, null, cl)
-    }
-    // TODO: Collect results
-    // TODO: Handle exceptions
-  }
-
-  def parallelSessions(List<String> urls, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
-    urls?.eachParallel { String url ->
-      remoteSession(url, null, cl)
-    }
-    // TODO: Collect results
-    // TODO: Handle exceptions
   }
 
   private executeSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl, Object context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure configure) {

@@ -18,8 +18,6 @@ package com.aestasit.ssh
 
 import org.junit.Test
 
-import com.aestasit.ssh.ExecOptions;
-
 /**
  * ExecOptions test.
  * 

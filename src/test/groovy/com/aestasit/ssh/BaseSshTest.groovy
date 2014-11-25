@@ -16,10 +16,9 @@
 
 package com.aestasit.ssh
 
+import com.aestasit.ssh.mocks.MockSshServer
 import org.junit.AfterClass
 import org.junit.BeforeClass
-
-import com.aestasit.ssh.mocks.MockSshServer
 
 /**
  * Base class for SSH functionality testing.

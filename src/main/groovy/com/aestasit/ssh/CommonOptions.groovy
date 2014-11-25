@@ -24,8 +24,8 @@ package com.aestasit.ssh
  */
 abstract class CommonOptions {
 
-  Boolean failOnError      = true
-  
+  Boolean failOnError        = true
+
   static setValue(val1, dflt) {
     val1 != null ? val1 : dflt
   }

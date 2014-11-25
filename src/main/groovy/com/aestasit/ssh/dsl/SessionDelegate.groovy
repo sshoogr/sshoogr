@@ -16,16 +16,23 @@
 
 package com.aestasit.ssh.dsl
 
+import com.aestasit.ssh.ExecOptions
+import com.aestasit.ssh.ScpOptions
 import com.aestasit.ssh.SshException
 import com.aestasit.ssh.SshOptions
 import com.aestasit.ssh.log.Logger
+import com.aestasit.ssh.log.LoggerOutputStream
+import com.aestasit.ssh.log.LoggerProgressMonitor
 import com.aestasit.ssh.log.Slf4jLogger
-import com.jcraft.jsch.JSch
-import com.jcraft.jsch.Session
+import com.jcraft.jsch.*
+import org.apache.commons.io.output.TeeOutputStream
 
 import java.util.regex.Pattern
 
+import static com.aestasit.ssh.dsl.FileSetType.*
 import static groovy.lang.Closure.DELEGATE_FIRST
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex
+import static org.apache.commons.io.FilenameUtils.*
 
 /**
  * Closure delegate that is used to collect all SSH options and give access to other DSL delegates.
@@ -33,7 +40,6 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  * @author Andrey Adamovich
  *
  */
-@Mixin([ScpMethods, ExecMethods])
 class SessionDelegate {
 
   private static final int DEFAULT_SSH_PORT = 22
@@ -170,6 +176,250 @@ class SessionDelegate {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
+  //   _____  _____ _____
+  //  / ____|/ ____|  __ \
+  // | (___ | |    | |__) |
+  //  \___ \| |    |  ___/
+  //  ____) | |____| |
+  // |_____/ \_____|_|
+  //
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  def scp(String sourceFile, String dst) {
+    scp(new File(sourceFile), dst)
+  }
+
+  def scp(File sourceFile, String dst) {
+    sftpChannel { ChannelSftp channel ->
+      ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
+      copySpec.with {
+        from { localFile(sourceFile) }
+        into { remoteDir(dst) }
+      }
+      upload(copySpec, channel)
+    }
+  }
+
+  def scp(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptionsDelegate) Closure cl) {
+    ScpOptionsDelegate copySpec = new ScpOptionsDelegate()
+    cl.delegate = copySpec
+    cl.resolveStrategy = DELEGATE_FIRST
+    cl()
+    scp(copySpec)
+  }
+
+  def scp(ScpOptionsDelegate copySpec) {
+    validateCopySpec(copySpec)
+    sftpChannel { ChannelSftp channel ->
+      if (copySpec.source.type == LOCAL) {
+        upload(copySpec, channel)
+      } else if (copySpec.source.type == REMOTE) {
+        download(copySpec, channel)
+      }
+    }
+  }
+
+  static private void validateCopySpec(ScpOptionsDelegate options) {
+    if (options.source.type == null || options.source.type == UNKNOWN ||
+        options.target.type == null || options.target.type == UNKNOWN) {
+      throw new SshException("Either scp source (from) or target (into) is of unknown type!")
+    }
+    if (options.source.type == options.target.type) {
+      throw new SshException("Scp source (from) and target (into) shouldn't be both local or both remote!")
+    }
+  }
+
+  private void upload(ScpOptionsDelegate copySpec, ChannelSftp channel) {
+
+    def remoteDirs = copySpec.target.remoteDirs
+    def remoteFiles = copySpec.target.remoteFiles
+    def scpOptions = new ScpOptions(options.scpOptions, copySpec)
+
+    // Check if upload should go through an intermediate directory and append its path hash to all target paths.
+    Map<String, String> uploadMap = [:] as Map<String, String>
+    if (scpOptions.uploadToDirectory) {
+      logger.debug("Uploading through: ${scpOptions.uploadToDirectory}")
+      def uploadDirectory = separatorsToUnix(normalize(scpOptions.uploadToDirectory))
+      createRemoteDirectory(uploadDirectory, channel)
+      remoteDirs = remoteDirs.collect { String dstPath ->
+        def uploadPath = uploadDirectory + '/' + md5Hex(dstPath)
+        uploadMap[uploadPath] = dstPath
+        uploadPath
+      }
+      remoteFiles = remoteFiles.collect { String dstPath ->
+        def dstDir = getFullPathNoEndSeparator(dstPath)
+        def dstName = new File(dstPath).name
+        def uploadPath = uploadDirectory + '/' + md5Hex(dstDir) + '/' + dstName
+        uploadMap[uploadPath] = dstDir
+        uploadPath
+      }
+    }
+
+    // Create remote directories.
+    remoteFiles.each { String dstFile ->
+      def dstDir = getFullPathNoEndSeparator(dstFile)
+      createRemoteDirectory(dstDir, channel)
+    }
+    remoteDirs.each { String dstDir ->
+      createRemoteDirectory(dstDir, channel)
+    }
+
+    // Upload local files and directories.
+    def allLocalFiles = copySpec.source.localFiles + copySpec.source.localDirs
+    allLocalFiles.each { File sourcePath ->
+      if (sourcePath.isDirectory()) {
+        sourcePath.eachFileRecurse { File childPath ->
+          def relativePath = relativePath(sourcePath, childPath)
+          logger.debug("Working with relative path: $relativePath")
+          remoteDirs.each { String dstDir ->
+            if (childPath.isDirectory()) {
+              def dstParentDir = separatorsToUnix(concat(dstDir, relativePath))
+              createRemoteDirectory(dstParentDir, channel)
+            } else {
+              def dstPath = separatorsToUnix(concat(dstDir, relativePath))
+              doPut(channel, childPath.canonicalFile, dstPath, scpOptions)
+            }
+          }
+        }
+      } else {
+        remoteDirs.each { String dstDir ->
+          def dstPath = separatorsToUnix(concat(dstDir, sourcePath.name))
+          doPut(channel, sourcePath, dstPath, scpOptions)
+        }
+        remoteFiles.each { String dstFile ->
+          doPut(channel, sourcePath, dstFile, scpOptions)
+        }
+      }
+    }
+
+    // Move files to their final destination using predefined command.
+    if (scpOptions.uploadToDirectory && scpOptions.postUploadCommand) {
+      remoteDirs.each { String copiedPath ->
+        exec {
+          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedPath])
+        }
+      }
+      remoteFiles.each { String copiedFilePath ->
+        def copiedPath = getFullPathNoEndSeparator(copiedFilePath)
+        exec {
+          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedFilePath])
+        }
+      }
+    }
+
+  }
+
+  private void download(ScpOptionsDelegate copySpec, ChannelSftp channel) {
+
+    // Download remote files.
+    copySpec.source.remoteFiles.each { String srcFile ->
+      copySpec.target.localDirs.each { File dstDir ->
+        dstDir.mkdirs()
+        doGet(channel, srcFile, new File(dstDir.canonicalPath, getName(srcFile)), new ScpOptions(options.scpOptions, copySpec))
+      }
+      copySpec.target.localFiles.each { File dstFile ->
+        dstFile.parentFile.mkdirs()
+        doGet(channel, srcFile, dstFile, new ScpOptions(options.scpOptions, copySpec))
+      }
+    }
+
+    // Download remote directories.
+    copySpec.source.remoteDirs.each { String srcDir ->
+      remoteEachFileRecurse(srcDir, channel) { String srcFile ->
+        copySpec.target.localDirs.each { File dstDir ->
+          def dstFile = new File(dstDir.canonicalPath, relativePath(srcDir, srcFile))
+          dstFile.parentFile.mkdirs()
+          doGet(channel, srcFile, new File(dstDir.canonicalPath, relativePath(srcDir, srcFile)), new ScpOptions(options.scpOptions, copySpec))
+        }
+      }
+      copySpec.target.localFiles.each { File dstFile ->
+        logger.warn("Can't copy remote directory ($srcDir) to a local file (${dstFile.path})!")
+      }
+    }
+
+  }
+
+  static private String relativePath(File parent, File child) {
+    separatorsToUnix(child.canonicalPath.replace(parent.canonicalPath, '')).replaceAll('^/', '')
+  }
+
+  static private String relativePath(String parent, String child) {
+    normalizeNoEndSeparator(child)
+        .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
+        .replace(File.separatorChar.toString(), '/')
+  }
+
+  private void createRemoteDirectory(String dstFile, ChannelSftp channel) {
+    boolean dirExists = true
+    try {
+      channel.lstat(dstFile)
+    } catch (SftpException e) {
+      dirExists = false
+    }
+    if (!dirExists) {
+      logger.debug("Creating remote directory: $dstFile")
+      channel.mkdir(dstFile)
+    }
+  }
+
+  private void remoteEachFileRecurse(String remoteDir, ChannelSftp channel, Closure cl) {
+    if (options.verbose) {
+      logger.info("> Getting file list from ${remoteDir} directory")
+    }
+    Vector<ChannelSftp.LsEntry> entries = channel.ls(separatorsToUnix(remoteDir))
+    entries.each { ChannelSftp.LsEntry entry ->
+      def childPath = separatorsToUnix(concat(remoteDir, entry.filename))
+      if (entry.attrs.isDir()) {
+        if (!(entry.filename in ['.', '..'])) {
+          remoteEachFileRecurse(childPath, channel, cl)
+        }
+      } else if (entry.attrs.isLink()) {
+        def linkPath = channel.readlink(childPath)
+        if (options.verbose) {
+          logger.info("> Skipping symlink: ${linkPath}")
+        }
+      } else {
+        cl(childPath)
+      }
+    }
+  }
+
+  private void doPut(ChannelSftp channel, File srcFile, String dst, ScpOptions scpOptions) {
+    if (options.verbose) {
+      logger.info("> ${srcFile.canonicalPath} => ${dst}")
+    }
+    def monitor = scpOptions.showProgress ? newMonitor() : null
+    srcFile.withInputStream { input ->
+      channel.put(input, dst, monitor)
+    }
+  }
+
+  private void doGet(ChannelSftp channel, String srcFile, File dstFile, ScpOptions scpOptions) {
+    if (options.verbose) {
+      logger.info("> ${srcFile} => ${dstFile.canonicalPath}")
+    }
+    def monitor = scpOptions.showProgress ? newMonitor() : null
+    dstFile.withOutputStream { output ->
+      channel.get(srcFile, output, monitor)
+    }
+  }
+
+  public void sftpChannel(Closure cl) {
+    connect()
+    ChannelSftp channel = (ChannelSftp) session.openChannel("sftp")
+    channel.connect()
+    try {
+      cl(channel)
+    } finally {
+      channel.disconnect()
+    }
+  }
+
+  private SftpProgressMonitor newMonitor() {
+    new LoggerProgressMonitor(logger)
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
   //  ______ _____
   // |  ____/ ____|
   // | |__ | (___
@@ -187,111 +437,6 @@ class SessionDelegate {
     new RemoteFile(this, destination)
   }
 
-  // TODO: Allow remote file manipulation through closure.
-  // RemoteFile remoteFile(String destination, Closure cl) {
-  //
-  // }
-  //
-  // RemoteFile remoteDir(String destination, Closure cl) {
-  //
-  // }
-
-  boolean mkdir(String destination) {
-    // TODO: improve error handling
-    exec "mkdir -p ${destination}"
-  }
-
-  boolean remkdir(String destination) {
-    delete(destination)
-    mkdir(destination)
-  }
-
-  // TODO: Allow setting parameters (permissions, owner etc.) for remote directory creation through closure.
-  // boolean mkdir(Closure cl) {
-  //
-  // }
-  //
-  // boolean remkdir(Closure cl) {
-  //
-  // }
-
-  boolean delete(String destination) {
-    // TODO: improve error handling
-    exec "rm -rf ${destination}"
-  }
-  
-  boolean touch(String destination) {
-    // TODO: improve error handling
-    exec "touch ${destination}"
-  }
-
-  // get facts
-  // isUbuntu, isRedhat, isCentOS
-  // remoteDate()
-  // remoteTimestamp()
-
-  // get environment variables
-  // remoteEnv
-  
-  // file/dir listing
-  // remoteFile().eachFile { RemoteFile ->
-  // 
-  // }
-    
-  // command output stream??
-  
-  // def $(String name) {
-  //
-  // }
-  
-  // add define blocks
-  // defineFact('currentDirEmpty', 'ls -la | wc -l', BOOLEAN, NOT_CACHED)
-  // if ($('currentDirEmpty')) {
-  //   
-  // }
-  // defineFact('abc') {
-  // 
-  //   return 'true'
-  // }
-  // defineBlock('ensureRunning') { String service ->
-  //   exec "/sbin/service $service start"
-  // }
-  // run 'ensureRunning', 'httpd'
-  //
-  // defineResource('service') {
-  //   parameter 'enabled', Boolean, true
-  //   exists {
-  //     exec "/sbin/service $('name') status"
-  //   }
-  //   create {
-  //     exec "/sbin/service $('name') start"
-  //   }
-  //   valid {
-  //     exec "/sbin/service $('name') status"
-  //   }
-  //   ensure {
-  //     exec "/sbin/service $('name') start"
-  //   }
-  //   remove {
-  //     
-  //   }
-  // }
-  // resource('service', 'httpd') {
-  //   enable = true
-  // }
-  // removeResource('service', 'httpd') 
-  // 
-  
-  // add rollback 
-  // TransactionResult transaction(Closure cl) {
-  //  
-  // }.onComplete {
-  //
-  // }.onFailure {
-  //
-  // }
-  
-  
   ////////////////////////////////////////////////////////////////////////////////////////////////
   //   _____ _    _
   //  / ____| |  | |
@@ -319,6 +464,230 @@ class SessionDelegate {
       command = "exit"
       failOnError = true
       showOutput = false
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  //   ________   ________ _____
+  //  |  ____\ \ / /  ____/ ____|
+  //  | |__   \ V /| |__ | |
+  //  |  __|   > < |  __|| |
+  //  | |____ / . \| |___| |____
+  //  |______/_/ \_\______\_____|
+  //
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private static final int RETRY_DELAY = 1000
+
+  CommandOutput exec(String cmd) {
+    doExec(cmd, new ExecOptions(options.execOptions))
+  }
+
+  CommandOutput exec(GString cmd) {
+    doExec(cmd?.toString(), new ExecOptions(options.execOptions))
+  }
+
+  CommandOutput exec(Collection<String> cmds) {
+    doExec(cmds, new ExecOptions(options.execOptions))
+  }
+
+  CommandOutput exec(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptionsDelegate) Closure cl) {
+    ExecOptionsDelegate delegate = new ExecOptionsDelegate()
+    cl.delegate = delegate
+    cl.resolveStrategy = DELEGATE_FIRST
+    cl()
+    if (!delegate.command) {
+      new SshException('Remote command is not specified!')
+    }
+    doExec(delegate.command, new ExecOptions(options.execOptions, delegate.execOptions))
+  }
+
+  CommandOutput exec(Map<?, ?> execOptions) {
+    doExec(execOptions?.command?.toString(), new ExecOptions(options.execOptions, execOptions))
+  }
+
+  /**
+   * Execute the specified command and returns a boolean to
+   * signal if the command execution was successful.
+   *
+   * @param cmd a command to execute remotely
+   * @return true, if command was successful
+   */
+  boolean ok(String cmd) {
+    doExec(cmd, new ExecOptions(failOnError: false, showOutput: false, showCommand: false)).exitStatus == 0
+  }
+
+  /**
+   * Execute the specified command and returns a boolean to
+   * signal if the command execution was unsuccessful.
+   *
+   * @param cmd a command to execute remotely
+   * @return true, if command was unsuccessful
+   */
+  boolean fail(String cmd) {
+    !ok(cmd)
+  }
+
+  def prefix(String prefix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+    def originalPrefix = options.execOptions.prefix
+    options.execOptions.prefix = prefix
+    def result = null
+    try {
+      cl.delegate = this
+      cl.resolveStrategy = DELEGATE_FIRST
+      result = cl()
+    } finally {
+      options.execOptions.prefix = originalPrefix
+    }
+    result
+  }
+
+  def suffix(String suffix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+    def originalSuffix = options.execOptions.suffix
+    options.execOptions.suffix = suffix
+    def result = null
+    try {
+      cl.delegate = this
+      cl.resolveStrategy = DELEGATE_FIRST
+      result = cl()
+    } finally {
+      options.execOptions.suffix = originalSuffix
+    }
+    result
+  }
+
+  private CommandOutput doExec(Collection<String> commands, ExecOptions execOptions) {
+    CommandOutput commandOutput = null
+    commands.each { String cmd ->
+      commandOutput = doExec(cmd, new ExecOptions(options.execOptions, execOptions))
+    }
+    commandOutput
+  }
+
+  private CommandOutput doExec(String cmd, ExecOptions options) {
+    connect()
+    catchExceptions(options) {
+      awaitTermination(executeCommand(cmd, options), options)
+    }
+  }
+
+  private ChannelData executeCommand(String cmd, ExecOptions options) {
+    session.timeout = options.maxWait
+    String actualCommand = cmd
+    if (options.escapeCharacters) {
+      if (options.escapeCharacters.contains('\\')) {
+        actualCommand = actualCommand.replace('\\', '\\\\')
+      }
+      options.escapeCharacters.each { ch ->
+        if (ch != '\\') {
+          actualCommand = actualCommand.replace(ch.toString(), '\\' + ch)
+        }
+      }
+    }
+    if (options.prefix) {
+      actualCommand = "${options.prefix} ${actualCommand}"
+    }
+    if (options.suffix) {
+      actualCommand = "${actualCommand} ${options.suffix}"
+    }
+    if (options.showCommand) {
+      logger.info("> " + actualCommand)
+    }
+    ChannelExec channel = (ChannelExec) session.openChannel("exec")
+    def savedOutput = new ByteArrayOutputStream()
+    def output = savedOutput
+    if (options.showOutput) {
+      def systemOutput = new LoggerOutputStream(logger)
+      output = new TeeOutputStream(savedOutput, systemOutput)
+    }
+    channel.command = actualCommand
+    channel.outputStream = output
+    channel.extOutputStream = output
+    channel.setPty(options.usePty)
+    channel.connect()
+    new ChannelData(channel: channel, output: savedOutput)
+  }
+
+  class ChannelData {
+    ByteArrayOutputStream output
+    Channel channel
+  }
+
+  private CommandOutput awaitTermination(ChannelData channelData, ExecOptions options) {
+    Channel channel = channelData.channel
+    try {
+      def thread = null
+      thread =
+          new Thread() {
+            void run() {
+              while (!channel.isClosed()) {
+                if (thread == null) {
+                  return
+                }
+                try {
+                  sleep(RETRY_DELAY)
+                } catch (Exception e) {
+                  // ignored
+                }
+              }
+            }
+          }
+      thread.start()
+      thread.join(options.maxWait)
+      if (thread.isAlive()) {
+        thread = null
+        return failWithTimeout(options)
+      } else {
+        int ec = channel.exitStatus
+        verifyExitCode(ec, options)
+        return new CommandOutput(ec, channelData.output.toString())
+      }
+    } finally {
+      channel.disconnect()
+    }
+  }
+
+  private CommandOutput catchExceptions(ExecOptions options, Closure cl) {
+    try {
+      return cl()
+    } catch (JSchException e) {
+      if (e.getMessage().indexOf("session is down") >= 0) {
+        return failWithTimeout(options)
+      } else {
+        return failWithException(options, e)
+      }
+    }
+  }
+
+  private CommandOutput failWithTimeout(ExecOptions options) {
+    setChanged(true)
+    if (options.failOnError) {
+      throw new SshException("Session timeout!")
+    } else {
+      logger.warn("Session timeout!")
+      return new CommandOutput(-1, "Session timeout!")
+    }
+  }
+
+  private CommandOutput failWithException(ExecOptions options, Throwable e) {
+    if (options.failOnError) {
+      throw new SshException("Command failed with exception", e)
+    } else {
+      logger.warn("Caught exception: " + e.getMessage())
+      return new CommandOutput(-1, e.getMessage(), e)
+    }
+  }
+
+  private void verifyExitCode(int exitCode, ExecOptions options) {
+    if (exitCode != 0) {
+      String msg = "Remote command failed with exit status $exitCode"
+      if (options.failOnError) {
+        throw new SshException(msg)
+      } else {
+        if (options.showOutput) {
+          logger.warn(msg)
+        }
+      }
     }
   }
 

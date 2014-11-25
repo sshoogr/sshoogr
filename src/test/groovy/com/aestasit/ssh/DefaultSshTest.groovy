@@ -16,9 +16,10 @@
 
 package com.aestasit.ssh
 
-import static com.aestasit.ssh.DefaultSsh.*
-
 import org.junit.Test
+
+import static com.aestasit.ssh.DefaultSsh.execOptions
+import static com.aestasit.ssh.DefaultSsh.remoteSession
 
 /**
  * Test for static default SSH DSL implementation.

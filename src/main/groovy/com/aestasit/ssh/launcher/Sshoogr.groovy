@@ -25,7 +25,7 @@ package com.aestasit.ssh.launcher
 final class Sshoogr {
   
   static void main(String[] args) {
-    
+    // TODO: Implement
   } 
   
 }

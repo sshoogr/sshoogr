@@ -23,4 +23,5 @@ package com.aestasit.ssh.launcher
  *
  */
 interface SshoogrOptions {
+  // TODO: Implement
 }

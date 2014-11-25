@@ -32,19 +32,21 @@ import static groovy.lang.Closure.DELEGATE_FIRST
 class SshOptions extends CommonOptions {
 
   // SSH connection options.
-  String defaultHost               = null
-  String defaultUser               = null
-  File defaultKeyFile              = null
-  String defaultPassPhrase         = null
-  String defaultPassword           = null
-  int defaultPort                  = 22
-  boolean trustUnknownHosts        = false
-  boolean reuseConnection          = false
-  boolean verbose                  = false
-  Logger logger                    = null
+  String defaultHost                 = null
+  String defaultUser                 = null
+  File defaultKeyFile                = null
+  String defaultPassPhrase           = null
+  String defaultPassword             = null
+  int defaultPort                    = 22
+  boolean trustUnknownHosts          = false
+  Map<String, String> jschProperties = [:]
+
+  boolean reuseConnection            = false
+  boolean verbose                    = false
+  Logger logger                      = null
   
   // SSH command execution options.
-  ExecOptions execOptions          = new ExecOptions()
+  ExecOptions execOptions            = new ExecOptions()
 
   def execOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ExecOptions) Closure cl) {
     cl.delegate = execOptions
