@@ -29,8 +29,6 @@ class ExecOptions extends CommonOptions {
   Long maxWait             = 0
 
   Long succeedOnExitStatus = 0
-  File outputFile          = null
-  Boolean appendFile       = false
   Boolean usePty           = true
 
   String prefix            = null
