@@ -8,7 +8,7 @@
  */
 
 @Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.4')
-import static com.aestasit.ssh.DefaultSsh.*
+import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 
 def repos = [
   'project1',
