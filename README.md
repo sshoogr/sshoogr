@@ -258,8 +258,6 @@ The `sshOptions` may also contain a nested `execOptions` structure, which define
  - `showCommand` (defaults to true) - If set to true, remote command is printed.
  - `maxWait` (defaults to 0) - Number of milliseconds to wait for command to finish. If it is set to 0, then library will wait forever.
  - `succeedOnExitStatus` (defaults to 0) - Exit code that indicates commands success. If command returns different exit code, then build will fail.
- - `outputFile` - File, to which to send command's output.
- - `appendFile` (defaults to false) - If outputFile is specified, then this option indicates if data should be appended or file should be created from scratch.
  - `failOnError` (defaults to true) - If set to true, failed remote commands will fail the build.
  - `verbose` (defaults to false) - If set to true, library produces more debug output.
  - `prefix` - String to prepend to each executed command, for example, "`sudo`".
@@ -313,8 +311,6 @@ A more verbose example of creating a `SshOptions` object can be found below:
         failOnError = false
         succeedOnExitStatus = 0
         maxWait = 30000
-        outputFile = new File("output.file")
-        appendFile = true
       }
 
       scpOptions.with {

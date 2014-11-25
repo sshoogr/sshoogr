@@ -56,8 +56,6 @@ class SshDslTest extends BaseSshTest {
         failOnError = false
         succeedOnExitStatus = 0
         maxWait = 30000
-        outputFile = new File("output.file")
-        appendFile = true
         usePty = true
       }
 

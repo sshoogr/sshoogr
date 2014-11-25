@@ -38,8 +38,6 @@ class DefaultSshTest extends BaseSshTest {
     trustUnknownHosts = true
     execOptions {
       maxWait = 30000
-      outputFile = new File("output.file")
-      appendFile = true
     }
     remoteSession('user2:654321@localhost:2233') {
       exec 'whoami'
