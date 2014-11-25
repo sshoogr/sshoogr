@@ -252,4 +252,21 @@ class SshDslTest extends BaseSshTest {
     }
   }
 
+  @Test
+  void testExecGStringCommand() throws Exception {
+    def cmd = 'whoami'
+    engine.remoteSession {
+      assert exec(command: "$cmd", showOutput: true).output.trim() == 'root'
+    }
+  }
+
+  @Test
+  void testExecGStringCommandArray() throws Exception {
+    def cmd = 'whoami'
+    List cmds = ["$cmd", "$cmd"]
+    engine.remoteSession {
+      exec(command: cmds, showOutput: true)
+    }
+  }
+
 }
