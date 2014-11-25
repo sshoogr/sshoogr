@@ -39,6 +39,7 @@ class DefaultSshTest extends BaseSshTest {
       exec 'whoami'
       exec 'du -s'
       exec 'rm -rf /tmp/test.file'
+      execCmd 'perl', '-e', 'if (1) { print "ok" }'
       scp testFile, '/tmp/test.file'
       remoteFile('/etc/init.conf').text = 'content'
     }
