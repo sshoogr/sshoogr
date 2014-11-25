@@ -503,6 +503,9 @@ class SessionDelegate {
   }
 
   CommandOutput exec(Map<?, ?> execOptions) {
+    if (!execOptions?.command) {
+      throw new SshException("The 'command' parameter is not specified!")
+    }
     doExec(execOptions?.command?.toString(), new ExecOptions(options.execOptions, execOptions))
   }
 

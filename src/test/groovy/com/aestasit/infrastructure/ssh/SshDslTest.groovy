@@ -201,12 +201,12 @@ class SshDslTest extends BaseSshTest {
   void testMultiExec() throws Exception {
     engine.remoteSession {
       exec([
-	  'ls -la',
-	  'whoami'
+          'ls -la',
+          'whoami'
       ])
       exec(failOnError: false, showOutput: true, command: [
-	  'ls -la',
-	  'whoami'
+          'ls -la',
+          'whoami'
       ])
     }
   }
@@ -226,8 +226,8 @@ class SshDslTest extends BaseSshTest {
     engine.remoteSession {
       prefix('sudo') {
         exec([
-	    'ls -la',
-	    'whoami'
+            'ls -la',
+            'whoami'
         ])
       }
     }
@@ -296,6 +296,19 @@ class SshDslTest extends BaseSshTest {
     println message
     Thread.allStackTraces.each { Thread t, StackTraceElement[] ste ->
       println t.name
+    }
+  }
+
+  @Test
+  void testExecMapValidation() throws Exception {
+    engine.remoteSession {
+      try {
+        exec commands: "whoami"
+        fail("Should not accept commands parameter")
+      } catch(SshException e) {
+        assert e.message == "The 'command' parameter is not specified!"
+      }
+      exec command: "whoami"
     }
   }
 

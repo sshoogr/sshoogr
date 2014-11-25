@@ -90,7 +90,7 @@ class SshDslEngine {
 
   private void safeDisconnect(SessionDelegate delegate) {
     try {
-      delegate.session.disconnect()
+      delegate.disconnect()
     } catch (Exception e) {
     }
   }
