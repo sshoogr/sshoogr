@@ -1,29 +1,30 @@
 
-group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.18-SNAPSHOT'
-
 buildscript {
   repositories { mavenCentral() }
   dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.2.4' }
-  dependencies { classpath 'org.ajoberstar:gradle-git:0.8.0' }
 }
+
+plugins {
+  id "com.github.hierynomus.license" version "0.11.0"
+  id "org.ajoberstar.github-pages" version "0.10.0"
+  id "org.asciidoctor.gradle.asciidoctor" version "1.5.0"
+}
+
+group = 'com.aestasit.infrastructure.sshoogr'
+version = '0.9.18-SNAPSHOT'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'cobertura'
-apply plugin: 'github-pages'
 
 apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
 apply from: 'docs.gradle'
 
-sourceCompatibility = '1.6'
-targetCompatibility = '1.6'
-
-compileGroovy {
-  options.compilerArgs << '-Xlint:-options'
+license {
+  header rootProject.file('HEADER')
 }
 
 dependencies {
