@@ -26,6 +26,12 @@ class ExecTest extends BaseIntegrationTest {
       exec('uname -a')
       exec('date')
       exec('hostname')
+      exec {
+        prefix = "sudo sh -c '"
+        suffix = "'"
+        escapeCharacters = ['"', "'", '\\', '/']
+        command = 'printf "%s\n%s\n" test rest'
+      }
     }
   }
 
