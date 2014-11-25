@@ -11,7 +11,7 @@ plugins {
 }
 
 group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.18-SNAPSHOT'
+version = '0.9.18'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
