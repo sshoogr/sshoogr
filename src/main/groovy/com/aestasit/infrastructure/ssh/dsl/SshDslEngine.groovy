@@ -74,16 +74,25 @@ class SshDslEngine {
       }
       cl.delegate = delegate
       cl.resolveStrategy = DELEGATE_FIRST
-      result = cl(context)
-      if ((!options.reuseConnection) &&
-          delegate.session?.connected) {
-        try {
-          delegate.session.disconnect()
-        } catch (Exception e) {
+      try {
+        result = cl(context)
+        if ((!options.reuseConnection) &&
+            delegate.session?.connected) {
+          safeDisconnect(delegate)
         }
+      } catch (Throwable ex) {
+        safeDisconnect(delegate)
+        throw ex
       }
     }
     result
+  }
+
+  private void safeDisconnect(SessionDelegate delegate) {
+    try {
+      delegate.session.disconnect()
+    } catch (Exception e) {
+    }
   }
 }
 

@@ -21,6 +21,8 @@ import com.aestasit.infrastructure.ssh.log.SysOutLogger
 import org.junit.BeforeClass
 import org.junit.Test
 
+import java.util.concurrent.TimeoutException
+
 /**
  * SSH DSL test case that verifies different DSL syntax use cases.
  *
@@ -266,6 +268,34 @@ class SshDslTest extends BaseSshTest {
     List cmds = ["$cmd", "$cmd"]
     engine.remoteSession {
       exec(command: cmds, showOutput: true)
+    }
+  }
+
+  @Test
+  void testExceptionInClosure() throws Exception {
+    engine.remoteSession {
+      connect()
+      disconnect()
+    }
+    printThreadNames("THREADS BEFORE:")
+    List<String> threadsBefore = Thread.allStackTraces.collect { key, value -> key.name }
+    try {
+      engine.remoteSession {
+        exec "whoami"
+        throw new TimeoutException("Bang!")
+      }
+    } catch (e) {
+      assert e instanceof TimeoutException
+      printThreadNames("THREADS AFTER:")
+      List<String> threadsAfter = Thread.allStackTraces.collect { key, value -> key.name }
+      assert !threadsAfter.contains('Connect thread 127.0.0.1 session')
+    }
+  }
+
+  private void printThreadNames(String message) {
+    println message
+    Thread.allStackTraces.each { Thread t, StackTraceElement[] ste ->
+      println t.name
     }
   }
 
