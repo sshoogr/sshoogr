@@ -1,31 +1,25 @@
 
-buildscript {
-  repositories { mavenCentral() }
-  dependencies { classpath 'net.saliman:gradle-cobertura-plugin:2.2.4' }
-}
-
 plugins {
+
+  id 'groovy'
+  id 'maven'
+  id 'eclipse'
+  id 'idea'
+  id 'project-report'
+
+  id "net.saliman.cobertura" version "2.2.5"
   id "com.github.hierynomus.license" version "0.11.0"
   id "org.ajoberstar.github-pages" version "0.10.0"
   id "org.asciidoctor.gradle.asciidoctor" version "1.5.0"
+
 }
 
 group = 'com.aestasit.infrastructure.sshoogr'
 version = '0.9.18'
 
-apply plugin: 'groovy'
-apply plugin: 'maven'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'cobertura'
-
 apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
 apply from: 'docs.gradle'
-
-license {
-  header rootProject.file('HEADER')
-}
 
 dependencies {
   compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
@@ -69,3 +63,8 @@ idea {
     testSourceDirs += file('src/integrationTest/groovy')
   }
 }
+
+license {
+  header rootProject.file('HEADER')
+}
+
