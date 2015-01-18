@@ -154,6 +154,22 @@ class RemoteFile {
     resolveId(delegate.exec("getent group ${group} | cut -d: -f3"))
   }
 
+  /**
+   * Tests that the path exists and is not a directory.
+   * @return isNormalFile
+   */
+  boolean isFile() {
+    !delegate.exec("test -f ${destination}").failed()
+  }
+
+  /**
+   * Tests that the path exists and is not a file.
+   * @return isNormalDirectory
+   */
+  boolean isDirectory() {
+    !delegate.exec("test -d ${destination}").failed()
+  }
+
   static private Integer resolveId(out) {
     if (out.output.isInteger()) {
       return  out.output.toInteger()
