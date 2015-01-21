@@ -72,6 +72,22 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
 	callback.onExit(0)
       }
 
+      command('^test -f /etc/init.conf$') { inp, out, err, callback, env ->
+        callback.onExit(0)
+      }
+
+      command('^test -d /etc/init.conf$') { inp, out, err, callback, env ->
+        callback.onExit(1)
+      }
+
+      command('^test -d /etc$') { inp, out, err, callback, env ->
+        callback.onExit(0)
+      }
+
+      command('^test -f /etc$') { inp, out, err, callback, env ->
+        callback.onExit(1)
+      }
+
       // Create file expectations.
       dir('.')
       dir('/tmp')

@@ -239,6 +239,16 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
+  void testRemoteFileIsFile() throws Exception {
+    engine.remoteSession {
+      assert remoteFile('/etc/init.conf').file
+      assert !remoteFile('/etc/init.conf').directory
+      assert remoteFile('/etc').directory
+      assert !remoteFile('/etc').file
+    }
+  }
+
+  @Test
   void testOk() throws Exception {
     engine.remoteSession {
       assert ok('whoami')
