@@ -525,7 +525,7 @@ class SessionDelegate {
    * @return true, if command was successful
    */
   boolean ok(String cmd) {
-    doExec(cmd, new ExecOptions(failOnError: false, showOutput: false, showCommand: false)).exitStatus == 0
+    doExec(cmd, new ExecOptions(options.execOptions, [failOnError: false, showOutput: false, showCommand: false])).exitStatus == 0
   }
 
   /**

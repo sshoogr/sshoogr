@@ -256,6 +256,15 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
+  void testOkWithPrefix() throws Exception {
+    engine.remoteSession {
+      prefix 'sudo', {
+        assert ok('which service')
+      }
+    }
+  }
+
+  @Test
   void testFail() throws Exception {
     engine.remoteSession {
       assert fail('mkdur dur')
