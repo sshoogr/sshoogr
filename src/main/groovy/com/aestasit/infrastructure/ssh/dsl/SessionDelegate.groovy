@@ -53,6 +53,9 @@ class SessionDelegate {
   private String     password       = null
   private boolean    changed        = false
 
+  String proxyHost                 = null
+  String proxyPort                 = null
+
   private Session          session  = null
   private final JSch       jsch
   private final SshOptions options
@@ -68,6 +71,10 @@ class SessionDelegate {
     this.password = options.defaultPassword
     this.keyFile = options.defaultKeyFile
     this.passPhrase = options.defaultPassPhrase
+	
+    this.proxyHost = options.defaultProxyHost
+    this.proxyPort = options.defaultProxyPort
+
     if (options.logger != null) {
       logger = options.logger
     } else {
@@ -76,6 +83,7 @@ class SessionDelegate {
   }
 
   void connect() {
+	
     try  {
       if (session == null || !session.connected || changed) {
 
@@ -90,6 +98,8 @@ class SessionDelegate {
         if (keyFile == null && password == null) {
           throw new SshException("Password or key file is required.")
         }
+			
+		
         session = jsch.getSession(username, host, port)
         if (keyFile != null) {
           if (passPhrase) {
@@ -100,6 +110,10 @@ class SessionDelegate {
         }
 
         session.password = password
+		
+		if(this.proxyHost?.trim() && this.proxyPort?.trim()){
+			session.proxy = new ProxyHTTP (this.proxyHost, Integer.parseInt(this.proxyPort))
+		} 
 
         if (options.verbose) {
           logger.info(">>> Connecting to $host")
@@ -163,6 +177,16 @@ class SessionDelegate {
   void setPassword(String password) {
     this.changed = changed || (this.password != password)
     this.password = password
+  }
+
+ void setProxyHost(String proxyHost) {
+    this.changed = changed || (this.proxyHost != proxyHost)
+    this.proxyHost = proxyHost
+  }
+
+   void setProxyPort(String proxyPort) {
+    this.changed = changed || (this.proxyPort != proxyPort)
+    this.proxyPort = proxyPort
   }
 
   void setPort(int port) {

@@ -18,6 +18,7 @@ package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.SshOptions
 import com.jcraft.jsch.JSch
+import com.jcraft.jsch.ProxyHTTP
 
 import static groovy.lang.Closure.DELEGATE_FIRST
 
@@ -38,6 +39,7 @@ class SshDslEngine {
     this.options = options
     this.jsch = new JSch()
     this.config = new Properties()
+
     config.put("StrictHostKeyChecking", options.trustUnknownHosts ? "no" : "yes")
     if (!options.jschProperties.containsKey("HashKnownHosts")) {
       config.put("HashKnownHosts", "yes")

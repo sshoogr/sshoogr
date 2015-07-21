@@ -44,6 +44,9 @@ class SshOptions extends CommonOptions {
   boolean reuseConnection            = false
   boolean verbose                    = false
   Logger logger                      = null
+
+  String defaultProxyHost                 = null
+  String defaultProxyPort                 = null
   
   // SSH command execution options.
   ExecOptions execOptions            = new ExecOptions()
