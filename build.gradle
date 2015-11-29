@@ -15,7 +15,7 @@ plugins {
 }
 
 group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.19-SNAPSHOT'
+version = '0.9.20-SNAPSHOT'
 
 apply from: 'repos.gradle'
 apply from: 'sonar.gradle'
@@ -31,7 +31,7 @@ dependencies {
   compile "com.jcraft:jsch:${jschVersion}"
   compile "com.lexicalscope.jewelcli:jewelcli:${jewelcliVersion}"
   testCompile "junit:junit:${junitVersion}"
-  testCompile "com.aestasit.infrastructure.mock:groovy-sshd-mock:"
+  testCompile "com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3"
 }
 
 sourceSets {
