@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Aestas/IT
+ * Copyright (C) 2011-2015 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package com.aestasit.infrastructure.ssh.launcher
 
+import com.aestasit.infrastructure.ssh.DefaultSsh
+import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
+import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.control.customizers.ImportCustomizer
+
 /**
  * Sshoogr script launcher application.
  *
@@ -26,6 +31,18 @@ final class Sshoogr {
   
   static void main(String[] args) {
     // TODO: Implement
-  } 
-  
+
+    GroovyShell shell = new GroovyShell(new Binding(args: args), compilerConfiguration())
+    shell.parse(args[])
+
+    SshDslEngine engine = new SshDslEngine()
+    engine.remoteSession {
+
+    }
+  }
+
+  private static CompilerConfiguration compilerConfiguration() {
+    new CompilerConfiguration().addCompilationCustomizers(new ImportCustomizer().addStaticStars(DefaultSsh.name))
+  }
+
 }

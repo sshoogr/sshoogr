@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Aestas/IT
+ * Copyright (C) 2011-2015 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.SshOptions
+import com.aestasit.infrastructure.ssh.log.JschLogger
 import com.jcraft.jsch.JSch
-import com.jcraft.jsch.ProxyHTTP
 
 import static groovy.lang.Closure.DELEGATE_FIRST
 
@@ -35,11 +35,10 @@ class SshDslEngine {
   private final SshOptions options
   private SessionDelegate delegate
 
-  SshDslEngine(SshOptions options)  {
+  SshDslEngine(SshOptions options) {
     this.options = options
     this.jsch = new JSch()
     this.config = new Properties()
-
     config.put("StrictHostKeyChecking", options.trustUnknownHosts ? "no" : "yes")
     if (!options.jschProperties.containsKey("HashKnownHosts")) {
       config.put("HashKnownHosts", "yes")
@@ -59,13 +58,16 @@ class SshDslEngine {
     remoteSession(url, null, cl)
   }
 
-  def remoteSession(String url, Object context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  def remoteSession(String url, Object context,
+                    @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, context) { SessionDelegate sessionDelegate ->
       sessionDelegate.url = url
     }
   }
 
-  private executeSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl, Object context, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure configure) {
+  private executeSession(
+    @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl, Object context,
+    @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure configure) {
     def result = null
     if (cl) {
       if (!options.reuseConnection || delegate == null) {
@@ -79,7 +81,7 @@ class SshDslEngine {
       try {
         result = cl(context)
         if ((!options.reuseConnection) &&
-            delegate.session?.connected) {
+          delegate.session?.connected) {
           safeDisconnect(delegate)
         }
       } catch (Throwable ex) {

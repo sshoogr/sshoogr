@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package com.aestasit.infrastructure.ssh
+package com.aestasit.infrastructure.ssh.log
 
-/**
- * Abstract class holding common configuration options available for EXEC and SCP functionality.
- *
- * @author Andrey Adamovich
- *
- */
-abstract class CommonOptions {
+class JschLogger implements com.jcraft.jsch.Logger {
 
-  Boolean failOnError        = true
-  Boolean sshDebug           = false
+  private Logger logger
 
-  static <T> T setValue(T val1, T dflt) {
-    val1 != null ? val1 : dflt
+  public JschLogger(Logger logger) {
+    this.logger = logger
   }
 
-  static <T> T setValue(T val2, T val1, T dflt) {
-    setValue(val2, setValue(val1, dflt))
+  public boolean isEnabled(int pLevel) {
+    return true;
   }
+
+  public void log(int pLevel, String pMessage) {
+    logger.debug(pMessage)
+  }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Aestas/IT
+ * Copyright (C) 2011-2015 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,7 @@ import com.aestasit.infrastructure.ssh.ExecOptions
 import com.aestasit.infrastructure.ssh.ScpOptions
 import com.aestasit.infrastructure.ssh.SshException
 import com.aestasit.infrastructure.ssh.SshOptions
-import com.aestasit.infrastructure.ssh.log.Logger
-import com.aestasit.infrastructure.ssh.log.LoggerOutputStream
-import com.aestasit.infrastructure.ssh.log.LoggerProgressMonitor
-import com.aestasit.infrastructure.ssh.log.Slf4jLogger
+import com.aestasit.infrastructure.ssh.log.*
 import com.jcraft.jsch.*
 import org.apache.commons.io.output.TeeOutputStream
 
@@ -45,24 +42,25 @@ class SessionDelegate {
   private static final int DEFAULT_SSH_PORT = 22
   private static final Pattern SSH_URL = ~/^(([^:@]+)(:([^@]+))?@)?([^:]+)(:(\d+))?$/
 
-  private String     host           = null
-  private int        port           = DEFAULT_SSH_PORT
-  private String     username       = null
-  private File       keyFile        = null
-  private String     passPhrase     = null
-  private String     password       = null
-  private boolean    changed        = false
+  private String host = null
+  private int port = DEFAULT_SSH_PORT
+  private String username = null
+  private File keyFile = null
+  private String passPhrase = null
+  private String password = null
+  private boolean changed = false
 
-  String proxyHost                 = null
-  String proxyPort                 = null
+  String proxyHost = null
+  String proxyPort = null
 
-  private Session          session  = null
-  private final JSch       jsch
+  private Session session = null
+  private final JSch jsch
   private final SshOptions options
 
-  protected Logger logger           = null
+  protected Logger logger = null
 
   SessionDelegate(JSch jsch, SshOptions options) {
+
     this.jsch = jsch
     this.options = options // TODO: we should clone this object to allow per session settings.
     this.host = options.defaultHost
@@ -71,7 +69,7 @@ class SessionDelegate {
     this.password = options.defaultPassword
     this.keyFile = options.defaultKeyFile
     this.passPhrase = options.defaultPassPhrase
-	
+
     this.proxyHost = options.defaultProxyHost
     this.proxyPort = options.defaultProxyPort
 
@@ -80,11 +78,15 @@ class SessionDelegate {
     } else {
       logger = new Slf4jLogger()
     }
+    if (options.sshDebug) {
+      jsch.setLogger(new JschLogger(logger))
+    }
+
   }
 
   void connect() {
-	
-    try  {
+
+    try {
       if (session == null || !session.connected || changed) {
 
         disconnect()
@@ -98,8 +100,8 @@ class SessionDelegate {
         if (keyFile == null && password == null) {
           throw new SshException("Password or key file is required.")
         }
-			
-		
+
+
         session = jsch.getSession(username, host, port)
         if (keyFile != null) {
           if (passPhrase) {
@@ -110,10 +112,10 @@ class SessionDelegate {
         }
 
         session.password = password
-		
-		if(this.proxyHost?.trim() && this.proxyPort?.trim()){
-			session.proxy = new ProxyHTTP (this.proxyHost, Integer.parseInt(this.proxyPort))
-		} 
+
+        if (this.proxyHost?.trim() && this.proxyPort?.trim()) {
+          session.proxy = new ProxyHTTP(this.proxyHost, Integer.parseInt(this.proxyPort))
+        }
 
         if (options.verbose) {
           logger.info(">>> Connecting to $host")
@@ -179,12 +181,12 @@ class SessionDelegate {
     this.password = password
   }
 
- void setProxyHost(String proxyHost) {
+  void setProxyHost(String proxyHost) {
     this.changed = changed || (this.proxyHost != proxyHost)
     this.proxyHost = proxyHost
   }
 
-   void setProxyPort(String proxyPort) {
+  void setProxyPort(String proxyPort) {
     this.changed = changed || (this.proxyPort != proxyPort)
     this.proxyPort = proxyPort
   }
@@ -249,7 +251,7 @@ class SessionDelegate {
 
   static private void validateCopySpec(ScpOptionsDelegate options) {
     if (options.source.type == null || options.source.type == UNKNOWN ||
-        options.target.type == null || options.target.type == UNKNOWN) {
+      options.target.type == null || options.target.type == UNKNOWN) {
       throw new SshException("Either scp source (from) or target (into) is of unknown type!")
     }
     if (options.source.type == options.target.type) {
@@ -373,8 +375,8 @@ class SessionDelegate {
 
   static private String relativePath(String parent, String child) {
     normalizeNoEndSeparator(child)
-        .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
-        .replace(File.separatorChar.toString(), '/')
+      .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
+      .replace(File.separatorChar.toString(), '/')
   }
 
   private void createRemoteDirectory(String dstFile, ChannelSftp channel) {
@@ -479,7 +481,8 @@ class SessionDelegate {
     su("root", password, cl)
   }
 
-  def su(String username, String password, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  def su(String username, String password,
+         @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     exec {
       command = "su $username $password"
       failOnError = true
@@ -546,7 +549,7 @@ class SessionDelegate {
    * signal if the command execution was successful.
    *
    * @param cmd a command to execute remotely
-   * @return true, if command was successful
+   * @return true , if command was successful
    */
   boolean ok(String cmd) {
     doExec(cmd, new ExecOptions(options.execOptions, [failOnError: false, showOutput: false, showCommand: false])).exitStatus == 0
@@ -557,7 +560,7 @@ class SessionDelegate {
    * signal if the command execution was unsuccessful.
    *
    * @param cmd a command to execute remotely
-   * @return true, if command was unsuccessful
+   * @return true , if command was unsuccessful
    */
   boolean fail(String cmd) {
     !ok(cmd)
@@ -653,20 +656,20 @@ class SessionDelegate {
     try {
       def thread = null
       thread =
-          new Thread() {
-            void run() {
-              while (!channel.isClosed()) {
-                if (thread == null) {
-                  return
-                }
-                try {
-                  sleep(RETRY_DELAY)
-                } catch (Exception e) {
-                  // ignored
-                }
+        new Thread() {
+          void run() {
+            while (!channel.isClosed()) {
+              if (thread == null) {
+                return
+              }
+              try {
+                sleep(RETRY_DELAY)
+              } catch (Exception e) {
+                // ignored
               }
             }
           }
+        }
       thread.start()
       thread.join(options.maxWait)
       if (thread.isAlive()) {
@@ -736,7 +739,8 @@ class SessionDelegate {
   //
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  def tunnel(int localPort, String remoteHost, int remotePort, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  def tunnel(int localPort, String remoteHost, int remotePort,
+             @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     connect()
     session.setPortForwardingL(localPort, remoteHost, remotePort)
     cl.delegate = this
@@ -744,7 +748,8 @@ class SessionDelegate {
     cl()
   }
 
-  def tunnel(String remoteHost, int remotePort, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  def tunnel(String remoteHost, int remotePort,
+             @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     connect()
     int localPort = findFreePort()
     session.setPortForwardingL(localPort, remoteHost, remotePort)
