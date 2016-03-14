@@ -58,6 +58,7 @@ class RemoteFile {
     text.eachLine { line -> 
       tempFile << "${line.trim()}\n" 
     }
+
     try {
       delegate.scp {
         from { localFile(tempFile) }
@@ -66,6 +67,11 @@ class RemoteFile {
     } finally {
       tempFile.delete()
     } 
+  }
+
+  void setAppendText(String textToAppend) {
+      String originalText = getText()
+      setText(originalText + textToAppend)
   }
 
   void touch() {
