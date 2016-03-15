@@ -34,6 +34,7 @@ dependencies {
   compile "commons-codec:commons-codec:${commonsCodecVersion}"
   compile "com.jcraft:jsch:${jschVersion}"
   compile "com.lexicalscope.jewelcli:jewelcli:${jewelcliVersion}"
+  compile 'org.fusesource.jansi:jansi:1.11'
   testCompile "junit:junit:${junitVersion}"
   testCompile "com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3"
   testCompile "com.github.stefanbirkner:system-rules:1.16.0"
