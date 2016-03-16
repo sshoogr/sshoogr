@@ -16,15 +16,36 @@
 
 package com.aestasit.infrastructure.ssh.launcher
 
+import com.lexicalscope.jewel.cli.Option
+import com.lexicalscope.jewel.cli.Unparsed
+
 /**
- * Sshoogr launcher application options interface.
+ * Sshoogr options parsed from command-line parameters.
  *
  * @author Andrey Adamovich
  *
  */
 interface SshoogrOptions {
 
+  @Option(defaultValue = [ '127.0.0.1' ], shortName = [ 'h' ], description = "default host")
+  String getHost()
 
+  @Option(defaultValue = [ 'root' ], shortName = [ 'u' ], description = "default user name")
+  String getUser()
 
+  @Option(defaultToNull = true, shortName = [ 'i' ], description = "path to default key file")
+  File getKey()
+
+  @Option(defaultToNull = true, shortName = [ 'p' ], description = "default password")
+  String getPassword()
+
+  @Option(defaultValue = [ "22" ], description = "default port")
+  int getPort()
+
+  @Option(description = "trust unknown hosts")
+  boolean isTrust()
+
+  @Unparsed(defaultValue = [ 'default.sshoogr' ] )
+  Collection<File> getInputFiles()
 
 }

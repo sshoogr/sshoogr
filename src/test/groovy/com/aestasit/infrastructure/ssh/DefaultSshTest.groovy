@@ -34,7 +34,7 @@ import static com.aestasit.infrastructure.ssh.DefaultSsh.setTrustUnknownHosts
 class DefaultSshTest extends BaseSshTest {
 
   @Test
-  def void testStaticMethods() throws Exception {
+  void testStaticMethods() throws Exception {
     trustUnknownHosts = true
     execOptions {
       maxWait = 30000
@@ -49,7 +49,7 @@ class DefaultSshTest extends BaseSshTest {
   }
 
   @Test
-  def void testUnknownHosts() throws Exception {
+  void testUnknownHosts() throws Exception {
     trustUnknownHosts = false
     try {
       remoteSession('user2:654321@localhost:2233') {

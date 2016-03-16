@@ -18,6 +18,7 @@ package com.aestasit.infrastructure.ssh.launcher
 
 import com.aestasit.infrastructure.ssh.DefaultSsh
 import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
+import com.lexicalscope.jewel.cli.CliFactory
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 
@@ -28,21 +29,34 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
  *
  */
 final class Sshoogr {
-  
+
   static void main(String[] args) {
-    // TODO: Implement
-
-    GroovyShell shell = new GroovyShell(new Binding(args: args), compilerConfiguration())
-    shell.parse(args[])
-
-    SshDslEngine engine = new SshDslEngine()
-    engine.remoteSession {
-
+    final SshoogrOptions options = CliFactory.parseArguments(SshoogrOptions, args)
+    options.inputFiles.each { File inputFile ->
+      GroovyShell shell = new GroovyShell(buildBinding(options), compilerConfiguration())
+      Script script = shell.parse(inputFile)
+      script.invokeMethod('init', null)
+      script.run()
     }
   }
 
+  private static Binding buildBinding(SshoogrOptions options) {
+    new Binding(init: {
+      DefaultSsh.defaultHost = options.host
+      DefaultSsh.defaultUser = options.user
+      DefaultSsh.defaultPort = options.port
+      DefaultSsh.defaultKeyFile = options.key
+      DefaultSsh.defaultPassword = options.password
+      DefaultSsh.trustUnknownHosts = options.isTrust()
+    })
+  }
+
   private static CompilerConfiguration compilerConfiguration() {
-    new CompilerConfiguration().addCompilationCustomizers(new ImportCustomizer().addStaticStars(DefaultSsh.name))
+    new CompilerConfiguration().
+      addCompilationCustomizers(
+        new ImportCustomizer()
+          .addStaticStars(DefaultSsh.name)
+      )
   }
 
 }
