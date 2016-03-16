@@ -20,8 +20,20 @@ import com.aestasit.infrastructure.ssh.ExecOptions
 import com.aestasit.infrastructure.ssh.ScpOptions
 import com.aestasit.infrastructure.ssh.SshException
 import com.aestasit.infrastructure.ssh.SshOptions
-import com.aestasit.infrastructure.ssh.log.*
-import com.jcraft.jsch.*
+import com.aestasit.infrastructure.ssh.log.JschLogger
+import com.aestasit.infrastructure.ssh.log.Logger
+import com.aestasit.infrastructure.ssh.log.LoggerOutputStream
+import com.aestasit.infrastructure.ssh.log.LoggerProgressMonitor
+import com.aestasit.infrastructure.ssh.log.Slf4jLogger
+import com.jcraft.jsch.Channel
+import com.jcraft.jsch.ChannelExec
+import com.jcraft.jsch.ChannelSftp
+import com.jcraft.jsch.JSch
+import com.jcraft.jsch.JSchException
+import com.jcraft.jsch.ProxyHTTP
+import com.jcraft.jsch.Session
+import com.jcraft.jsch.SftpException
+import com.jcraft.jsch.SftpProgressMonitor
 import org.apache.commons.io.output.TeeOutputStream
 
 import java.util.regex.Pattern
@@ -101,7 +113,6 @@ class SessionDelegate {
           throw new SshException("Password or key file is required.")
         }
 
-
         session = jsch.getSession(username, host, port)
         if (keyFile != null) {
           if (passPhrase) {
@@ -111,7 +122,7 @@ class SessionDelegate {
           }
         }
 
-        session.password = password
+        session.setPassword(password as String)
 
         if (this.proxyHost?.trim() && this.proxyPort?.trim()) {
           session.proxy = new ProxyHTTP(this.proxyHost, Integer.parseInt(this.proxyPort))
