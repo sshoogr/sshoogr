@@ -13,6 +13,7 @@ artifacts {
   archives jar
   archives groovydocJar
   archives sourcesJar
+  archives distZip
 }
 
 githubPages {                                        

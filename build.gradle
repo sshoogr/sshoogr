@@ -6,9 +6,10 @@ plugins {
   id 'eclipse'
   id 'idea'
   id 'project-report'
+  id 'application'
 
   id "net.saliman.cobertura" version "2.2.5"
-  id "com.github.hierynomus.license" version "0.11.0"
+  id "com.github.hierynomus.license" version "0.12.1"
   id "org.ajoberstar.github-pages" version "0.10.0"
   // id "org.asciidoctor.gradle.asciidoctor" version "1.5.3"
 
@@ -16,6 +17,8 @@ plugins {
 
 group = 'com.aestasit.infrastructure.sshoogr'
 version = '0.9.21-SNAPSHOT'
+
+mainClassName = 'com.aestasit.infrastructure.ssh.launcher.Sshoogr'
 
 apply from: 'gradle/repos.gradle'
 apply from: 'gradle/sonar.gradle'
@@ -64,5 +67,6 @@ idea {
 
 license {
   header rootProject.file('gradle/HEADER')
+  exclude '*.gdsl' 
 }
 
