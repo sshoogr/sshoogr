@@ -1,9 +1,14 @@
 package com.aestasit.infrastructure.ssh
 
 import com.aestasit.infrastructure.ssh.launcher.Sshoogr
+import org.junit.Rule
 import org.junit.Test
+import org.junit.contrib.java.lang.system.ExpectedSystemExit
 
 class LauncherTest extends BaseSshTest {
+
+  @Rule
+  public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
   static final String script = '''
     remoteSession {
@@ -15,7 +20,7 @@ class LauncherTest extends BaseSshTest {
     '''
 
   @Test
-  void testLauncherParameterOverride() throws Exception {
+  void scriptWithConnectionParameters() throws Exception {
     Sshoogr.main([
 
       "--user",
@@ -35,6 +40,26 @@ class LauncherTest extends BaseSshTest {
       temporaryScript.absolutePath
 
     ] as String[])
+  }
+
+  @Test
+  void defaultSshoogrScript() throws Exception {
+    Sshoogr.main()
+  }
+
+  @Test
+  void helpMessage() throws Exception {
+    exit.expectSystemExitWithStatus(1)
+    String output = captureOutput {
+      Sshoogr.main(['--help'] as String[])
+    }
+    assert output.contains('Usage:')
+  }
+
+  @Test
+  void notExistingScript() throws Exception {
+    exit.expectSystemExitWithStatus(127)
+    Sshoogr.main(['gg.sshoogr'] as String[])
   }
 
   static File getTemporaryScript() {

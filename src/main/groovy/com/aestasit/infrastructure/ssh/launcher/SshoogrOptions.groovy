@@ -16,6 +16,7 @@
 
 package com.aestasit.infrastructure.ssh.launcher
 
+import com.lexicalscope.jewel.cli.CommandLineInterface
 import com.lexicalscope.jewel.cli.Option
 import com.lexicalscope.jewel.cli.Unparsed
 
@@ -25,6 +26,7 @@ import com.lexicalscope.jewel.cli.Unparsed
  * @author Andrey Adamovich
  *
  */
+@CommandLineInterface(application="sshoogr")
 interface SshoogrOptions {
 
   @Option(defaultValue = [ '127.0.0.1' ], shortName = [ 'h' ], description = "default host")
@@ -45,7 +47,10 @@ interface SshoogrOptions {
   @Option(description = "trust unknown hosts")
   boolean isTrust()
 
-  @Unparsed(defaultValue = [ 'default.sshoogr' ] )
+  @Option(helpRequest = true, description = "display help")
+  boolean getHelp()
+
+  @Unparsed(defaultValue = [ 'default.sshoogr' ], name = 'SCRIPTS')
   Collection<File> getInputFiles()
 
 }

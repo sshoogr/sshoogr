@@ -19,6 +19,7 @@ package com.aestasit.infrastructure.ssh.launcher
 import com.aestasit.infrastructure.ssh.DefaultSsh
 import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
 import com.lexicalscope.jewel.cli.CliFactory
+import com.lexicalscope.jewel.cli.HelpRequestedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 
@@ -31,12 +32,22 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 final class Sshoogr {
 
   static void main(String[] args) {
-    final SshoogrOptions options = CliFactory.parseArguments(SshoogrOptions, args)
-    options.inputFiles.each { File inputFile ->
-      GroovyShell shell = new GroovyShell(buildBinding(options), compilerConfiguration())
-      Script script = shell.parse(inputFile)
-      script.invokeMethod('init', null)
-      script.run()
+    try {
+      final SshoogrOptions options = CliFactory.parseArguments(SshoogrOptions, args)
+      options.inputFiles.each { File inputFile ->
+        if (inputFile.exists()) {
+          GroovyShell shell = new GroovyShell(buildBinding(options), compilerConfiguration())
+          Script script = shell.parse(inputFile)
+          script.invokeMethod('init', null)
+          script.run()
+        } else {
+          System.err.println "File not found: ${inputFile.absolutePath}"
+          System.exit(127)
+        }
+      }
+    } catch (HelpRequestedException e) {
+      println e.message
+      System.exit(1)
     }
   }
 
