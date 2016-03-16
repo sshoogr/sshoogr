@@ -17,7 +17,6 @@
 package com.aestasit.infrastructure.ssh.launcher
 
 import com.aestasit.infrastructure.ssh.DefaultSsh
-import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
 import com.lexicalscope.jewel.cli.CliFactory
 import com.lexicalscope.jewel.cli.HelpRequestedException
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -47,7 +46,6 @@ final class Sshoogr {
       }
     } catch (HelpRequestedException e) {
       println e.message
-      System.exit(1)
     }
   }
 

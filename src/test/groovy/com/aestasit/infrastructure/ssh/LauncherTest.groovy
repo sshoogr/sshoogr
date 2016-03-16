@@ -49,7 +49,6 @@ class LauncherTest extends BaseSshTest {
 
   @Test
   void helpMessage() throws Exception {
-    exit.expectSystemExitWithStatus(1)
     String output = captureOutput {
       Sshoogr.main(['--help'] as String[])
     }
