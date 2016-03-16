@@ -30,7 +30,7 @@ class ExecTest extends BaseIntegrationTest {
         prefix = "sudo sh -c '"
         suffix = "'"
         escapeCharacters = ['"', "'", '\\', '/']
-        command = 'printf "%s\n%s\n" test rest'
+        command = 'printf "%s\\n%s\\n" test rest'
       }
     }
   }
