@@ -7,7 +7,7 @@
  * 
  */
 
-@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.18')
+@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.21')
 import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 
 def repos = [
