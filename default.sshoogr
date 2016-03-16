@@ -1,0 +1,9 @@
+
+trustUnknownHosts = true
+
+remoteSession('user2:654321@localhost:2233') {
+  exec 'whoami'
+  exec 'du -s'
+  exec 'rm -rf /tmp/test.file'
+  remoteFile('/etc/init.conf').text = 'content'
+}

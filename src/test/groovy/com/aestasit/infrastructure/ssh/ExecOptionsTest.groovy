@@ -16,7 +16,6 @@
 
 package com.aestasit.infrastructure.ssh
 
-import com.aestasit.infrastructure.ssh.ExecOptions
 import org.junit.Test
 
 /**

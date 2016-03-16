@@ -15,11 +15,11 @@ plugins {
 }
 
 group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.20-SNAPSHOT'
+version = '0.9.21-SNAPSHOT'
 
-apply from: 'repos.gradle'
-apply from: 'sonar.gradle'
-apply from: 'docs.gradle'
+apply from: 'gradle/repos.gradle'
+apply from: 'gradle/sonar.gradle'
+apply from: 'gradle/docs.gradle'
 
 dependencies {
   compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
@@ -32,6 +32,7 @@ dependencies {
   compile "com.lexicalscope.jewelcli:jewelcli:${jewelcliVersion}"
   testCompile "junit:junit:${junitVersion}"
   testCompile "com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3"
+  testCompile "com.github.stefanbirkner:system-rules:1.16.0"
 }
 
 sourceSets {
@@ -62,6 +63,6 @@ idea {
 }
 
 license {
-  header rootProject.file('HEADER')
+  header rootProject.file('gradle/HEADER')
 }
 

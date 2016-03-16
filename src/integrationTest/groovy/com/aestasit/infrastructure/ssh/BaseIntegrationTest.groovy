@@ -16,7 +16,6 @@
 
 package com.aestasit.infrastructure.ssh
 
-import com.aestasit.infrastructure.ssh.SshOptions
 import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
 import org.junit.Before
 

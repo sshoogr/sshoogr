@@ -20,10 +20,7 @@ import com.jcraft.jsch.JSchException
 import org.junit.Assert
 import org.junit.Test
 
-import static com.aestasit.infrastructure.ssh.DefaultSsh.execOptions
-import static com.aestasit.infrastructure.ssh.DefaultSsh.remoteSession
-import static com.aestasit.infrastructure.ssh.DefaultSsh.scpOptions
-import static com.aestasit.infrastructure.ssh.DefaultSsh.setTrustUnknownHosts
+import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 
 /**
  * Test for static default SSH DSL implementation.

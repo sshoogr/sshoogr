@@ -108,11 +108,11 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
   }
 
   static File getTestFile() {
-    new File("input.file").getAbsoluteFile()
+    new File("test-data/input.file").getAbsoluteFile()
   }
 
   static File getTestKey() {
-    new File("dummy.pem").getAbsoluteFile()
+    new File("test-data/dummy.pem").getAbsoluteFile()
   }
 
   static String captureOutput(Closure cl) {
