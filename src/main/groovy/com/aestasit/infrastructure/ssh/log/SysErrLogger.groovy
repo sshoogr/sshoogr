@@ -35,4 +35,9 @@ class SysErrLogger implements Logger {
   def void debug(String message) {
     System.err.println "DEBUG: $message"
   }
+
+  def void progress(String prog) {
+  	System.err.print prog
+  }
+
 }

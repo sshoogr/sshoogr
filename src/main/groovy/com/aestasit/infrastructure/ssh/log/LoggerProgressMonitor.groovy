@@ -29,24 +29,42 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
   private final Logger logger
   private int max = 1
   private int current = 0
+  private boolean progressBar = true
 
   LoggerProgressMonitor(Logger logger) {
     this.logger = logger
   }
 
   void init(int op, String src, String dest, long max) {
-    this.max = max
+    if (max != -1) {
+      this.max = max
+    } else {
+      // unable to retrieve the file size
+      // revert to print byte progress
+      progressBar = false
+    } 
     this.current = 0
   }
 
   boolean count(long count) {
+
     current += count
-    // int percent = (current / max * 100) as int
-    // TODO: logging settings
-    logger.info("${current} bytes transferred")
+    if (progressBar) {
+      printProgBar((int) ((current / max) * 100.0))
+    } else {
+      logger.info("${current} bytes transferred")
+    }
     true
   }
 
   void end() {
+  }
+
+  void printProgBar (int percent) {
+    int status = percent / 2
+    def bar = (0..50).collect() {
+      (it <= status) ? ((it == status) ? ">" : "=") : " "
+    }
+    logger.progress("\r[${bar.join()}] ${percent}%")
   }
 }

@@ -35,4 +35,8 @@ class SysOutLogger implements Logger {
   def void debug(String message) {
     println "DEBUG: $message"
   }
+
+  def void progress(String prog) {
+  	print prog
+  }
 }

@@ -430,9 +430,7 @@ class SessionDelegate {
       logger.info("> ${srcFile.canonicalPath} => ${dst}")
     }
     def monitor = scpOptions.showProgress ? newMonitor() : null
-    srcFile.withInputStream { input ->
-      channel.put(input, dst, monitor)
-    }
+    channel.put(srcFile.canonicalPath, dst, monitor)
   }
 
   private void doGet(ChannelSftp channel, String srcFile, File dstFile, ScpOptions scpOptions) {
