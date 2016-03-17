@@ -11,16 +11,18 @@ plugins {
   id "net.saliman.cobertura" version "2.2.5"
   id "com.github.hierynomus.license" version "0.12.1"
   id "org.ajoberstar.github-pages" version "1.4.2"
+  // TODO: id 'net.researchgate.release' version '2.2.1'
+  // TODO: apply plugin: 'io.codearte.nexus-staging'   http://www.sonatype.org/nexus/2015/03/31/nexus-staging-plugin-automatic-releasepromotion-of-artifacts-to-maven-central-from-gradle/
   // TODO: id "org.asciidoctor.gradle.asciidoctor" version "1.5.3"
-  // TODO: add artifactory plugin
-  // TODO: add nexus plugin
-  // TODO: add release plugin
+  // TODO: id "com.jfrog.artifactory" version "4.0.0"
+  // TODO: id 'org.sonarqube' version '1.0'
 
 }
 
-
 apply from: 'gradle/repos.gradle'
 apply from: 'gradle/docs.gradle'
+
+mainClassName = applicationLauncher
 
 dependencies {
 
