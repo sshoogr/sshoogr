@@ -10,23 +10,22 @@ plugins {
 
   id "net.saliman.cobertura" version "2.2.5"
   id "com.github.hierynomus.license" version "0.12.1"
-  id "org.ajoberstar.github-pages" version "0.10.0"
-  // id "org.asciidoctor.gradle.asciidoctor" version "1.5.3"
-  // TODO: add artifactory plugin, add nexus plugin, add release plugin, add ascii doctor plugin
+  id "org.ajoberstar.github-pages" version "1.4.2"
+  // TODO: id "org.asciidoctor.gradle.asciidoctor" version "1.5.3"
+  // TODO: add artifactory plugin
+  // TODO: add nexus plugin
+  // TODO: add release plugin
 
 }
 
-group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.22-SNAPSHOT'
-
-mainClassName = 'com.aestasit.infrastructure.ssh.launcher.Sshoogr'
 
 apply from: 'gradle/repos.gradle'
-apply from: 'gradle/sonar.gradle'
 apply from: 'gradle/docs.gradle'
 
 dependencies {
+
   compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+
   compile "org.slf4j:slf4j-api:${slf4jVersion}"
   compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
   compile "ch.qos.logback:logback-classic:${logbackVersion}"
@@ -34,10 +33,12 @@ dependencies {
   compile "commons-codec:commons-codec:${commonsCodecVersion}"
   compile "com.jcraft:jsch:${jschVersion}"
   compile "com.lexicalscope.jewelcli:jewelcli:${jewelcliVersion}"
-  compile 'org.fusesource.jansi:jansi:1.11'
+  compile "org.fusesource.jansi:jansi:${jansiVersion}"
+
   testCompile "junit:junit:${junitVersion}"
   testCompile "com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3"
   testCompile "com.github.stefanbirkner:system-rules:1.16.0"
+
 }
 
 sourceSets {
