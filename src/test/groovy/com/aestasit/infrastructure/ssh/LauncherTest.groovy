@@ -64,6 +64,11 @@ class LauncherTest extends BaseSshTest {
   }
 
   @Test
+  void defaultSshoogrScriptWithLogger() throws Exception {
+    Sshoogr.main(['--logger', 'color'] as String[])
+  }
+
+  @Test
   void helpMessage() throws Exception {
     String output = captureOutput {
       Sshoogr.main(['--help'] as String[])
