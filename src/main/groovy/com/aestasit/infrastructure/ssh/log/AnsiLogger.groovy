@@ -56,4 +56,8 @@ class AnsiLogger implements Logger {
     print(ansi().fg(WHITE).a(progress).reset())
   }
 
+  void progressEnd() {
+    println()
+  }
+
 }

@@ -48,4 +48,8 @@ class SysErrLogger implements Logger {
   	System.err.print progress
   }
 
+  void progressEnd() {
+    System.err.println()
+  }
+
 }

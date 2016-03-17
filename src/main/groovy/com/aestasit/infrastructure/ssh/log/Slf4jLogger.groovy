@@ -52,4 +52,8 @@ class Slf4jLogger implements Logger {
     // do nothing
   }
 
+  void progressEnd() {
+    // do nothing
+  }
+
 }

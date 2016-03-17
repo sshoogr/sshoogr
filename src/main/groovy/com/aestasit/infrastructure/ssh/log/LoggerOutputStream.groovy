@@ -34,24 +34,24 @@ class LoggerOutputStream extends OutputStream {
     reader = new BufferedReader(new InputStreamReader(inp))
     Thread.start {
       reader.eachLine { line ->
-        logger.info(line)
+        logger.stdOutput(line)
       }
     }
   }
 
-  def void write(int chr) throws IOException {
+  void write(int chr) throws IOException {
     out.write(chr)
   }
 
-  def void write(byte[] buf, int start, int end) throws IOException {
+  void write(byte[] buf, int start, int end) throws IOException {
     out.write(buf, start, end)
   }
 
-  def void flush() throws IOException {
+  void flush() throws IOException {
     out.flush()
   }
 
-  def void close() throws IOException {
+  void close() throws IOException {
     out.close()
   }
 }

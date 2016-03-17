@@ -47,10 +47,9 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
   }
 
   boolean count(long count) {
-
     current += count
     if (progressBar) {
-      printProgBar((int) ((current / max) * 100.0))
+      printProgressBar((int) ((current / max) * 100.0))
     } else {
       logger.info("${current} bytes transferred")
     }
@@ -58,13 +57,14 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
   }
 
   void end() {
+    logger.progressEnd()
   }
 
-  void printProgBar (int percent) {
+  void printProgressBar(int percent) {
     int status = percent / 2
     def bar = (0..50).collect() {
       (it <= status) ? ((it == status) ? ">" : "=") : " "
     }
-    logger.progress("\r[${bar.join()}] ${percent}%")
+    logger.progress("\r[${bar.join('')}] ${percent}%")
   }
 }

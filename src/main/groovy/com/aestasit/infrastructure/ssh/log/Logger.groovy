@@ -60,4 +60,10 @@ interface Logger {
    */
   void progress(String progress)
 
+  /**
+   * Signal logger about progress bar end.
+   *
+   */
+  void progressEnd()
+
 }

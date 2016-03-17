@@ -44,7 +44,12 @@ class SysOutLogger implements Logger {
     println "$line"
   }
 
-  void progress(String prog) {
-  	print prog
+  void progress(String progress) {
+  	print progress
   }
+
+  void progressEnd() {
+    println()
+  }
+
 }
