@@ -21,5 +21,11 @@ interface Logger {
   def void info(String message)
   def void warn(String message)
   def void debug(String message)
-  
+
+  /**
+   * Log method that should be used to display a progress bar for upload/download operation
+   * @param prog the actual String that represent the progress bar
+   */
+  def void progress(String prog)
+
 }

@@ -39,4 +39,8 @@ class Slf4jLogger implements Logger {
   def void debug(String message) {
     logger.debug(message)
   }
+
+  def void progress(String prog) {
+    // do nothing
+  }
 }
