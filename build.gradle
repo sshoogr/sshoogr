@@ -12,6 +12,7 @@ plugins {
   id "com.github.hierynomus.license" version "0.12.1"
   id "org.ajoberstar.github-pages" version "0.10.0"
   // id "org.asciidoctor.gradle.asciidoctor" version "1.5.3"
+  // TODO: add artifactory plugin, add nexus plugin, add release plugin, add ascii doctor plugin
 
 }
 
