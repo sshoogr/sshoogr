@@ -17,6 +17,9 @@
 package com.aestasit.infrastructure.ssh.launcher
 
 import com.aestasit.infrastructure.ssh.DefaultSsh
+import com.aestasit.infrastructure.ssh.log.AnsiLogger
+import com.aestasit.infrastructure.ssh.log.Slf4jLogger
+import com.aestasit.infrastructure.ssh.log.SysOutLogger
 import com.lexicalscope.jewel.cli.CliFactory
 import com.lexicalscope.jewel.cli.HelpRequestedException
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -51,6 +54,17 @@ final class Sshoogr {
 
   private static Binding buildBinding(SshoogrOptions options) {
     new Binding(init: {
+      switch (options.logger) {
+        case 'slf4j':
+          DefaultSsh.logger = new Slf4jLogger()
+          break
+        case 'standard':
+          DefaultSsh.logger = new SysOutLogger()
+          break
+        case 'color':
+          DefaultSsh.logger = new AnsiLogger()
+          break
+      }
       DefaultSsh.defaultHost = options.host
       DefaultSsh.defaultUser = options.user
       DefaultSsh.defaultPort = options.port

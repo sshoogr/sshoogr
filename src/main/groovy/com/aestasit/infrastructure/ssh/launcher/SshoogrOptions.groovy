@@ -29,28 +29,31 @@ import com.lexicalscope.jewel.cli.Unparsed
 @CommandLineInterface(application="sshoogr")
 interface SshoogrOptions {
 
-  @Option(defaultValue = [ '127.0.0.1' ], shortName = [ 'h' ], description = "default host")
+  @Option(defaultValue = [ '127.0.0.1' ], shortName = [ 'h' ], description = "Default host to connect to. Default value is '127.0.0.1'.")
   String getHost()
 
-  @Option(defaultValue = [ 'root' ], shortName = [ 'u' ], description = "default user name")
+  @Option(defaultValue = [ 'root' ], shortName = [ 'u' ], description = "Default user name to use for connections. Default value is 'root'.")
   String getUser()
 
-  @Option(defaultToNull = true, shortName = [ 'i' ], description = "path to default key file")
+  @Option(defaultValue = [ 'standard' ], shortName = [ 'l' ], description = "Logger implementation to use during execution. Possible options are: standard, color, slf4j. Default value is 'standard'.")
+  String getLogger()
+
+  @Option(defaultToNull = true, shortName = [ 'i' ], description = "Path to default key file to use for connections.")
   File getKey()
 
-  @Option(defaultToNull = true, shortName = [ 'p' ], description = "default password")
+  @Option(defaultToNull = true, shortName = [ 'p' ], description = "Default password to use for connections.")
   String getPassword()
 
-  @Option(defaultValue = [ "22" ], description = "default port")
+  @Option(defaultValue = [ "22" ], description = "Default port to use for connections. Default value is 22.")
   int getPort()
 
-  @Option(description = "trust unknown hosts")
+  @Option(description = "Trust unknown SSH hosts.")
   boolean isTrust()
 
   @Option(helpRequest = true, description = "display help")
   boolean getHelp()
 
-  @Unparsed(defaultValue = [ 'default.sshoogr' ], name = 'SCRIPTS')
+  @Unparsed(defaultValue = [ 'default.sshoogr' ], name = '[scripts]', description = "S")
   Collection<File> getInputFiles()
 
 }
