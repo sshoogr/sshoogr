@@ -28,7 +28,7 @@ apply from: 'gradle/license.gradle'
 apply from: 'gradle/integration.gradle'
 apply from: 'gradle/ide.gradle'
 apply from: 'gradle/docs.gradle'
-// TODO: apply from: 'gradle/sdkman.gradle'
+apply from: 'gradle/sdkman.gradle'
 // TODO: apply from: 'gradle/sonar.gradle'
 apply from: 'gradle/release.gradle'
 
