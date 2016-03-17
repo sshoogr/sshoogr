@@ -24,20 +24,28 @@ package com.aestasit.infrastructure.ssh.log
  */
 class SysErrLogger implements Logger {
 
-  def void info(String message) {
+  void info(String message) {
     System.err.println "$message"
   }
 
-  def void warn(String message) {
+  void warn(String message) {
     System.err.println "WARN: $message"
   }
 
-  def void debug(String message) {
+  void debug(String message) {
     System.err.println "DEBUG: $message"
   }
 
-  def void progress(String prog) {
-  	System.err.print prog
+  void stdOutput(String line) {
+    System.err.println "$line"
+  }
+
+  void errOutput(String line) {
+    System.err.println "$line"
+  }
+
+  void progress(String progress) {
+  	System.err.print progress
   }
 
 }

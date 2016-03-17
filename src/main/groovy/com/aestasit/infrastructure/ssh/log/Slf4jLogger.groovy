@@ -28,19 +28,28 @@ class Slf4jLogger implements Logger {
 
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass().getPackage().getName())
 
-  def void info(String message) {
+  void info(String message) {
     logger.info(message)
   }
 
-  def void warn(String message) {
+  void warn(String message) {
     logger.warn(message)
   }
 
-  def void debug(String message) {
+  void debug(String message) {
     logger.debug(message)
   }
 
-  def void progress(String prog) {
+  void stdOutput(String line) {
+    logger.debug(line)
+  }
+
+  void errOutput(String line) {
+    logger.debug(line)
+  }
+
+  void progress(String progress) {
     // do nothing
   }
+
 }

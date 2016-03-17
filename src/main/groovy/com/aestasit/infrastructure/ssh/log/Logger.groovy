@@ -18,14 +18,46 @@ package com.aestasit.infrastructure.ssh.log
 
 interface Logger {
 
-  def void info(String message)
-  def void warn(String message)
-  def void debug(String message)
+  /**
+   * Print information level message.
+   *
+   * @param message String message to print.
+   */
+  void info(String message)
 
   /**
-   * Log method that should be used to display a progress bar for upload/download operation
-   * @param prog the actual String that represent the progress bar
+   * Print warning level message.
+   *
+   * @param message String message to print.
    */
-  def void progress(String prog)
+  void warn(String message)
+
+  /**
+   * Print debug level message.
+   *
+   * @param message String message to print.
+   */
+  void debug(String message)
+
+  /**
+   * Print remote command standard output stream.
+   *
+   * @param line String line to print.
+   */
+  void stdOutput(String line)
+
+  /**
+   * Print remote command standard error output stream.
+   *
+   * @param line String line to print.
+   */
+  void errOutput(String line)
+
+  /**
+   * Display a progress bar for upload/download operations.
+   *
+   * @param progress the actual String that represent the progress bar.
+   */
+  void progress(String progress)
 
 }

@@ -24,19 +24,27 @@ package com.aestasit.infrastructure.ssh.log
  */
 class SysOutLogger implements Logger {
 
-  def void info(String message) {
+  void info(String message) {
     println "$message"
   }
 
-  def void warn(String message) {
+  void warn(String message) {
     println "WARN: $message"
   }
 
-  def void debug(String message) {
+  void debug(String message) {
     println "DEBUG: $message"
   }
 
-  def void progress(String prog) {
+  void stdOutput(String line) {
+    println "$line"
+  }
+
+  void errOutput(String line) {
+    println "$line"
+  }
+
+  void progress(String prog) {
   	print prog
   }
 }

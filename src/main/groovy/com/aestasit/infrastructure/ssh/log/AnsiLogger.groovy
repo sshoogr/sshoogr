@@ -21,37 +21,39 @@ import static org.fusesource.jansi.Ansi.*
 import static org.fusesource.jansi.Ansi.Color.*
 
 /**
- * LIST OF COLORS
+ * Standard output logger with ANSI colors.
  *
- * "BLACK"), 
- * "RED"), 
- * "GREEN"), 
- * "YELLOW"), 
- * "BLUE"), 
- * "MAGENTA"), 
- * "CYAN"), 
- * "WHITE"),
- * "DEFAULT");
+ * @author Luciano Fiandesio
+ *
  */
-
 class AnsiLogger implements Logger {
 
   public AnsiLogger() {
   	AnsiConsole.systemInstall()
   }	
   
-  def void info(String message) {
-
-    println (ansi().fg(BLUE).a(message).reset())
-
+  void info(String message) {
+    println(ansi().fg(BLUE).a(message).reset())
   }
 
-  def void warn(String message) {
-  	println (ansi().fg(YELLOW).a(message).reset())
+  void warn(String message) {
+  	println(ansi().fg(YELLOW).a(message).reset())
   }
 
-  def void debug(String message) {
-    println (ansi().fg(GREEN).a(message).reset())
+  void debug(String message) {
+    println(ansi().fg(GREEN).a(message).reset())
+  }
+
+  void stdOutput(String line) {
+    println(ansi().fg(WHITE).a(line).reset())
+  }
+
+  void errOutput(String line) {
+    println(ansi().fg(RED).a(line).reset())
+  }
+
+  void progress(String progress) {
+    print(ansi().fg(WHITE).a(progress).reset())
   }
 
 }
