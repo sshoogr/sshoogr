@@ -71,7 +71,7 @@ class DefaultSshTest extends BaseSshTest {
         }
       }
     }
-    assert output.contains('bytes transferred')
+    assert output.contains('100%')
 
     // Test scp delegate override.
     output = captureOutput {
