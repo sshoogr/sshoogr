@@ -16,6 +16,7 @@
 
 package com.aestasit.infrastructure.ssh
 
+import com.aestasit.infrastructure.ssh.log.AnsiLogger
 import com.aestasit.infrastructure.ssh.log.Logger
 import com.aestasit.infrastructure.ssh.log.Slf4jLogger
 import com.aestasit.infrastructure.ssh.log.SysErrLogger
@@ -64,6 +65,10 @@ class SshOptions extends CommonOptions {
     cl.delegate = scpOptions
     cl.resolveStrategy = DELEGATE_FIRST
     cl()
+  }
+
+  static AnsiLogger ansi() {
+    new AnsiLogger()
   }
 
   static SysOutLogger systemOut() {
