@@ -27,7 +27,7 @@ import com.jcraft.jsch.SftpATTRS
  * @author Luciano Fiandesio
  *
  */
-class RemoteFile {
+class RemoteFile implements java.lang.Appendable {
 
   private final SessionDelegate delegate
   private final String destination
@@ -58,6 +58,7 @@ class RemoteFile {
     text.eachLine { line -> 
       tempFile << "${line.trim()}\n" 
     }
+
     try {
       delegate.scp {
         from { localFile(tempFile) }
@@ -130,6 +131,28 @@ class RemoteFile {
       mask = Integer.toOctalString(attr.getPermissions()).toInteger() - 100000
     }
     mask
+  }
+
+  public Appendable append(CharSequence csq) throws IOException {
+
+    String originalText = getText()
+    setText(originalText + csq)
+    this
+  }
+
+  public Appendable append(CharSequence csq, int start, int end) throws IOException {
+
+    this 
+  }
+
+  public Appendable append(char c) throws IOException {
+
+     this
+  }
+
+  public Appendable leftShift(Object value) {
+
+     append (value)
   }
 
   /**
