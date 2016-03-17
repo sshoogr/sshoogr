@@ -17,7 +17,7 @@ plugins {
 }
 
 group = 'com.aestasit.infrastructure.sshoogr'
-version = '0.9.21'
+version = '0.9.22-SNAPSHOT'
 
 mainClassName = 'com.aestasit.infrastructure.ssh.launcher.Sshoogr'
 
