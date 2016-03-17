@@ -9,13 +9,6 @@ task sourcesJar(type: Jar) {
   classifier = 'sources'
 }
 
-artifacts {
-  archives jar
-  archives groovydocJar
-  archives sourcesJar
-  archives distZip
-}
-
 githubPages {                                        
   repoUri = "https://github.com/aestasit/${githubProjectName}.git"
   pages {

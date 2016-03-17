@@ -1,0 +1,48 @@
+
+import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.*
+
+buildscript {
+  dependencies {
+    classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+  }
+}
+
+task releaseOnSdkman << {
+  sdkman().request(POST, JSON) {
+    body = [
+      candidate: "sshoogr", 
+      version: "2.4.2", 
+      "url": "http://dl.bintray.com/groovy/maven/groovy-binary-2.4.2.zip"
+    ]
+    response.success = { resp, json ->
+      println "POST response status: ${resp.statusLine}"
+    }
+  }
+}
+
+HTTPBuilder HTTPBuilder { 
+  new HTTPBuilder('https://sdkman-vendor.herokuapp.com/release/')
+}
+
+
+
+curl -X POST \
+    -H "consumer_key: CONSUMER_KEY" \
+    -H "consumer_token: CONSUMER_TOKEN" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"candidate": "groovy", "version": "2.4.2", "url": "http://dl.bintray.com/groovy/maven/groovy-binary-2.4.2.zip"}' \
+    https://sdkman-vendor.herokuapp.com/release
+                                        
+
+
+
+curl -X PUT \
+    -H "consumer_key: CONSUMER_KEY" \
+    -H "consumer_token: CONSUMER_TOKEN" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"candidate": "groovy", "default": "2.3.8"}' \
+    https://sdkman-vendor.herokuapp.com/default

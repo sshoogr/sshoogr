@@ -1,0 +1,20 @@
+
+// TODO: run standalone script against vagrant machine
+
+sourceSets {
+  integrationTest {
+    compileClasspath += main.output + test.output
+    runtimeClasspath += main.output + test.output
+  }
+}
+
+configurations {
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+}
+
+task integration(type: Test) {
+  description = "Run integration tests (located in src/integrationTest/groovy)."
+  testClassesDir = project.sourceSets.integrationTest.output.classesDir
+  classpath = project.sourceSets.integrationTest.runtimeClasspath
+}

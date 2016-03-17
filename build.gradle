@@ -8,70 +8,27 @@ plugins {
   id 'project-report'
   id 'application'
 
-  id "net.saliman.cobertura" version "2.2.5"
-  id "com.github.hierynomus.license" version "0.12.1"
-  id "org.ajoberstar.github-pages" version "1.4.2"
-  // TODO: id 'net.researchgate.release' version '2.2.1'
+  id 'net.saliman.cobertura' version '2.2.5'
+  id 'com.github.hierynomus.license' version '0.12.1'
+  id 'org.ajoberstar.github-pages' version '1.4.2'
+  id 'net.researchgate.release' version '2.2.1'
+
   // TODO: apply plugin: 'io.codearte.nexus-staging'   http://www.sonatype.org/nexus/2015/03/31/nexus-staging-plugin-automatic-releasepromotion-of-artifacts-to-maven-central-from-gradle/
-  // TODO: id "org.asciidoctor.gradle.asciidoctor" version "1.5.3"
-  // TODO: id "com.jfrog.artifactory" version "4.0.0"
+
+  // TODO: apply plugin: "com.gradle.plugin-publish"   https://plugins.gradle.org/docs/publish-plugin
+  // TODO: id 'com.jfrog.artifactory' version '4.0.0'
+  // TODO: id 'org.asciidoctor.gradle.asciidoctor' version '1.5.3'
   // TODO: id 'org.sonarqube' version '1.0'
 
 }
 
 apply from: 'gradle/repos.gradle'
+apply from: 'gradle/deps.gradle'
+apply from: 'gradle/license.gradle'
+apply from: 'gradle/integration.gradle'
+apply from: 'gradle/ide.gradle'
 apply from: 'gradle/docs.gradle'
-
-mainClassName = applicationLauncher
-
-dependencies {
-
-  compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-
-  compile "org.slf4j:slf4j-api:${slf4jVersion}"
-  compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-  compile "ch.qos.logback:logback-classic:${logbackVersion}"
-  compile "commons-io:commons-io:${commonsIOVersion}"
-  compile "commons-codec:commons-codec:${commonsCodecVersion}"
-  compile "com.jcraft:jsch:${jschVersion}"
-  compile "com.lexicalscope.jewelcli:jewelcli:${jewelcliVersion}"
-  compile "org.fusesource.jansi:jansi:${jansiVersion}"
-
-  testCompile "junit:junit:${junitVersion}"
-  testCompile "com.aestasit.infrastructure.mock:groovy-sshd-mock:0.3"
-  testCompile "com.github.stefanbirkner:system-rules:1.16.0"
-
-}
-
-sourceSets {
-  integrationTest {
-    compileClasspath += main.output + test.output
-    runtimeClasspath += main.output + test.output
-  }
-}
-
-configurations {
-  all*.exclude group: 'commons-logging'
-  all*.exclude group: 'log4j'
-  all*.exclude module: 'slf4j-simple'
-  integrationTestCompile.extendsFrom testCompile
-  integrationTestRuntime.extendsFrom testRuntime
-}
-
-task integration(type: Test) {
-  description = "Run integration tests (located in src/integrationTest/groovy)."
-  testClassesDir = project.sourceSets.integrationTest.output.classesDir
-  classpath = project.sourceSets.integrationTest.runtimeClasspath
-}
-
-idea {
-  module {
-    testSourceDirs += file('src/integrationTest/groovy')
-  }
-}
-
-license {
-  header rootProject.file('gradle/HEADER')
-  exclude '*.gdsl' 
-}
+// TODO: apply from: 'gradle/sdkman.gradle'
+// TODO: apply from: 'gradle/sonar.gradle'
+apply from: 'gradle/release.gradle'
 

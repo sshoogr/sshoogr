@@ -1,0 +1,6 @@
+
+idea {
+  module {
+    testSourceDirs += file('src/integrationTest/groovy')
+  }
+}

@@ -1,0 +1,89 @@
+
+jar {
+  manifest {
+    attributes(
+      "Gradle-Version":         gradle.gradleVersion, 
+      "Created-By":             System.getProperty('java.version'), 
+      "Built-By":               System.getProperty('user.name'), 
+      "Built-Date":             new Date().toString(), 
+      "Implementation-Title":   project.name,
+      "Implementation-Vendor":  vendor,
+      "Implementation-Version": version,
+      "Main-Class":             mainClass,
+    )
+  }
+}
+
+artifacts {
+  archives jar
+  archives groovydocJar
+  archives sourcesJar
+  archives distZip
+}
+
+release {
+  failOnCommitNeeded         = true
+  failOnPublishNeeded        = true
+  failOnSnapshotDependencies = true
+  failOnUnversionedFiles     = true
+  failOnUpdateNeeded         = true
+  revertOnFail               = true
+  preCommitText              = ''
+  preTagCommitMessage        = 'AP-AUTO: [Gradle Release Plugin] - pre tag commit: '
+  tagCommitMessage           = 'AP-AUTO: [Gradle Release Plugin] - creating tag: '
+  newVersionCommitMessage    = 'AP-AUTO: [Gradle Release Plugin] - new version commit: '
+  tagTemplate                = 'v${version}'
+  buildTasks                 = [ 'build', 'uploadArchives' ]
+  versionPropertyFile        = 'gradle.properties'
+}
+
+
+if (!project.version.endsWith('-SNAPSHOT')) {
+  apply plugin: 'signing'
+  signing {
+    sign configurations.archives
+  }
+}
+
+uploadArchives {
+  repositories.mavenDeployer {
+    if (project.version.endsWith('-SNAPSHOT')) { 
+      repository(url: ossSnapshotRepositoryUrl) {
+        authentication(userName: ossSnapshotRepositoryUserName, password: ossSnapshotRepositoryPassword)
+      }
+    } else {
+      repository(url: ossReleaseRepositoryUrl) {
+        authentication(userName: ossReleaseRepositoryUserName, password: ossReleaseRepositoryPassword)
+      }
+      beforeDeployment { deployment -> signing.signPom(deployment) }
+    }
+    pom.project {
+      name pomProjectTitle
+      packaging 'jar'
+      description pomProjectDescription
+      url "https://github.com/aestasit/${githubProjectName}"
+      scm {
+        url "scm:git@github.com:aestasit/${githubProjectName}.git"
+        connection "scm:git@github.com:aestasit/${githubProjectName}.git"
+        developerConnection "scm:git@github.com:aestasit/${githubProjectName}.git"
+      }
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+      developers {
+        developer {
+          id 'aadamovich'
+          name 'Andrey Adamovich'
+        }
+        developer {
+          id 'lfiandesio'
+          name 'Luciano Fiandesio'
+        }
+      }
+    }
+  }
+}
