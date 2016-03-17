@@ -1,6 +1,4 @@
 
-// TODO: run standalone script against vagrant machine
-
 sourceSets {
   integrationTest {
     compileClasspath += main.output + test.output
@@ -18,3 +16,4 @@ task integration(type: Test) {
   testClassesDir = project.sourceSets.integrationTest.output.classesDir
   classpath = project.sourceSets.integrationTest.runtimeClasspath
 }
+

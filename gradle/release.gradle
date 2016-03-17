@@ -1,4 +1,6 @@
 
+conf2ScopeMappings.addMapping(1, configurations.groovy, 'provided')
+
 jar {
   manifest {
     attributes(

@@ -2,6 +2,7 @@
 mainClassName = mainClass
 
 configurations {
+  groovy
   all*.exclude group: 'commons-logging'
   all*.exclude group: 'log4j'
   all*.exclude module: 'slf4j-simple'
@@ -9,7 +10,9 @@ configurations {
 
 dependencies {
 
-  compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+  groovy "org.codehaus.groovy:groovy-all:${groovyVersion}"
+
+  compile configurations.groovy
 
   compile "org.slf4j:slf4j-api:${slf4jVersion}"
   compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
