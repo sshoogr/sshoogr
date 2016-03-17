@@ -1,18 +1,18 @@
 contributor(
-    context(
-        scope: scriptScope(),
-        filetypes: ['sshoogr']
-    )
+  context(
+    scope: scriptScope(),
+    filetypes: ['sshoogr']
+  )
 ) {
-  findClass('com.aestasit.infrastructure.ssh.dsl.SessionDelegate').methods.each { m ->
+  findClass('com.aestasit.infrastructure.ssh.DefaultSsh').methods.each { m ->
     add(m)
   }
 }
 
 contributor(
-    context(
-        scope: closureScope(isArgument: true)
-    )
+  context(
+    scope: closureScope(isArgument: true)
+  )
 ) {
   def call = enclosingCall("remoteSession")
   if (call) {
