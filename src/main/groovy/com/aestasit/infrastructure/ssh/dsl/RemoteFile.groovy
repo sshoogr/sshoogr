@@ -27,17 +27,17 @@ import com.jcraft.jsch.SftpATTRS
  * @author Luciano Fiandesio
  *
  */
-class RemoteFile implements java.lang.Appendable {
+class RemoteFile implements Appendable {
 
   private final SessionDelegate delegate
   private final String destination
 
   RemoteFile(SessionDelegate delegate, String destination) {
     this.delegate = delegate
+    this.destination = destination
     if (!destination || !destination.trim()) {
       throw new SshException("Remote file destination is not set!")
     }
-    this.destination = destination
   }
 
   String getText() {
@@ -58,7 +58,6 @@ class RemoteFile implements java.lang.Appendable {
     text.eachLine { line -> 
       tempFile << "${line.trim()}\n" 
     }
-
     try {
       delegate.scp {
         from { localFile(tempFile) }
@@ -110,7 +109,7 @@ class RemoteFile implements java.lang.Appendable {
         channel.chgrp(gid, this.destination)
       }
     } else {
-      // TODO how do we handle a custom exception?
+      // TODO: how do we handle a custom exception?
       // throw new NullPointerException('invalid user')
     }
   }
@@ -133,26 +132,25 @@ class RemoteFile implements java.lang.Appendable {
     mask
   }
 
-  public Appendable append(CharSequence csq) throws IOException {
-
+  Appendable append(CharSequence csq) throws IOException {
     String originalText = getText()
     setText(originalText + csq)
     this
   }
 
-  public Appendable append(CharSequence csq, int start, int end) throws IOException {
-
+  Appendable append(CharSequence csq, int start, int end) throws IOException {
+    // TODO: implement
     this 
   }
 
-  public Appendable append(char c) throws IOException {
-
+  Appendable append(char c) throws IOException {
+    // TODO: implement
      this
   }
 
-  public Appendable leftShift(Object value) {
-
-     append (value)
+  Appendable leftShift(Object value) {
+    // TODO: create signature for each variant
+     append(value)
   }
 
   /**
@@ -170,8 +168,7 @@ class RemoteFile implements java.lang.Appendable {
    * Get the gid of a group.
    * 
    * @param group group name
-   * @return an Integer representing the gid
-   * or null if the group is not found
+   * @return an Integer representing the gid or null if the group is not found.
    */
   private Integer getGid(String group) {
     resolveId(delegate.exec("getent group ${group} | cut -d: -f3"))
@@ -179,6 +176,7 @@ class RemoteFile implements java.lang.Appendable {
 
   /**
    * Tests that the path exists and is not a directory.
+   *
    * @return isNormalFile
    */
   boolean isFile() {
@@ -187,6 +185,7 @@ class RemoteFile implements java.lang.Appendable {
 
   /**
    * Tests that the path exists and is not a file.
+   *
    * @return isNormalDirectory
    */
   boolean isDirectory() {
