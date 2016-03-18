@@ -11,6 +11,20 @@ The `sshoogr` is a **Groovy**-based **DSL** library for working with remote serv
 
 The library was jointly developed by **Aestas/IT** (http://aestasit.com) and **NetCompany A/S** (http://www.netcompany.com/) to support the quickly growing company's operations and hosting department.
 
+### Installing `sshoogr` with SDKMAN!
+
+The simplest way to use `sshoogr` from the command line is by using [SDKMAN!](http://sdkman.io).
+
+If SDKMAN is not yet installed, open a terminal and enter the following:
+
+    $ curl -s get.sdkman.io | bash
+
+Follow the instructions presented in the terminal, then enter the following command:
+
+    $ sdk install sshoogr
+
+This will install the `sshoogr` and make it available on your path.
+
 ### Using `sshoogr` in Groovy scripts
 
 The easiest way to use `sshoogr` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).

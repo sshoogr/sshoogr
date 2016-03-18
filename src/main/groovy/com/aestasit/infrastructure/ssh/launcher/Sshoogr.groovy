@@ -43,7 +43,9 @@ final class Sshoogr {
           script.invokeMethod('init', null)
           script.run()
         } else {
-          System.err.println "File not found: ${inputFile.absolutePath}"
+          System.err.println "File not found: ${inputFile.absolutePath}\n"
+          System.err.println "Sshoogr requires an input file to work!\n"
+          System.err.println "See https://github.com/aestasit/sshoogr for details."
           System.exit(127)
         }
       }
