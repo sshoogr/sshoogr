@@ -3,7 +3,7 @@
  *
  */
 
-@Grab(group = 'com.aestasit.infrastructure.sshoogr', module = 'sshoogr', version = '0.9.21', changing = true)
+@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.23')
 import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 
 options.execOptions {
