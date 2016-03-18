@@ -12,10 +12,12 @@ buildscript {
 }
 
 task releaseOnSdkman << {
+  def url = "https://repo1.maven.org/maven2/${rootProject.group.split('\\.').join('/')}/${rootProject.name}/${rootProject.sdkmanDefaultVersion}/${rootProject.name}-${rootProject.sdkmanDefaultVersion}.zip"
+  println "sdkman: ${url}"
   sdkmanRequest('release', POST, [
     candidate: rootProject.name, 
     version: rootProject.sdkmanDefaultVersion, 
-    url: "https://repo1.maven.org/maven2/${rootProject.group.split('\\.').join('/')}/${rootProject.name}/${rootProject.sdkmanDefaultVersion}/${rootProject.name}-${rootProject.sdkmanDefaultVersion}.zip"
+    url: url
   ])
 }
 
