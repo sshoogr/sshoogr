@@ -51,6 +51,9 @@ final class Sshoogr {
       }
     } catch (HelpRequestedException e) {
       println e.message
+    } catch (Exception ex) {
+      System.err.println "${ex.message}"
+      System.exit(1)
     }
   }
 
@@ -66,6 +69,8 @@ final class Sshoogr {
         case 'color':
           DefaultSsh.logger = new AnsiLogger()
           break
+        default:
+          throw new RuntimeException("Unknown logger type!")
       }
       DefaultSsh.defaultHost = options.host
       DefaultSsh.defaultUser = options.user
