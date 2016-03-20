@@ -18,6 +18,9 @@ package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.SshException
 import com.aestasit.infrastructure.ssh.dsl.FileSetType
+import groovy.transform.Canonical
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 
 import static com.aestasit.infrastructure.ssh.dsl.FileSetType.*
 
@@ -27,6 +30,9 @@ import static com.aestasit.infrastructure.ssh.dsl.FileSetType.*
  * @author Andrey Adamovich
  *
  */
+@CompileStatic
+@TypeChecked
+@Canonical
 class FileSetDelegate {
 
   private FileSetType type = UNKNOWN
@@ -35,42 +41,42 @@ class FileSetDelegate {
   private List<String> remoteFiles = new ArrayList<String>()
   private List<String> remoteDirs = new ArrayList<String>()
 
-  def localFile(String file) {
+  void localFile(String file) {
     if (file) {
       setType(LOCAL)
       localFiles += new File(file)
     }
   }
 
-  def localFile(File file) {
+  void localFile(File file) {
     if (file) {
       setType(LOCAL)
       localFiles += file
     }
   }
 
-  def localDir(String dir) {
+  void localDir(String dir) {
     if (dir) {
       setType(LOCAL)
       localDirs += new File(dir)
     }
   }
 
-  def localDir(File dir) {
+  void localDir(File dir) {
     if (dir) {
       setType(LOCAL)
       localDirs += dir
     }
   }
 
-  def remoteFile(String file) {
+  void remoteFile(String file) {
     if (file) {
       setType(REMOTE)
       remoteFiles += file
     }
   }
 
-  def remoteDir(String dir) {
+  void remoteDir(String dir) {
     if (dir) {
       setType(REMOTE)
       remoteDirs += dir

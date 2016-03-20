@@ -22,7 +22,6 @@ package com.aestasit.infrastructure.ssh;
  * @author Andrey Adamovich
  *
  */
-@SuppressWarnings("all")
 public class SshException extends RuntimeException {
 
   private static final long serialVersionUID = 6622654048925830665L;
@@ -34,4 +33,5 @@ public class SshException extends RuntimeException {
   public SshException(String message) {
     super(message);
   }
+
 }

@@ -21,6 +21,8 @@ import com.aestasit.infrastructure.ssh.log.Logger
 import com.aestasit.infrastructure.ssh.log.Slf4jLogger
 import com.aestasit.infrastructure.ssh.log.SysErrLogger
 import com.aestasit.infrastructure.ssh.log.SysOutLogger
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 
 import static groovy.lang.Closure.DELEGATE_FIRST
 
@@ -30,6 +32,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  * @author Andrey Adamovich
  *
  */
+@CompileStatic
+@TypeChecked
 class SshOptions extends CommonOptions {
 
   // SSH connection options.

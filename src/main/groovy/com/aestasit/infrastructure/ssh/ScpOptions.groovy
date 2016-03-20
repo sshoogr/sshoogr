@@ -16,12 +16,17 @@
 
 package com.aestasit.infrastructure.ssh
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
+
 /**
  * Configuration object holding options used for SCP (remote file coping) functionality.
  *
  * @author Andrey Adamovich
  *
  */
+@CompileStatic
+@TypeChecked
 class ScpOptions extends CommonOptions {
 
   Boolean showProgress     = true

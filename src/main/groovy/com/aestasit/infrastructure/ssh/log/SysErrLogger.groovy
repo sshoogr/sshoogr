@@ -16,12 +16,17 @@
 
 package com.aestasit.infrastructure.ssh.log
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
+
 /**
  * Standard system output logger.
  *
  * @author Andrey Adamovich
  *
  */
+@CompileStatic
+@TypeChecked
 class SysErrLogger implements Logger {
 
   void info(String message) {

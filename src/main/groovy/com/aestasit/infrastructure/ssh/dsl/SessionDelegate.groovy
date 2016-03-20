@@ -34,6 +34,7 @@ import com.jcraft.jsch.ProxyHTTP
 import com.jcraft.jsch.Session
 import com.jcraft.jsch.SftpException
 import com.jcraft.jsch.SftpProgressMonitor
+import groovy.transform.TypeChecked
 import org.apache.commons.io.output.TeeOutputStream
 
 import java.util.regex.Pattern

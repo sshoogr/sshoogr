@@ -16,6 +16,8 @@
 
 package com.aestasit.infrastructure.ssh.log
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 import org.fusesource.jansi.AnsiConsole
 import static org.fusesource.jansi.Ansi.*
 import static org.fusesource.jansi.Ansi.Color.*
@@ -26,6 +28,8 @@ import static org.fusesource.jansi.Ansi.Color.*
  * @author Luciano Fiandesio
  *
  */
+@CompileStatic
+@TypeChecked
 class AnsiLogger implements Logger {
 
   public AnsiLogger() {

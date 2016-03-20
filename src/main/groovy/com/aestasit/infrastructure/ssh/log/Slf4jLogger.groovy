@@ -16,6 +16,8 @@
 
 package com.aestasit.infrastructure.ssh.log
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 import org.slf4j.LoggerFactory
 
 /**
@@ -24,6 +26,8 @@ import org.slf4j.LoggerFactory
  * @author Andrey Adamovich
  *
  */
+@TypeChecked
+@CompileStatic
 class Slf4jLogger implements Logger {
 
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass().getPackage().getName())

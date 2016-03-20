@@ -17,6 +17,7 @@
 package com.aestasit.infrastructure.ssh.log
 
 import com.jcraft.jsch.SftpProgressMonitor
+import groovy.transform.CompileStatic
 
 /**
  * File coping progress monitor that prints progress status using logging system.
@@ -24,6 +25,7 @@ import com.jcraft.jsch.SftpProgressMonitor
  * @author Andrey Adamovich
  *
  */
+@CompileStatic
 class LoggerProgressMonitor implements SftpProgressMonitor {
 
   private final Logger logger

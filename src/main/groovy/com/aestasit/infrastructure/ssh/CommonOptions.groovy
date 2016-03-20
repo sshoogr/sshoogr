@@ -16,12 +16,17 @@
 
 package com.aestasit.infrastructure.ssh
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
+
 /**
  * Abstract class holding common configuration options available for EXEC and SCP functionality.
  *
  * @author Andrey Adamovich
  *
  */
+@CompileStatic
+@TypeChecked
 abstract class CommonOptions {
 
   Boolean failOnError        = true

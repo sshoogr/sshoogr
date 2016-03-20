@@ -19,6 +19,8 @@ package com.aestasit.infrastructure.ssh.dsl
 import com.aestasit.infrastructure.ssh.SshOptions
 import com.aestasit.infrastructure.ssh.log.JschLogger
 import com.jcraft.jsch.JSch
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 
 import static groovy.lang.Closure.DELEGATE_FIRST
 
@@ -28,6 +30,8 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  * @author Andrey Adamovich
  *
  */
+@TypeChecked
+@CompileStatic
 class SshDslEngine {
 
   private final JSch jsch
@@ -50,16 +54,16 @@ class SshDslEngine {
     jsch.config = config
   }
 
-  def remoteSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  void remoteSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, null, null)
   }
 
-  def remoteSession(String url, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  void remoteSession(String url, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     remoteSession(url, null, cl)
   }
 
-  def remoteSession(String url, Object context,
-                    @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  void remoteSession(String url, Object context,
+                     @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, context) { SessionDelegate sessionDelegate ->
       sessionDelegate.url = url
     }
@@ -92,7 +96,7 @@ class SshDslEngine {
     result
   }
 
-  private void safeDisconnect(SessionDelegate delegate) {
+  private static void safeDisconnect(SessionDelegate delegate) {
     try {
       delegate.disconnect()
     } catch (Exception e) {

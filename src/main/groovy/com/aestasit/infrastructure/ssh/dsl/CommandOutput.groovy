@@ -16,12 +16,19 @@
 
 package com.aestasit.infrastructure.ssh.dsl
 
+import groovy.transform.Canonical
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
+
 /**
  * This class holds data for remote command execution result.
  *
  * @author Andrey Adamovich
  *
  */
+@TypeChecked
+@CompileStatic
+@Canonical
 class CommandOutput {
 
   int exitStatus

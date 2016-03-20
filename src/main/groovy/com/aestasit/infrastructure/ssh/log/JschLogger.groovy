@@ -16,19 +16,22 @@
 
 package com.aestasit.infrastructure.ssh.log
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
+
+@CompileStatic
+@TypeChecked
 class JschLogger implements com.jcraft.jsch.Logger {
 
   private Logger logger
 
-  public JschLogger(Logger logger) {
+  JschLogger(Logger logger) {
     this.logger = logger
   }
 
-  public boolean isEnabled(int pLevel) {
-    return true;
-  }
+  boolean isEnabled(int pLevel) { true }
 
-  public void log(int pLevel, String pMessage) {
+  void log(int pLevel, String pMessage) {
     logger.debug(pMessage)
   }
 

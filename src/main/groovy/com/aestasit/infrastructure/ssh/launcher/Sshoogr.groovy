@@ -22,6 +22,8 @@ import com.aestasit.infrastructure.ssh.log.Slf4jLogger
 import com.aestasit.infrastructure.ssh.log.SysOutLogger
 import com.lexicalscope.jewel.cli.CliFactory
 import com.lexicalscope.jewel.cli.HelpRequestedException
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 
@@ -31,6 +33,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
  * @author Andrey Adamovich
  *
  */
+@TypeChecked
+@CompileStatic
 final class Sshoogr {
 
   static void main(String[] args) {

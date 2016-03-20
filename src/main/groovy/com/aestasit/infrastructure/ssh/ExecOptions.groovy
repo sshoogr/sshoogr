@@ -16,12 +16,17 @@
 
 package com.aestasit.infrastructure.ssh
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
+
 /**
  * Configuration object holding options used for EXEC (remote command execution) functionality.
  *
  * @author Andrey Adamovich
  *
  */
+@CompileStatic
+@TypeChecked
 class ExecOptions extends CommonOptions {
 
   Boolean showOutput       = true

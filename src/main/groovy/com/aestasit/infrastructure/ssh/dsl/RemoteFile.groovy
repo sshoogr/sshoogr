@@ -19,6 +19,8 @@ package com.aestasit.infrastructure.ssh.dsl
 import com.aestasit.infrastructure.ssh.SshException
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.SftpATTRS
+import groovy.transform.TypeChecked
+import groovy.transform.TypeCheckingMode
 
 /**
  * This class represents a remote file and it gives some methods to access file's content.
@@ -27,7 +29,8 @@ import com.jcraft.jsch.SftpATTRS
  * @author Luciano Fiandesio
  *
  */
-class RemoteFile implements Appendable {
+@TypeChecked
+class RemoteFile implements Appendable, Writable {
 
   private final SessionDelegate delegate
   private final String destination
@@ -53,10 +56,11 @@ class RemoteFile implements Appendable {
     }
   }
 
+  @TypeChecked(TypeCheckingMode.SKIP)
   void setText(String text) {
     File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
-    text.eachLine { line -> 
-      tempFile << "${line.trim()}\n" 
+    text.eachLine { line ->
+      tempFile << "${line.trim()}\n"
     }
     try {
       delegate.scp {
@@ -65,7 +69,7 @@ class RemoteFile implements Appendable {
       }
     } finally {
       tempFile.delete()
-    } 
+    }
   }
 
   void touch() {
@@ -75,8 +79,8 @@ class RemoteFile implements Appendable {
   String getOwner() {
     int uid = -1
     delegate.sftpChannel { ChannelSftp channel ->
-      SftpATTRS attr = channel.stat( this.destination)
-      uid =  attr.getUId()
+      SftpATTRS attr = channel.stat(this.destination)
+      uid = attr.getUId()
     }
     delegate.exec("getent passwd ${uid} | cut -d: -f1").output.trim()
   }
@@ -96,8 +100,8 @@ class RemoteFile implements Appendable {
   String getGroup() {
     int uid = -1
     delegate.sftpChannel { ChannelSftp channel ->
-      SftpATTRS attr = channel.stat( this.destination)
-      uid =  attr.getGId()
+      SftpATTRS attr = channel.stat(this.destination)
+      uid = attr.getGId()
     }
     delegate.exec("getent group ${uid} | cut -d: -f1").output.trim()
   }
@@ -116,16 +120,15 @@ class RemoteFile implements Appendable {
 
   void setPermissions(int mask) {
     delegate.sftpChannel { ChannelSftp channel ->
-      // Convert the mask from octal to decimal
-      // ChannelSftp requires decimal format
-      channel.chmod(Integer.parseInt(mask.toString(),8), this.destination)
+      // Convert the mask from octal to decimal, because ChannelSftp requires decimal format.
+      channel.chmod(Integer.parseInt("${mask}", 8), this.destination)
     }
   }
 
   int getPermissions() {
     int mask = 0
     delegate.sftpChannel { ChannelSftp channel ->
-      SftpATTRS attr = channel.stat( this.destination)
+      SftpATTRS attr = channel.stat(this.destination)
       // Convert back to octal.
       mask = Integer.toOctalString(attr.getPermissions()).toInteger() - 100000
     }
@@ -139,23 +142,25 @@ class RemoteFile implements Appendable {
   }
 
   Appendable append(CharSequence csq, int start, int end) throws IOException {
-    // TODO: implement
-    this 
+    append(csq.subSequence(start, end))
   }
 
   Appendable append(char c) throws IOException {
-    // TODO: implement
-     this
+    append(c.toString())
   }
 
-  Appendable leftShift(Object value) {
-    // TODO: create signature for each variant
-     append(value)
+  Appendable leftShift(CharSequence value) {
+    append(value)
+  }
+
+  Writer writeTo(Writer out) throws IOException {
+    // TODO: implement
+    out
   }
 
   /**
    * Get the uid of a user.
-   * 
+   *
    * @param user user
    * @return an Integer representing the uid
    * or null if the user is not found
@@ -163,10 +168,10 @@ class RemoteFile implements Appendable {
   private Integer getUid(String user) {
     resolveId(delegate.exec("id -u ${user}"))
   }
-  
+
   /**
    * Get the gid of a group.
-   * 
+   *
    * @param group group name
    * @return an Integer representing the gid or null if the group is not found.
    */
@@ -192,9 +197,9 @@ class RemoteFile implements Appendable {
     !delegate.exec("test -d ${destination}").failed()
   }
 
-  static private Integer resolveId(out) {
+  static private Integer resolveId(CommandOutput out) {
     if (out.output.isInteger()) {
-      return  out.output.toInteger()
+      return out.output.toInteger()
     }
     null
   }

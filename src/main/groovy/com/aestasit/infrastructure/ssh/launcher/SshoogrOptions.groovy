@@ -19,6 +19,8 @@ package com.aestasit.infrastructure.ssh.launcher
 import com.lexicalscope.jewel.cli.CommandLineInterface
 import com.lexicalscope.jewel.cli.Option
 import com.lexicalscope.jewel.cli.Unparsed
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 
 /**
  * Sshoogr options parsed from command-line parameters.
@@ -27,6 +29,8 @@ import com.lexicalscope.jewel.cli.Unparsed
  *
  */
 @CommandLineInterface(application="sshoogr")
+@CompileStatic
+@TypeChecked
 interface SshoogrOptions {
 
   @Option(defaultValue = [ '127.0.0.1' ], shortName = [ 'h' ], description = "Default host to connect to. Default value is '127.0.0.1'.")

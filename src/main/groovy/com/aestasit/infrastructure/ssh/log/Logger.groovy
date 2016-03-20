@@ -16,6 +16,16 @@
 
 package com.aestasit.infrastructure.ssh.log
 
+import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
+
+/**
+ *
+ *
+ *
+ */
+@CompileStatic
+@TypeChecked
 interface Logger {
 
   /**
