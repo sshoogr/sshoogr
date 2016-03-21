@@ -31,9 +31,9 @@ release {
   failOnUpdateNeeded         = true
   revertOnFail               = true
   preCommitText              = ''
-  preTagCommitMessage        = 'AP-AUTO: [Gradle Release Plugin] - pre tag commit: '
-  tagCommitMessage           = 'AP-AUTO: [Gradle Release Plugin] - creating tag: '
-  newVersionCommitMessage    = 'AP-AUTO: [Gradle Release Plugin] - new version commit: '
+  preTagCommitMessage        = '[Gradle Release Plugin] - pre tag commit: '
+  tagCommitMessage           = '[Gradle Release Plugin] - creating tag: '
+  newVersionCommitMessage    = '[Gradle Release Plugin] - new version commit: '
   tagTemplate                = 'v${version}'
   buildTasks                 = [ 'build', 'uploadArchives' ]
   versionPropertyFile        = 'gradle.properties'
@@ -90,3 +90,6 @@ uploadArchives {
   }
 }
 
+nexusStaging {
+  packageGroup = ossReleaseGroup
+}
