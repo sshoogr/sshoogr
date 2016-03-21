@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory
  */
 @TypeChecked
 @CompileStatic
-class Slf4JSessionLogger implements SessionLogger {
+class Slf4JEventLogger implements EventLogger {
 
-  static private final org.slf4j.Logger LOG = LoggerFactory.getLogger(Slf4JSessionLogger)
+  static private final org.slf4j.Logger LOG = LoggerFactory.getLogger(Slf4JEventLogger)
 
   void info(String message) {
     LOG.info(message)

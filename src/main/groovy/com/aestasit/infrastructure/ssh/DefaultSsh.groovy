@@ -18,11 +18,11 @@ package com.aestasit.infrastructure.ssh
 
 import com.aestasit.infrastructure.ssh.dsl.SessionDelegate
 import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
-import com.aestasit.infrastructure.ssh.log.AnsiSessionLogger
-import com.aestasit.infrastructure.ssh.log.SessionLogger
-import com.aestasit.infrastructure.ssh.log.Slf4JSessionLogger
-import com.aestasit.infrastructure.ssh.log.SysErrSessionLogger
-import com.aestasit.infrastructure.ssh.log.SysOutSessionLogger
+import com.aestasit.infrastructure.ssh.log.AnsiEventLogger
+import com.aestasit.infrastructure.ssh.log.EventLogger
+import com.aestasit.infrastructure.ssh.log.Slf4JEventLogger
+import com.aestasit.infrastructure.ssh.log.SysErrEventLogger
+import com.aestasit.infrastructure.ssh.log.SysOutEventLogger
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
@@ -43,7 +43,7 @@ class DefaultSsh {
 
   static {
     options.with {
-      logger = new SysOutSessionLogger()
+      logger = new SysOutEventLogger()
       verbose = true
       execOptions.with {
         showOutput = true
@@ -107,7 +107,7 @@ class DefaultSsh {
     options.reuseConnection
   }
 
-  static SessionLogger getLogger() {
+  static EventLogger getLogger() {
     options.logger
   }
 
@@ -151,7 +151,7 @@ class DefaultSsh {
     options.reuseConnection = flag
   }
   
-  static void setLogger(SessionLogger logger) {
+  static void setLogger(EventLogger logger) {
     options.logger = logger
   }
   
@@ -183,20 +183,20 @@ class DefaultSsh {
     options.defaultHost = host
   }
 
-  static AnsiSessionLogger ansi() {
-    new AnsiSessionLogger()
+  static AnsiEventLogger ansi() {
+    new AnsiEventLogger()
   }
 
-  static SysOutSessionLogger systemOut() {
-    new SysOutSessionLogger()
+  static SysOutEventLogger systemOut() {
+    new SysOutEventLogger()
   }
 
-  static SysErrSessionLogger systemErr() {
-    new SysErrSessionLogger()
+  static SysErrEventLogger systemErr() {
+    new SysErrEventLogger()
   }
 
-  static Slf4JSessionLogger sf4j() {
-    new Slf4JSessionLogger()
+  static Slf4JEventLogger sf4j() {
+    new Slf4JEventLogger()
   }
 
 }

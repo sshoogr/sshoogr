@@ -28,7 +28,7 @@ class LoggerOutputStream extends OutputStream implements Closeable {
   private final PipedOutputStream out
   private final BufferedReader reader
 
-  LoggerOutputStream(SessionLogger logger) {
+  LoggerOutputStream(EventLogger logger) {
     inp = new PipedInputStream()
     out = new PipedOutputStream(inp)
     reader = new BufferedReader(new InputStreamReader(inp))

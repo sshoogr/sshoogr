@@ -18,46 +18,39 @@ package com.aestasit.infrastructure.ssh.log
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
-import org.fusesource.jansi.AnsiConsole
-import static org.fusesource.jansi.Ansi.*
-import static org.fusesource.jansi.Ansi.Color.*
 
 /**
- * Standard output logger with ANSI colors.
+ * Standard system output logger.
  *
- * @author Luciano Fiandesio
+ * @author Andrey Adamovich
  *
  */
 @CompileStatic
 @TypeChecked
-class AnsiSessionLogger implements SessionLogger {
+class SysOutEventLogger implements EventLogger {
 
-  AnsiSessionLogger() {
-  	AnsiConsole.systemInstall()
-  }	
-  
   void info(String message) {
-    System.out.println(ansi().fg(BLUE).a(message).reset())
+    System.out.println "$message"
   }
 
   void warn(String message) {
-    System.out.println(ansi().fg(YELLOW).a(message).reset())
+    System.out.println "WARN: $message"
   }
 
   void debug(String message) {
-    System.out.println(ansi().fg(GREEN).a(message).reset())
+    System.out.println "DEBUG: $message"
   }
 
   void stdOutput(String line) {
-    System.out.println(ansi().fg(WHITE).a(line).reset())
+    System.out.println "$line"
   }
 
   void errOutput(String line) {
-    System.out.println(ansi().fg(RED).a(line).reset())
+    System.out.println "$line"
   }
 
   void progress(String progress) {
-    System.out.print(ansi().fg(WHITE).a(progress).reset())
+    System.out.print progress
   }
 
   void progressEnd() {

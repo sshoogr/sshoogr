@@ -16,7 +16,7 @@
 
 package com.aestasit.infrastructure.ssh
 
-import com.aestasit.infrastructure.ssh.log.SessionLogger
+import com.aestasit.infrastructure.ssh.log.EventLogger
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
@@ -45,7 +45,7 @@ class SshOptions extends CommonOptions {
 
   boolean reuseConnection            = false
   boolean verbose                    = false
-  SessionLogger logger                      = null
+  EventLogger logger                      = null
 
   String defaultProxyHost            = null
   String defaultProxyPort            = null

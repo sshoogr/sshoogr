@@ -30,12 +30,12 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class LoggerProgressMonitor implements SftpProgressMonitor {
 
-  private final SessionLogger logger
+  private final EventLogger logger
   private long max = 1
   private long current = 0
   private boolean progressBar = true
 
-  LoggerProgressMonitor(SessionLogger logger) {
+  LoggerProgressMonitor(EventLogger logger) {
     this.logger = logger
   }
 

@@ -27,34 +27,34 @@ import groovy.transform.TypeChecked
  */
 @CompileStatic
 @TypeChecked
-class SysOutSessionLogger implements SessionLogger {
+class SysErrEventLogger implements EventLogger {
 
   void info(String message) {
-    System.out.println "$message"
+    System.err.println "$message"
   }
 
   void warn(String message) {
-    System.out.println "WARN: $message"
+    System.err.println "WARN: $message"
   }
 
   void debug(String message) {
-    System.out.println "DEBUG: $message"
+    System.err.println "DEBUG: $message"
   }
 
   void stdOutput(String line) {
-    System.out.println "$line"
+    System.err.println "$line"
   }
 
   void errOutput(String line) {
-    System.out.println "$line"
+    System.err.println "$line"
   }
 
   void progress(String progress) {
-    System.out.print progress
+  	System.err.print progress
   }
 
   void progressEnd() {
-    System.out.println()
+    System.err.println()
   }
 
 }

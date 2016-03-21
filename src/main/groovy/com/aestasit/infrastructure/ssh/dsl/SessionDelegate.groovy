@@ -43,6 +43,8 @@ class SessionDelegate {
   private static final int DEFAULT_SSH_PORT = 22
   private static final Pattern SSH_URL = ~/^(([^:@]+)(:([^@]+))?@)?([^:]+)(:(\d+))?$/
 
+  public static final int UNKNOWN_EXIT_CODE = -1
+
   private String host = null
   private int port = DEFAULT_SSH_PORT
   private String username = null
@@ -58,7 +60,7 @@ class SessionDelegate {
   private final JSch jsch
   private final SshOptions options
 
-  protected SessionLogger logger = null
+  protected EventLogger logger = null
 
   SessionDelegate(JSch jsch, SshOptions options) {
 
@@ -77,7 +79,7 @@ class SessionDelegate {
     if (options.logger != null) {
       logger = options.logger
     } else {
-      logger = new Slf4JSessionLogger()
+      logger = new Slf4JEventLogger()
     }
     if (options.sshDebug) {
       jsch.setLogger(new JschLogger(logger))
@@ -128,6 +130,7 @@ class SessionDelegate {
     }
   }
 
+  @SuppressWarnings('CatchException')
   void disconnect() {
     if (session?.connected) {
       try {
@@ -376,7 +379,7 @@ class SessionDelegate {
   static private String relativePath(String parent, String child) {
     normalizeNoEndSeparator(child)
       .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
-      .replace(File.separatorChar.toString(), '/')
+      .replace(File.separatorChar, '/' as char)
   }
 
   private void createRemoteDirectory(String dstFile, ChannelSftp channel) {
@@ -476,7 +479,7 @@ class SessionDelegate {
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   def su(String password, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
-    su("root", password, cl)
+    su('root', password, cl)
   }
 
   def su(String username, String password,
@@ -490,7 +493,7 @@ class SessionDelegate {
     cl.resolveStrategy = DELEGATE_FIRST
     cl()
     exec {
-      command = "exit"
+      command = 'exit'
       failOnError = true
       showOutput = false
     }
@@ -537,7 +540,7 @@ class SessionDelegate {
 
   CommandOutput exec(Map<?, ?> execOptions) {
     if (!execOptions?.command) {
-      throw new SshException("The 'command' parameter is not specified!")
+      throw new SshException('The "command" parameter is not specified!')
     }
     doExec(execOptions?.command?.toString(), new ExecOptions(options.execOptions, execOptions))
   }
@@ -682,7 +685,7 @@ class SessionDelegate {
     try {
       return cl()
     } catch (JSchException e) {
-      if (e.getMessage().indexOf("session is down") >= 0) {
+      if (e.getMessage().indexOf('session is down') >= 0) {
         return failWithTimeout(options)
       } else {
         return failWithException(options, e)
@@ -693,19 +696,19 @@ class SessionDelegate {
   private CommandOutput failWithTimeout(ExecOptions options) {
     setChanged(true)
     if (options.failOnError) {
-      throw new SshException("Session timeout!")
+      throw new SshException('Session timeout!')
     } else {
-      logger.warn("Session timeout!")
-      return new CommandOutput(-1, "Session timeout!")
+      logger.warn('Session timeout!')
+      return new CommandOutput(UNKNOWN_EXIT_CODE, 'Session timeout!')
     }
   }
 
   private CommandOutput failWithException(ExecOptions options, Throwable e) {
     if (options.failOnError) {
-      throw new SshException("Command failed with exception", e)
+      throw new SshException('Command failed with exception', e)
     } else {
-      logger.warn("Caught exception: " + e.getMessage())
-      return new CommandOutput(-1, e.getMessage(), e)
+      logger.warn("Caught exception: ${e.getMessage()}")
+      return new CommandOutput(UNKNOWN_EXIT_CODE, e.getMessage(), e)
     }
   }
 

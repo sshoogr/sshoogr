@@ -26,7 +26,7 @@ import groovy.transform.TypeChecked
  */
 @CompileStatic
 @TypeChecked
-interface SessionLogger {
+interface EventLogger {
 
   /**
    * Print information level message.
