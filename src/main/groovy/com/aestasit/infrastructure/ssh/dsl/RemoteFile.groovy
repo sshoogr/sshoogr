@@ -280,16 +280,20 @@ class RemoteFile implements Appendable, Writable {
   }
 
   /**
+   * Append character sequence in the end of the remote file.
    *
-   *
+   * @param value character sequence
+   * @return this object for chaining calls.
    */
   Appendable leftShift(CharSequence value) {
     append(value)
   }
 
   /**
+   * Append local file contents in the end of the remote file.
    *
-   *
+   * @param file local file reference.
+   * @return this object for chaining calls.
    */
   Appendable leftShift(File file) {
     append(file.text)
