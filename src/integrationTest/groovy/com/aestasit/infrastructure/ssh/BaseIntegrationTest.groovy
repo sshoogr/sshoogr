@@ -19,6 +19,8 @@ package com.aestasit.infrastructure.ssh
 import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
 import org.junit.Before
 
+import static com.aestasit.infrastructure.ssh.DefaultSsh.ansi
+
 class BaseIntegrationTest {
 
   protected SshOptions options
@@ -29,7 +31,7 @@ class BaseIntegrationTest {
     options = new SshOptions()
     options.with {
 
-      logger = systemOut()
+      logger = ansi()
 
       defaultHost = '192.168.33.144'
       defaultUser = 'vagrant'

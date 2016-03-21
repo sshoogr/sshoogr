@@ -258,6 +258,7 @@ class RemoteFile implements Appendable, Writable {
     }
   }
 
+  @SuppressWarnings('FactoryMethodName')
   private File createTempFile() {
     File.createTempFile(this.getClass().package.name, 'txt')
   }

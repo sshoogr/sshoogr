@@ -17,7 +17,6 @@
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.SshOptions
-import com.aestasit.infrastructure.ssh.log.JschLogger
 import com.jcraft.jsch.JSch
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
@@ -32,23 +31,30 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  */
 @TypeChecked
 @CompileStatic
+@SuppressWarnings(['CatchThrowable', 'CatchException'])
 class SshDslEngine {
+
+  public static final String SSH_STRICT_HOST_KEY_CHECKING = 'StrictHostKeyChecking'
+  public static final String SSH_HASH_KNOWN_HOSTS = 'HashKnownHosts'
+  public static final String SSH_PREFERRED_AUTHENTICATIONS = 'PreferredAuthentications'
+  public static final String DEFAULT_AUTH_METHODS = 'publickey,keyboard-interactive,password'
 
   private final JSch jsch
   private final Properties config
   private final SshOptions options
+
   private SessionDelegate delegate
 
   SshDslEngine(SshOptions options) {
     this.options = options
     this.jsch = new JSch()
     this.config = new Properties()
-    config.put("StrictHostKeyChecking", options.trustUnknownHosts ? "no" : "yes")
-    if (!options.jschProperties.containsKey("HashKnownHosts")) {
-      config.put("HashKnownHosts", "yes")
+    config.put(SSH_STRICT_HOST_KEY_CHECKING, options.trustUnknownHosts ? 'no' : 'yes')
+    if (!options.jschProperties.containsKey(SSH_HASH_KNOWN_HOSTS)) {
+      config.put(SSH_HASH_KNOWN_HOSTS, 'yes')
     }
-    if (!options.jschProperties.containsKey("PreferredAuthentications")) {
-      config.put("PreferredAuthentications", "publickey,keyboard-interactive,password")
+    if (!options.jschProperties.containsKey(SSH_PREFERRED_AUTHENTICATIONS)) {
+      config.put(SSH_PREFERRED_AUTHENTICATIONS, DEFAULT_AUTH_METHODS)
     }
     config.putAll(options.jschProperties)
     jsch.config = config
@@ -68,6 +74,7 @@ class SshDslEngine {
       sessionDelegate.url = url
     }
   }
+
 
   private executeSession(
     @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl, Object context,
@@ -100,6 +107,7 @@ class SshDslEngine {
     try {
       delegate.disconnect()
     } catch (Exception e) {
+      delegate.logger.warn(e.message)
     }
   }
 }

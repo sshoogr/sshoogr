@@ -18,46 +18,50 @@ package com.aestasit.infrastructure.ssh.log
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
-import org.slf4j.LoggerFactory
+import org.fusesource.jansi.AnsiConsole
+import static org.fusesource.jansi.Ansi.*
+import static org.fusesource.jansi.Ansi.Color.*
 
 /**
- * Slf4j-based logger.
+ * Standard output logger with ANSI colors.
  *
- * @author Andrey Adamovich
+ * @author Luciano Fiandesio
  *
  */
-@TypeChecked
 @CompileStatic
-class Slf4jLogger implements Logger {
+@TypeChecked
+class AnsiSessionLogger implements SessionLogger {
 
-  static private final org.slf4j.Logger LOG = LoggerFactory.getLogger(Slf4jLogger)
-
+  AnsiSessionLogger() {
+  	AnsiConsole.systemInstall()
+  }	
+  
   void info(String message) {
-    LOG.info(message)
+    System.out.println(ansi().fg(BLUE).a(message).reset())
   }
 
   void warn(String message) {
-    LOG.warn(message)
+    System.out.println(ansi().fg(YELLOW).a(message).reset())
   }
 
   void debug(String message) {
-    LOG.debug(message)
+    System.out.println(ansi().fg(GREEN).a(message).reset())
   }
 
   void stdOutput(String line) {
-    LOG.debug(line)
+    System.out.println(ansi().fg(WHITE).a(line).reset())
   }
 
   void errOutput(String line) {
-    LOG.debug(line)
+    System.out.println(ansi().fg(RED).a(line).reset())
   }
 
   void progress(String progress) {
-    LOG.trace(progress)
+    System.out.print(ansi().fg(WHITE).a(progress).reset())
   }
 
   void progressEnd() {
-    // do nothing
+    System.out.println()
   }
 
 }

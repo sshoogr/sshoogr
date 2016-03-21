@@ -18,43 +18,46 @@ package com.aestasit.infrastructure.ssh.log
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
+import org.slf4j.LoggerFactory
 
 /**
- * Standard system output logger.
+ * Slf4j-based logger.
  *
  * @author Andrey Adamovich
  *
  */
-@CompileStatic
 @TypeChecked
-class SysErrLogger implements Logger {
+@CompileStatic
+class Slf4JSessionLogger implements SessionLogger {
+
+  static private final org.slf4j.Logger LOG = LoggerFactory.getLogger(Slf4JSessionLogger)
 
   void info(String message) {
-    System.err.println "$message"
+    LOG.info(message)
   }
 
   void warn(String message) {
-    System.err.println "WARN: $message"
+    LOG.warn(message)
   }
 
   void debug(String message) {
-    System.err.println "DEBUG: $message"
+    LOG.debug(message)
   }
 
   void stdOutput(String line) {
-    System.err.println "$line"
+    LOG.debug(line)
   }
 
   void errOutput(String line) {
-    System.err.println "$line"
+    LOG.debug(line)
   }
 
   void progress(String progress) {
-  	System.err.print progress
+    LOG.trace(progress)
   }
 
   void progressEnd() {
-    System.err.println()
+    // do nothing
   }
 
 }

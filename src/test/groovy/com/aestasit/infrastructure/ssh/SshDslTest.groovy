@@ -17,7 +17,7 @@
 package com.aestasit.infrastructure.ssh
 
 import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
-import com.aestasit.infrastructure.ssh.log.SysOutLogger
+import com.aestasit.infrastructure.ssh.log.SysOutSessionLogger
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -39,7 +39,7 @@ class SshDslTest extends BaseSshTest {
     options = new SshOptions()
     options.with {
 
-      logger = new SysOutLogger()
+      logger = new SysOutSessionLogger()
 
       defaultHost = '127.0.0.1'
       defaultUser = 'user1'

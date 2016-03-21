@@ -18,8 +18,11 @@ package com.aestasit.infrastructure.ssh
 
 import com.aestasit.infrastructure.ssh.dsl.SessionDelegate
 import com.aestasit.infrastructure.ssh.dsl.SshDslEngine
-import com.aestasit.infrastructure.ssh.log.Logger
-import com.aestasit.infrastructure.ssh.log.SysOutLogger
+import com.aestasit.infrastructure.ssh.log.AnsiSessionLogger
+import com.aestasit.infrastructure.ssh.log.SessionLogger
+import com.aestasit.infrastructure.ssh.log.Slf4JSessionLogger
+import com.aestasit.infrastructure.ssh.log.SysErrSessionLogger
+import com.aestasit.infrastructure.ssh.log.SysOutSessionLogger
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
@@ -33,13 +36,14 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  */
 @CompileStatic
 @TypeChecked
+@SuppressWarnings('MethodCount')
 class DefaultSsh {
 
   static SshOptions options = new SshOptions()
 
   static {
     options.with {
-      logger = new SysOutLogger()
+      logger = new SysOutSessionLogger()
       verbose = true
       execOptions.with {
         showOutput = true
@@ -68,11 +72,11 @@ class DefaultSsh {
   }
 
   static ExecOptions getExecOptions() {
-    options.getExecOptions()
+    options.execOptions
   }
 
   static ScpOptions getScpOptions() {
-    options.getScpOptions()
+    options.scpOptions
   }
 
   static scpOptions(@DelegatesTo(strategy = DELEGATE_FIRST, value = ScpOptions) Closure cl) {
@@ -80,103 +84,119 @@ class DefaultSsh {
   }
 
   static String getDefaultHost() {
-    options.getDefaultHost()
+    options.defaultHost
   }
 
   static File getDefaultKeyFile() {
-    options.getDefaultKeyFile()
+    options.defaultKeyFile
   }
 
   static String getDefaultPassword() {
-    options.getDefaultPassword()
+    options.defaultPassword
   }
 
   static boolean getVerbose() {
-    options.getVerbose()
+    options.verbose
   }
 
   static boolean getTrustUnknownHosts() {
-    options.getTrustUnknownHosts()
+    options.trustUnknownHosts
   }
 
   static boolean getReuseConnection() {
-    options.getReuseConnection()
+    options.reuseConnection
   }
 
-  static Logger getLogger() {
-    options.getLogger()
+  static SessionLogger getLogger() {
+    options.logger
   }
 
   static Boolean getFailOnError() {
-    options.getFailOnError()
+    options.failOnError
   }
 
   static String getDefaultUser() {
-    options.getDefaultUser()
+    options.defaultUser
   }
 
   static int getDefaultPort() {
-    options.getDefaultPort()
+    options.defaultPort
   }
 
   static boolean isReuseConnection() {
-    options.isReuseConnection()
+    options.reuseConnection
   }
 
   static boolean isVerbose() {
-    options.isVerbose()
+    options.verbose
   }
   
   static boolean isTrustUnknownHosts() {
-    options.isTrustUnknownHosts()
+    options.trustUnknownHosts
   }
 
   static void setVerbose(boolean verbose) {
-    options.setVerbose(verbose)
+    options.verbose = verbose
   }
   
   static void setTrustUnknownHosts(boolean flag) {
-    options.setTrustUnknownHosts(flag)
+    options.trustUnknownHosts = flag
   }
   
   static void setScpOptions(ScpOptions opts) {
-    options.setScpOptions(opts)
+    options.scpOptions = opts
   }
   
   static void setReuseConnection(boolean flag) {
-    options.setReuseConnection(flag)
+    options.reuseConnection = flag
   }
   
-  static void setLogger(Logger logger) {
-    options.setLogger(logger)
+  static void setLogger(SessionLogger logger) {
+    options.logger = logger
   }
   
   static void setFailOnError(Boolean flag) {
-    options.setFailOnError(flag)
+    options.failOnError = flag
   }
   
   static void setExecOptions(ExecOptions opts) {
-    options.setExecOptions(opts)
+    options.execOptions = opts
   }
   
   static void setDefaultUser(String user) {
-    options.setDefaultUser(user)
+    options.defaultUser = user
   }
   
   static void setDefaultPort(int port) {
-    options.setDefaultPort(port)
+    options.defaultPort = port
   }
   
   static void setDefaultPassword(String password) {
-    options.setDefaultPassword(password)
+    options.defaultPassword = password
   }
   
   static void setDefaultKeyFile(File key) {
-    options.setDefaultKeyFile(key)
+    options.defaultKeyFile = key
   }
   
   static void setDefaultHost(String host) {
-    options.setDefaultHost(host)
+    options.defaultHost = host
   }
-    
+
+  static AnsiSessionLogger ansi() {
+    new AnsiSessionLogger()
+  }
+
+  static SysOutSessionLogger systemOut() {
+    new SysOutSessionLogger()
+  }
+
+  static SysErrSessionLogger systemErr() {
+    new SysErrSessionLogger()
+  }
+
+  static Slf4JSessionLogger sf4j() {
+    new Slf4JSessionLogger()
+  }
+
 }

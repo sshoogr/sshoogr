@@ -27,7 +27,7 @@ import groovy.transform.TypeChecked
  */
 @CompileStatic
 @TypeChecked
-class SysOutLogger implements Logger {
+class SysOutSessionLogger implements SessionLogger {
 
   void info(String message) {
     System.out.println "$message"

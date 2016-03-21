@@ -17,15 +17,13 @@
 package com.aestasit.infrastructure.ssh.launcher
 
 import com.aestasit.infrastructure.ssh.DefaultSsh
-import com.aestasit.infrastructure.ssh.log.AnsiLogger
-import com.aestasit.infrastructure.ssh.log.Slf4jLogger
-import com.aestasit.infrastructure.ssh.log.SysOutLogger
 import com.lexicalscope.jewel.cli.CliFactory
 import com.lexicalscope.jewel.cli.HelpRequestedException
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
+
 
 /**
  * Sshoogr script launcher application.
@@ -35,6 +33,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
  */
 @TypeChecked
 @CompileStatic
+@SuppressWarnings(['CatchException', 'ThrowRuntimeException'])
 final class Sshoogr {
 
   static void main(String[] args) {
@@ -48,33 +47,34 @@ final class Sshoogr {
           script.run()
         } else {
           System.err.println "File not found: ${inputFile.absolutePath}\n"
-          System.err.println "Sshoogr requires an input file to work!\n"
-          System.err.println "See https://github.com/aestasit/sshoogr for details."
+          System.err.println 'Sshoogr requires an input file to work!\n'
+          System.err.println 'See https://github.com/aestasit/sshoogr for details.'
           System.exit(127)
         }
       }
     } catch (HelpRequestedException e) {
-      println e.message
+      System.out.println e.message
     } catch (Exception ex) {
       System.err.println "${ex.message}"
       System.exit(1)
     }
   }
 
+  @SuppressWarnings(['UnnecessaryObjectReferences', 'FactoryMethodName'])
   private static Binding buildBinding(SshoogrOptions options) {
     new Binding(init: {
       switch (options.logger) {
         case 'slf4j':
-          DefaultSsh.logger = new Slf4jLogger()
+          DefaultSsh.logger = DefaultSsh.sf4j()
           break
         case 'standard':
-          DefaultSsh.logger = new SysOutLogger()
+          DefaultSsh.logger = DefaultSsh.systemOut()
           break
         case 'color':
-          DefaultSsh.logger = new AnsiLogger()
+          DefaultSsh.logger = DefaultSsh.ansi()
           break
         default:
-          throw new RuntimeException("Unknown logger type!")
+          throw new RuntimeException('Unknown logger type!')
       }
       DefaultSsh.defaultHost = options.host
       DefaultSsh.defaultUser = options.user

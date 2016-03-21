@@ -23,9 +23,9 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class JschLogger implements com.jcraft.jsch.Logger {
 
-  private final Logger logger
+  private final SessionLogger logger
 
-  JschLogger(Logger logger) {
+  JschLogger(SessionLogger logger) {
     this.logger = logger
   }
 

@@ -16,11 +16,7 @@
 
 package com.aestasit.infrastructure.ssh
 
-import com.aestasit.infrastructure.ssh.log.AnsiLogger
-import com.aestasit.infrastructure.ssh.log.Logger
-import com.aestasit.infrastructure.ssh.log.Slf4jLogger
-import com.aestasit.infrastructure.ssh.log.SysErrLogger
-import com.aestasit.infrastructure.ssh.log.SysOutLogger
+import com.aestasit.infrastructure.ssh.log.SessionLogger
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
@@ -34,6 +30,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST
  */
 @CompileStatic
 @TypeChecked
+@SuppressWarnings('ConfusingMethodName')
 class SshOptions extends CommonOptions {
 
   // SSH connection options.
@@ -48,10 +45,10 @@ class SshOptions extends CommonOptions {
 
   boolean reuseConnection            = false
   boolean verbose                    = false
-  Logger logger                      = null
+  SessionLogger logger                      = null
 
-  String defaultProxyHost                 = null
-  String defaultProxyPort                 = null
+  String defaultProxyHost            = null
+  String defaultProxyPort            = null
   
   // SSH command execution options.
   ExecOptions execOptions            = new ExecOptions()
@@ -69,22 +66,6 @@ class SshOptions extends CommonOptions {
     cl.delegate = scpOptions
     cl.resolveStrategy = DELEGATE_FIRST
     cl()
-  }
-
-  static AnsiLogger ansi() {
-    new AnsiLogger()
-  }
-
-  static SysOutLogger systemOut() {
-    new SysOutLogger()
-  }
-
-  static SysErrLogger systemErr() {
-    new SysErrLogger()
-  }
-
-  static Slf4jLogger sf4j() {
-    new Slf4jLogger()
   }
 
 }

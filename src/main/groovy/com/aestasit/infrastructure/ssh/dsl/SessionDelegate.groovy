@@ -20,21 +20,8 @@ import com.aestasit.infrastructure.ssh.ExecOptions
 import com.aestasit.infrastructure.ssh.ScpOptions
 import com.aestasit.infrastructure.ssh.SshException
 import com.aestasit.infrastructure.ssh.SshOptions
-import com.aestasit.infrastructure.ssh.log.JschLogger
-import com.aestasit.infrastructure.ssh.log.Logger
-import com.aestasit.infrastructure.ssh.log.LoggerOutputStream
-import com.aestasit.infrastructure.ssh.log.LoggerProgressMonitor
-import com.aestasit.infrastructure.ssh.log.Slf4jLogger
-import com.jcraft.jsch.Channel
-import com.jcraft.jsch.ChannelExec
-import com.jcraft.jsch.ChannelSftp
-import com.jcraft.jsch.JSch
-import com.jcraft.jsch.JSchException
-import com.jcraft.jsch.ProxyHTTP
-import com.jcraft.jsch.Session
-import com.jcraft.jsch.SftpException
-import com.jcraft.jsch.SftpProgressMonitor
-import groovy.transform.TypeChecked
+import com.aestasit.infrastructure.ssh.log.*
+import com.jcraft.jsch.*
 import org.apache.commons.io.output.TeeOutputStream
 
 import java.util.regex.Pattern
@@ -50,6 +37,7 @@ import static org.apache.commons.io.FilenameUtils.*
  * @author Andrey Adamovich
  *
  */
+@SuppressWarnings('MethodCount')
 class SessionDelegate {
 
   private static final int DEFAULT_SSH_PORT = 22
@@ -70,7 +58,7 @@ class SessionDelegate {
   private final JSch jsch
   private final SshOptions options
 
-  protected Logger logger = null
+  protected SessionLogger logger = null
 
   SessionDelegate(JSch jsch, SshOptions options) {
 
@@ -89,7 +77,7 @@ class SessionDelegate {
     if (options.logger != null) {
       logger = options.logger
     } else {
-      logger = new Slf4jLogger()
+      logger = new Slf4JSessionLogger()
     }
     if (options.sshDebug) {
       jsch.setLogger(new JschLogger(logger))
