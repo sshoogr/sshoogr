@@ -161,7 +161,7 @@ class RemoteFile implements Appendable, Writable {
     int mask = 0
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat(this.destination)
-      mask = attr.getPermissions()
+      mask = attr.getPermissions() - 32768
     }
     mask
   }

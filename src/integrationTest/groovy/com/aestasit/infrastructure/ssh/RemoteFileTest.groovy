@@ -54,8 +54,8 @@ class RemoteFileTest extends BaseIntegrationTest {
     engine.remoteSession {
       exec('rm -rf /tmp/test2.file')
       remoteFile('/tmp/test2.file').touch()
-      remoteFile('/tmp/test2.file').setPermissions(777)
-      assert remoteFile('/tmp/test2.file').permissions == 777
+      remoteFile('/tmp/test2.file').setPermissions(0777)
+      assert remoteFile('/tmp/test2.file').permissions == 0777
     }
   }
 
