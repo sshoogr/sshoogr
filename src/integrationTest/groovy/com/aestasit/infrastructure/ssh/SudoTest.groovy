@@ -17,4 +17,7 @@
 package com.aestasit.infrastructure.ssh
 
 class SudoTest extends BaseIntegrationTest {
+
+  // TODO: implement sudo test
+
 }

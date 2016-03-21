@@ -18,6 +18,6 @@ package com.aestasit.infrastructure.ssh
 
 class ScpTest extends BaseIntegrationTest {
 
-
+  // TODO: implement scp test
 
 }

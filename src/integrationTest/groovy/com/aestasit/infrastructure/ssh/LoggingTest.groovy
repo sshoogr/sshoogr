@@ -17,4 +17,7 @@
 package com.aestasit.infrastructure.ssh
 
 class LoggingTest extends BaseIntegrationTest {
+
+  // TODO: implement logging quality test
+
 }
