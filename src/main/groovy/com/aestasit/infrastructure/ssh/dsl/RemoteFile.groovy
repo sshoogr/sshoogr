@@ -71,7 +71,7 @@ class RemoteFile implements Appendable, Writable {
    * @return isNormalFile
    */
   boolean isFile() {
-    !delegate.exec("test -f ${destination}").failed()
+    delegate.ok("test -f ${destination}")
   }
 
   /**
@@ -80,7 +80,7 @@ class RemoteFile implements Appendable, Writable {
    * @return isNormalDirectory
    */
   boolean isDirectory() {
-    !delegate.exec("test -d ${destination}").failed()
+    delegate.ok("test -d ${destination}")
   }
 
   /**
