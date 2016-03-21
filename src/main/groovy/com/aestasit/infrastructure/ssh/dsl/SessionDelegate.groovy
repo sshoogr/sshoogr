@@ -17,6 +17,7 @@
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.ExecOptions
+import com.aestasit.infrastructure.ssh.RemoteURL
 import com.aestasit.infrastructure.ssh.ScpOptions
 import com.aestasit.infrastructure.ssh.SshException
 import com.aestasit.infrastructure.ssh.SshOptions
@@ -40,9 +41,7 @@ import static org.apache.commons.io.FilenameUtils.*
 @SuppressWarnings('MethodCount')
 class SessionDelegate {
 
-  private static final int DEFAULT_SSH_PORT = 22
-  private static final Pattern SSH_URL = ~/^(([^:@]+)(:([^@]+))?@)?([^:]+)(:(\d+))?$/
-
+  public static final int DEFAULT_SSH_PORT = 22
   public static final int UNKNOWN_EXIT_CODE = -1
 
   private String host = null
@@ -150,18 +149,16 @@ class SessionDelegate {
   }
 
   void setUrl(String url) {
-    def matcher = SSH_URL.matcher(url)
-    if (matcher.matches()) {
-      setHost(matcher.group(5))
-      if (matcher.group(7)) {
-        setPort(matcher.group(7).toInteger())
-      } else {
-        setPort(DEFAULT_SSH_PORT)
-      }
-      setUser(matcher.group(2))
-      setPassword(matcher.group(4))
-    } else {
-      throw new MalformedURLException("Unknown URL format: " + url)
+    RemoteURL remoteURL = new RemoteURL(url, DEFAULT_SSH_PORT)
+    setHost(remoteURL.host)
+    if (remoteURL.portSet) {
+      setPort(remoteURL.port)
+    }
+    if (remoteURL.userSet) {
+      setUser(remoteURL.user)
+    }
+    if (remoteURL.passwordSet) {
+      setPassword(remoteURL.password)
     }
   }
 
