@@ -24,6 +24,7 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit
 class LauncherTest extends BaseSshTest {
 
   @Rule
+  @SuppressWarnings('PublicInstanceField')
   public final ExpectedSystemExit exit = ExpectedSystemExit.none()
 
   protected static final String SCRIPT = '''
@@ -37,35 +38,44 @@ class LauncherTest extends BaseSshTest {
 
   @Test
   void scriptWithConnectionParameters() {
-    Sshoogr.main([
+    String output = captureOutput {
+      Sshoogr.main([
 
-      '--user',
-      'user2',
+        '--user',
+        'user2',
 
-      '--password',
-      '654321',
+        '--password',
+        '654321',
 
-      '--host',
-      'localhost',
+        '--host',
+        'localhost',
 
-      '--trust',
+        '--trust',
 
-      '--port',
-      '2233',
+        '--port',
+        '2233',
 
-      temporaryScript.absolutePath
+        temporaryScript.absolutePath
 
-    ] as String[])
+      ] as String[])
+    }
+    assert output.contains('Connecting')
   }
 
   @Test
   void defaultSshoogrScript() {
-    Sshoogr.main()
+    String output = captureOutput {
+      Sshoogr.main()
+    }
+    assert output.contains('Connecting')
   }
 
   @Test
   void defaultSshoogrScriptWithLogger() {
-    Sshoogr.main(['--logger', 'color'] as String[])
+    String output = captureOutput {
+      Sshoogr.main(['--logger', 'color'] as String[])
+    }
+    assert output.contains('Connecting')
   }
 
   @Test

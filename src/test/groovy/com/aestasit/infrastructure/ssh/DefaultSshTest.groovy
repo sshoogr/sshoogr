@@ -36,13 +36,18 @@ class DefaultSshTest extends BaseSshTest {
     execOptions {
       maxWait = 30000
     }
-    remoteSession('user2:654321@localhost:2233') {
-      exec 'whoami'
-      exec 'du -s'
-      exec 'rm -rf /tmp/test.file'
-      scp testFile, '/tmp/test.file'
-      remoteFile('/etc/init.conf').text = 'content'
+    String output = captureOutput {
+      remoteSession('user2:654321@localhost:2233') {
+        exec 'whoami'
+        exec 'du -s'
+        exec 'rm -rf /tmp/test.file'
+        scp testFile, '/tmp/test.file'
+        remoteFile('/etc/init.conf').text = 'content'
+      }
     }
+    assert output.contains('whoami')
+    assert output.contains('test.file')
+    assert output.contains('100%')
   }
 
   @Test
