@@ -8,6 +8,7 @@ buildscript {
   dependencies {
     classpath 'net.gvmtool:gradle-sdkvendor-plugin:0.3.1'
     classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
   }
 }
 

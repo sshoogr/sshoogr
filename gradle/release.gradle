@@ -1,4 +1,6 @@
 
+apply plugin: 'io.codearte.nexus-staging'
+
 jar {
   manifest {
     attributes(
@@ -88,4 +90,3 @@ uploadArchives {
   }
 }
 
-  // id 'io.codearte.nexus-staging' version '0.5.3'
