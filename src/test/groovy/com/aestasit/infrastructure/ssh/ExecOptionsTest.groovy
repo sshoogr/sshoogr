@@ -27,7 +27,7 @@ import org.junit.Test
 class ExecOptionsTest {
 
   @Test
-  public void testExecCtrs() throws Exception {
+  void testExecCtrs() {
     def defaultOpts = new ExecOptions()
     assert defaultOpts.failOnError
     assert defaultOpts.showOutput
@@ -36,7 +36,7 @@ class ExecOptionsTest {
   }
 
   @Test
-  public void testScpCtrs() throws Exception {
+  void testScpCtrs() {
     ScpOptions defaultOpts = new ScpOptions()
     assert defaultOpts.failOnError
     assert defaultOpts.showProgress

@@ -26,10 +26,11 @@ import org.junit.BeforeClass
  * @author Andrey Adamovich
  *
  */
-abstract class BaseSshTest {
+class BaseSshTest {
 
   @BeforeClass
-  def static void createServer() {
+  @SuppressWarnings(['FactoryMethodName', 'BuilderMethodWithSideEffects'])
+  static void createServer() {
     MockSshServer.with {
       
       // Create command expectations.
@@ -43,22 +44,22 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
       }
 
       command('^whoami.*$') { inp, out, err, callback, env ->
-        out << "root\n"
+        out << 'root\n'
         callback.onExit(0)
       }
 
       command('^du.*$') { inp, out, err, callback, env ->
-        out << "100\n"
+        out << '100\n'
         callback.onExit(0)
       }
 
       command('^rm.*$') { inp, out, err, callback, env ->
-        out << "/tmp/test.file\n"
+        out << '/tmp/test.file\n'
         callback.onExit(0)
       }
 
       command('^sudo.*$') { inp, out, err, callback, env ->
-        out << "OK\n"
+        out << 'OK\n'
         callback.onExit(0)
       }
 
@@ -68,7 +69,7 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
       }
 
       command('^touch.*$') { inp, out, err, callback, env ->
-      	out << "/tmp/test.file\n"
+      	out << '/tmp/test.file\n'
 	      callback.onExit(0)
       }
 
@@ -104,19 +105,19 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
   }
 
   static File getCurrentDir() {
-    new File(".").getAbsoluteFile()
+    new File('.').absoluteFile
   }
 
   static File getTestFile() {
-    new File("test-data/input.file").getAbsoluteFile()
+    new File('test-data/input.file').absoluteFile
   }
 
   static File getTestKey() {
-    new File("test-data/dummy.pem").getAbsoluteFile()
+    new File('test-data/dummy.pem').absoluteFile
   }
 
   static String captureOutput(Closure cl) {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream()
     PrintStream ps = new PrintStream(baos)
     PrintStream old = System.out
     System.out = ps
@@ -126,14 +127,14 @@ drwxr-xr-x 3 1100 1100 4096 Aug  7 16:49 examples
       System.out.flush()
       System.out = old
     }
-    println baos.toString()
+    System.out.println baos.toString()
     baos.toString()
   }
 
   static void printThreadNames(String message) {
-    println message
+    System.out.println message
     Thread.allStackTraces.each { Thread t, StackTraceElement[] ste ->
-      println t.name
+      System.out.println t.name
     }
   }
 }

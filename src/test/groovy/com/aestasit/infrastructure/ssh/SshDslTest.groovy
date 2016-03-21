@@ -35,7 +35,7 @@ class SshDslTest extends BaseSshTest {
   static SshDslEngine engine
 
   @BeforeClass
-  def static void defineOptions() {
+  static void defineOptions() {
     options = new SshOptions()
     options.with {
 
@@ -64,7 +64,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testDefaultSettings() throws Exception {
+  void testDefaultSettings() {
     engine.remoteSession {
       exec 'whoami'
       exec 'du -s'
@@ -74,7 +74,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testUrlAndOverriding() throws Exception {
+  void testUrlAndOverriding() {
     // Test overriding default connection settings through URL.
     engine.remoteSession {
 
@@ -89,7 +89,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testPasswordlessLogin() throws Exception {
+  void testPasswordlessLogin() {
     engine.remoteSession {
       url = 'user2@localhost:2233'
       keyFile = getTestKey()
@@ -98,7 +98,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testMethodOverriding() throws Exception {
+  void testMethodOverriding() {
     // Test overriding default connection settings through method parameter.
     engine.remoteSession('user2:654321@localhost:2233') {
 
@@ -111,7 +111,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testPropertyOverriding() throws Exception {
+  void testPropertyOverriding() {
     // Test overriding default connection settings through delegate parameters.
     engine.remoteSession {
 
@@ -129,13 +129,13 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testOutputScripting() throws Exception {
+  void testOutputScripting() {
     // Test saving the output and setting exec parameters through a builder.
     engine.remoteSession {
-      println ">>>>> COMMAND: whoami"
+      System.out.println ">>>>> COMMAND: whoami"
       def output = exec(command: 'whoami', showOutput: false)
-      output.output.eachLine { line -> println ">>>>> OUTPUT: ${line.reverse()}" }
-      println ">>>>> EXIT: ${output.exitStatus}"
+      output.output.eachLine { line -> System.out.println ">>>>> OUTPUT: ${line.reverse()}" }
+      System.out.println ">>>>> EXIT: ${output.exitStatus}"
     }
   }
 
@@ -147,14 +147,14 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testFailOnError() throws Exception {
+  void testFailOnError() {
     engine.remoteSession {
       exec(command: 'abcd', failOnError: false)
     }
   }
 
   @Test
-  void testTimeout() throws Exception {
+  void testTimeout() {
     try {
       engine.remoteSession {
         exec(command: 'timeout', maxWait: 1000)
@@ -165,13 +165,13 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testExecClosure() throws Exception {
+  void testExecClosure() {
     // Test closure based builder for exec.
     engine.remoteSession { exec { command = 'whoami' } }
   }
 
   @Test
-  void testCopy() throws Exception {
+  void testCopy() {
     engine.remoteSession {
       scp {
         from {
@@ -183,7 +183,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testSudoCopy() throws Exception {
+  void testSudoCopy() {
     engine.remoteSession {
       scp {
         uploadToDirectory = '/tmp'
@@ -196,7 +196,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testMultiExec() throws Exception {
+  void testMultiExec() {
     engine.remoteSession {
       exec([
           'ls -la',
@@ -211,7 +211,7 @@ class SshDslTest extends BaseSshTest {
 
 
   @Test
-  void testEscaping() throws Exception {
+  void testEscaping() {
     engine.remoteSession {
       exec(command: 'ls -la "\\', escapeCharacters: '"\\')
       exec(command: 'ls -la "\\', escapeCharacters: ['"', '\\'])
@@ -220,7 +220,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testPrefix() throws Exception {
+  void testPrefix() {
     engine.remoteSession {
       prefix('sudo') {
         exec([
@@ -232,14 +232,14 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testRemoteFile() throws Exception {
+  void testRemoteFile() {
     engine.remoteSession {
       remoteFile('/etc/init.conf').text = 'content'
     }
   }
 
   @Test
-  void testRemoteFileIsFile() throws Exception {
+  void testRemoteFileIsFile() {
     engine.remoteSession {
       assert remoteFile('/etc/init.conf').file
       assert !remoteFile('/etc/init.conf').directory
@@ -249,14 +249,14 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testOk() throws Exception {
+  void testOk() {
     engine.remoteSession {
       assert ok('whoami')
     }
   }
 
   @Test
-  void testOkWithPrefix() throws Exception {
+  void testOkWithPrefix() {
     engine.remoteSession {
       prefix 'sudo', {
         assert ok('which service')
@@ -265,14 +265,14 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testFail() throws Exception {
+  void testFail() {
     engine.remoteSession {
       assert fail('mkdur dur')
     }
   }
 
   @Test
-  void testExecGStringCommand() throws Exception {
+  void testExecGStringCommand() {
     def cmd = 'whoami'
     engine.remoteSession {
       assert exec(command: "$cmd", showOutput: true).output.trim() == 'root'
@@ -280,7 +280,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testExecGStringCommandArray() throws Exception {
+  void testExecGStringCommandArray() {
     def cmd = 'whoami'
     List cmds = ["$cmd", "$cmd"]
     engine.remoteSession {
@@ -289,7 +289,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testExceptionInClosure() throws Exception {
+  void testExceptionInClosure() {
     engine.remoteSession {
       connect()
       disconnect()
@@ -310,7 +310,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testExecMapValidation() throws Exception {
+  void testExecMapValidation() {
     engine.remoteSession {
       try {
         exec commandS: "whoami"
@@ -323,7 +323,7 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
-  void testOptionsOverride() throws Exception {
+  void testOptionsOverride() {
     String output = captureOutput {
       engine.remoteSession {
         scp {

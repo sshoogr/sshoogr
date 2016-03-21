@@ -41,6 +41,8 @@ class SessionDelegate {
   public static final String FROM_PARAMETER = '%from%'
   public static final String TO_PARAMETER = '%to%'
   public static final String SESSION_TIMEOUT = 'Session timeout!'
+  public static final String ESCAPE_CHARACTER = '\\'
+  public static final String ESCAPED_ESCAPE_CHARACTER = '\\\\'
 
   private String host = null
   private int port = DEFAULT_SSH_PORT
@@ -611,12 +613,12 @@ class SessionDelegate {
     session.timeout = options.maxWait
     String actualCommand = cmd
     if (options.escapeCharacters) {
-      if (options.escapeCharacters.contains('\\')) {
-        actualCommand = actualCommand.replace('\\', '\\\\')
+      if (options.escapeCharacters.contains(ESCAPE_CHARACTER)) {
+        actualCommand = actualCommand.replace(ESCAPE_CHARACTER, ESCAPED_ESCAPE_CHARACTER)
       }
       options.escapeCharacters.each { ch ->
-        if (ch != '\\') {
-          actualCommand = actualCommand.replace(ch.toString(), '\\' + ch)
+        if (ch != ESCAPE_CHARACTER) {
+          actualCommand = actualCommand.replace(ch.toString(), ESCAPE_CHARACTER + ch.toString())
         }
       }
     }

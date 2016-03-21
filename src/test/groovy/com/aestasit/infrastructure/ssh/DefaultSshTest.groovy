@@ -17,10 +17,10 @@
 package com.aestasit.infrastructure.ssh
 
 import com.jcraft.jsch.JSchException
-import org.junit.Assert
 import org.junit.Test
 
 import static com.aestasit.infrastructure.ssh.DefaultSsh.*
+import static org.junit.Assert.fail
 
 /**
  * Test for static default SSH DSL implementation.
@@ -31,7 +31,7 @@ import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 class DefaultSshTest extends BaseSshTest {
 
   @Test
-  void testStaticMethods() throws Exception {
+  void testStaticMethods() {
     trustUnknownHosts = true
     execOptions {
       maxWait = 30000
@@ -46,27 +46,27 @@ class DefaultSshTest extends BaseSshTest {
   }
 
   @Test
-  void testUnknownHosts() throws Exception {
+  void testUnknownHosts() {
     trustUnknownHosts = false
     try {
       remoteSession('user2:654321@localhost:2233') {
         exec 'whoami'
       }
-      Assert.fail("Should fail with host reject!")
+      fail('Should fail with host reject!')
     } catch (JSchException e) {
       assert e.message.contains('reject')
     }
   }
 
   @Test
-  void testOptionsOverride() throws Exception {
+  void testOptionsOverride() {
     trustUnknownHosts = true
 
     // Default behaviour should show the progress.
     String output = captureOutput {
       remoteSession('user2:654321@localhost:2233') {
         scp {
-          from { localDir new File(getCurrentDir(), 'test-settings') }
+          from { localDir new File(currentDir, 'test-settings') }
           into { remoteDir '/tmp/puppet' }
         }
       }
@@ -78,7 +78,7 @@ class DefaultSshTest extends BaseSshTest {
       remoteSession('user2:654321@localhost:2233') {
         scp {
           showProgress = false
-          from { localDir new File(getCurrentDir(), 'test-settings') }
+          from { localDir new File(currentDir, 'test-settings') }
           into { remoteDir '/tmp/puppet' }
         }
       }
@@ -92,7 +92,7 @@ class DefaultSshTest extends BaseSshTest {
           showProgress = false
         }
         scp {
-          from { localDir new File(getCurrentDir(), 'test-settings') }
+          from { localDir new File(currentDir, 'test-settings') }
           into { remoteDir '/tmp/puppet' }
         }
       }

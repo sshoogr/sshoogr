@@ -24,9 +24,9 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit
 class LauncherTest extends BaseSshTest {
 
   @Rule
-  public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+  protected final ExpectedSystemExit exit = ExpectedSystemExit.none()
 
-  static final String script = '''
+  protected static final String SCRIPT = '''
     remoteSession {
       exec 'whoami'
       exec 'du -s'
@@ -36,22 +36,22 @@ class LauncherTest extends BaseSshTest {
     '''
 
   @Test
-  void scriptWithConnectionParameters() throws Exception {
+  void scriptWithConnectionParameters() {
     Sshoogr.main([
 
-      "--user",
-      "user2",
+      '--user',
+      'user2',
 
-      "--password",
-      "654321",
+      '--password',
+      '654321',
 
-      "--host",
-      "localhost",
+      '--host',
+      'localhost',
 
-      "--trust",
+      '--trust',
 
-      "--port",
-      "2233",
+      '--port',
+      '2233',
 
       temporaryScript.absolutePath
 
@@ -59,17 +59,17 @@ class LauncherTest extends BaseSshTest {
   }
 
   @Test
-  void defaultSshoogrScript() throws Exception {
+  void defaultSshoogrScript() {
     Sshoogr.main()
   }
 
   @Test
-  void defaultSshoogrScriptWithLogger() throws Exception {
+  void defaultSshoogrScriptWithLogger() {
     Sshoogr.main(['--logger', 'color'] as String[])
   }
 
   @Test
-  void helpMessage() throws Exception {
+  void helpMessage() {
     String output = captureOutput {
       Sshoogr.main(['--help'] as String[])
     }
@@ -77,14 +77,14 @@ class LauncherTest extends BaseSshTest {
   }
 
   @Test
-  void notExistingScript() throws Exception {
+  void notExistingScript() {
     exit.expectSystemExitWithStatus(127)
     Sshoogr.main(['gg.sshoogr'] as String[])
   }
 
   static File getTemporaryScript() {
-    File scriptFile = File.createTempFile("default", ".sshoogr")
-    scriptFile.text = script
+    File scriptFile = File.createTempFile('default', '.sshoogr')
+    scriptFile.text = SCRIPT
     scriptFile
   }
 
