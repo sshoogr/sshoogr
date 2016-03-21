@@ -19,8 +19,10 @@ package com.aestasit.infrastructure.ssh.dsl
 import com.aestasit.infrastructure.ssh.SshException
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.SftpATTRS
+import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
-import groovy.transform.TypeCheckingMode
+
+import static com.aestasit.infrastructure.ssh.dsl.ParsingUtils.resolveId
 
 /**
  * This class represents a remote file and it gives some methods to access file's content.
@@ -30,11 +32,18 @@ import groovy.transform.TypeCheckingMode
  *
  */
 @TypeChecked
+@CompileStatic
 class RemoteFile implements Appendable, Writable {
 
   private final SessionDelegate delegate
   private final String destination
 
+  /**
+   * Remote file reference constructor.
+   *
+   * @param delegate session delegate to use for accessing remote file.
+   * @param destination path to remote file.
+   */
   RemoteFile(SessionDelegate delegate, String destination) {
     this.delegate = delegate
     this.destination = destination
@@ -43,39 +52,40 @@ class RemoteFile implements Appendable, Writable {
     }
   }
 
-  String getText() {
-    File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
-    try {
-      delegate.scp {
-        from { remoteFile destination }
-        into { localFile tempFile }
-      }
-      return tempFile.text
-    } finally {
-      tempFile.delete()
-    }
+  /***
+   *    __ _ _
+   *   / _(_) |
+   *  | |_ _| | ___   _ __  _ __ ___  _ __  ___
+   *  |  _| | |/ _ \ | '_ \| '__/ _ \| '_ \/ __|
+   *  | | | | |  __/ | |_) | | | (_) | |_) \__ \
+   *  |_| |_|_|\___| | .__/|_|  \___/| .__/|___/
+   *                 | |             | |
+   *                 |_|             |_|
+   */
+
+  /**
+   * Tests that the path exists and is not a directory.
+   *
+   * @return isNormalFile
+   */
+  boolean isFile() {
+    !delegate.exec("test -f ${destination}").failed()
   }
 
-  @TypeChecked(TypeCheckingMode.SKIP)
-  void setText(String text) {
-    File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
-    text.eachLine { line ->
-      tempFile << "${line.trim()}\n"
-    }
-    try {
-      delegate.scp {
-        from { localFile(tempFile) }
-        into { remoteFile(destination) }
-      }
-    } finally {
-      tempFile.delete()
-    }
+  /**
+   * Tests that the path exists and is not a file.
+   *
+   * @return isNormalDirectory
+   */
+  boolean isDirectory() {
+    !delegate.exec("test -d ${destination}").failed()
   }
 
-  void touch() {
-    delegate.exec(command: 'touch ' + this.destination, failOnError: true, showOutput: true)
-  }
-
+  /**
+   * Returns file's owner.
+   *
+   * @return owner's user name.
+   */
   String getOwner() {
     int uid = -1
     delegate.sftpChannel { ChannelSftp channel ->
@@ -85,6 +95,11 @@ class RemoteFile implements Appendable, Writable {
     delegate.exec("getent passwd ${uid} | cut -d: -f1").output.trim()
   }
 
+  /**
+   * Sets remote file owner.
+   *
+   * @param user owner's user name.
+   */
   void setOwner(String user) {
     def uid = getUid(user)
     if (uid) {
@@ -92,11 +107,15 @@ class RemoteFile implements Appendable, Writable {
         channel.chown(uid, this.destination)
       }
     } else {
-      // TODO how do we handle a custom exception?
-      // throw new NullPointerException('invalid user')
+      delegate.logger.warn("User ${user} does not exist!")
     }
   }
 
+  /**
+   * Retrieves remote file owner group.
+   *
+   * @return owner group name.
+   */
   String getGroup() {
     int uid = -1
     delegate.sftpChannel { ChannelSftp channel ->
@@ -106,6 +125,11 @@ class RemoteFile implements Appendable, Writable {
     delegate.exec("getent group ${uid} | cut -d: -f1").output.trim()
   }
 
+  /**
+   * Sets remote file's owner group.
+   *
+   * @param group owner group name.
+   */
   void setGroup(String group) {
     def gid = getGid(group)
     if (gid) {
@@ -113,49 +137,33 @@ class RemoteFile implements Appendable, Writable {
         channel.chgrp(gid, this.destination)
       }
     } else {
-      // TODO: how do we handle a custom exception?
-      // throw new NullPointerException('invalid user')
+      delegate.logger.warn("Group ${group} does not exist!")
     }
   }
 
+  /**
+   * Sets remote file's permission mask e.g. remoteFile('/home/user/for_all.txt').permissions = 0777
+   *
+   * @param mask permissions to set.
+   */
   void setPermissions(int mask) {
     delegate.sftpChannel { ChannelSftp channel ->
-      // Convert the mask from octal to decimal, because ChannelSftp requires decimal format.
-      channel.chmod(Integer.parseInt("${mask}", 8), this.destination)
+      channel.chmod(mask, this.destination)
     }
   }
 
+  /**
+   * Retrieves remote file's permission mask.
+   *
+   * @return permission mask as decimal integer.
+   */
   int getPermissions() {
     int mask = 0
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat(this.destination)
-      // Convert back to octal.
-      mask = Integer.toOctalString(attr.getPermissions()).toInteger() - 100000
+      mask = attr.getPermissions()
     }
     mask
-  }
-
-  Appendable append(CharSequence csq) throws IOException {
-    String originalText = getText()
-    setText(originalText + csq)
-    this
-  }
-
-  Appendable append(CharSequence csq, int start, int end) throws IOException {
-    append(csq.subSequence(start, end))
-  }
-
-  Appendable append(char c) throws IOException {
-    append(c.toString())
-  }
-
-  Appendable leftShift(CharSequence value) {
-    append(value)
-  }
-
-  Writer writeTo(Writer out) throws IOException {
-    // TODO: implement
-    out
   }
 
   /**
@@ -179,29 +187,114 @@ class RemoteFile implements Appendable, Writable {
     resolveId(delegate.exec("getent group ${group} | cut -d: -f3"))
   }
 
-  /**
-   * Tests that the path exists and is not a directory.
-   *
-   * @return isNormalFile
+  /***
+   *    __ _ _
+   *   / _(_) |
+   *  | |_ _| | ___    ___  _ __  ___
+   *  |  _| | |/ _ \  / _ \| '_ \/ __|
+   *  | | | | |  __/ | (_) | |_) \__ \
+   *  |_| |_|_|\___|  \___/| .__/|___/
+   *                          | |
+   *                          |_|
    */
-  boolean isFile() {
-    !delegate.exec("test -f ${destination}").failed()
-  }
 
   /**
-   * Tests that the path exists and is not a file.
-   *
-   * @return isNormalDirectory
+   * "Touches" remote file.
    */
-  boolean isDirectory() {
-    !delegate.exec("test -d ${destination}").failed()
+  void touch() {
+    delegate.exec(command: 'touch ' + this.destination, failOnError: true, showOutput: true)
   }
 
-  static private Integer resolveId(CommandOutput out) {
-    if (out.output.isInteger()) {
-      return out.output.toInteger()
+
+  /***
+   *    __ _ _                        _             _
+   *   / _(_) |                      | |           | |
+   *  | |_ _| | ___    ___ ___  _ __ | |_ ___ _ __ | |_
+   *  |  _| | |/ _ \  / __/ _ \| '_ \| __/ _ \ '_ \| __|
+   *  | | | | |  __/ | (_| (_) | | | | ||  __/ | | | |_
+   *  |_| |_|_|\___|  \___\___/|_| |_|\__\___|_| |_|\__|
+   *
+   */
+
+  /**
+   * Retrieves remote file content.
+   *
+   * @return file content.
+   */
+  String getText() {
+    File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
+    try {
+      delegate.scp {
+        from { remoteFile destination }
+        into { localFile tempFile }
+      }
+      return tempFile.text
+    } finally {
+      tempFile.delete()
     }
-    null
+  }
+
+  /**
+   * Sets remote file content as text.
+   *
+   * @param text content to set.
+   */
+  void setText(String text) {
+    File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
+    tempFile.withWriter { writer ->
+      text.readLines().each { String line ->
+        writer << "${line.trim()}\n"
+      }
+    }
+    try {
+      delegate.scp {
+        from { localFile(tempFile) }
+        into { remoteFile(destination) }
+      }
+    } finally {
+      tempFile.delete()
+    }
+  }
+
+  /**
+   *
+   * @param csq
+   * @return
+   * @throws IOException
+   */
+  Appendable append(CharSequence csq) throws IOException {
+    String originalText = getText()
+    setText(originalText + csq)
+    this
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  Appendable append(CharSequence csq, int start, int end) throws IOException {
+    append(csq.subSequence(start, end))
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  Appendable append(char c) throws IOException {
+    append(c.toString())
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  Appendable leftShift(CharSequence value) {
+    append(value)
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  Writer writeTo(Writer out) throws IOException {
+    // TODO: implement
+    out
   }
 
 }
