@@ -15,6 +15,12 @@ TODO: write this section
 
 `gradlew clean integration`
 
+
+==== Release snapshot
+
+`gradlew clean uploadArchives`
+
+
 ==== Publishing to Maven Central
 
 `gradlew release`
