@@ -16,16 +16,10 @@
 
 package com.aestasit.infrastructure.ssh.dsl
 
-import com.aestasit.infrastructure.ssh.ExecOptions
-import com.aestasit.infrastructure.ssh.RemoteURL
-import com.aestasit.infrastructure.ssh.ScpOptions
-import com.aestasit.infrastructure.ssh.SshException
-import com.aestasit.infrastructure.ssh.SshOptions
+import com.aestasit.infrastructure.ssh.*
 import com.aestasit.infrastructure.ssh.log.*
 import com.jcraft.jsch.*
 import org.apache.commons.io.output.TeeOutputStream
-
-import java.util.regex.Pattern
 
 import static com.aestasit.infrastructure.ssh.dsl.FileSetType.*
 import static groovy.lang.Closure.DELEGATE_FIRST
@@ -43,6 +37,9 @@ class SessionDelegate {
 
   public static final int DEFAULT_SSH_PORT = 22
   public static final int UNKNOWN_EXIT_CODE = -1
+  public static final char CANONICAL_SEPARATOR = '/' as char
+  public static final String FROM_PARAMETER = '%from%'
+  public static final String TO_PARAMETER = '%to%'
 
   private String host = null
   private int port = DEFAULT_SSH_PORT
@@ -259,6 +256,7 @@ class SessionDelegate {
     }
   }
 
+  @SuppressWarnings('AbcMetric')
   private void upload(ScpOptionsDelegate copySpec, ChannelSftp channel) {
 
     def remoteDirs = copySpec.target.remoteDirs
@@ -266,20 +264,20 @@ class SessionDelegate {
     def scpOptions = new ScpOptions(options.scpOptions, copySpec)
 
     // Check if upload should go through an intermediate directory and append its path hash to all target paths.
-    Map<String, String> uploadMap = [:] as Map<String, String>
+    Map<String, String> uploadMap = [:]
     if (scpOptions.uploadToDirectory) {
       logger.debug("Uploading through: ${scpOptions.uploadToDirectory}")
       def uploadDirectory = separatorsToUnix(normalize(scpOptions.uploadToDirectory))
       createRemoteDirectory(uploadDirectory, channel)
       remoteDirs = remoteDirs.collect { String dstPath ->
-        def uploadPath = uploadDirectory + '/' + md5Hex(dstPath)
+        def uploadPath = uploadDirectory + CANONICAL_SEPARATOR + md5Hex(dstPath)
         uploadMap[uploadPath] = dstPath
         uploadPath
       }
       remoteFiles = remoteFiles.collect { String dstPath ->
         def dstDir = getFullPathNoEndSeparator(dstPath)
         def dstName = new File(dstPath).name
-        def uploadPath = uploadDirectory + '/' + md5Hex(dstDir) + '/' + dstName
+        def uploadPath = uploadDirectory + CANONICAL_SEPARATOR + md5Hex(dstDir) + CANONICAL_SEPARATOR + dstName
         uploadMap[uploadPath] = dstDir
         uploadPath
       }
@@ -326,13 +324,13 @@ class SessionDelegate {
     if (scpOptions.uploadToDirectory && scpOptions.postUploadCommand) {
       remoteDirs.each { String copiedPath ->
         exec {
-          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedPath])
+          command = scpOptions.postUploadCommand.replaceAll(FROM_PARAMETER, copiedPath).replaceAll(TO_PARAMETER, uploadMap[copiedPath])
         }
       }
       remoteFiles.each { String copiedFilePath ->
         def copiedPath = getFullPathNoEndSeparator(copiedFilePath)
         exec {
-          command = scpOptions.postUploadCommand.replaceAll('%from%', copiedPath).replaceAll('%to%', uploadMap[copiedFilePath])
+          command = scpOptions.postUploadCommand.replaceAll(FROM_PARAMETER, copiedPath).replaceAll(TO_PARAMETER, uploadMap[copiedFilePath])
         }
       }
     }
@@ -376,9 +374,10 @@ class SessionDelegate {
   static private String relativePath(String parent, String child) {
     normalizeNoEndSeparator(child)
       .replace(normalizeNoEndSeparator(parent) + File.separatorChar, '')
-      .replace(File.separatorChar, '/' as char)
+      .replace(File.separatorChar, CANONICAL_SEPARATOR as char)
   }
 
+  @SuppressWarnings([ 'FactoryMethodName', 'BuilderMethodWithSideEffects'])
   private void createRemoteDirectory(String dstFile, ChannelSftp channel) {
     boolean dirExists = true
     try {
