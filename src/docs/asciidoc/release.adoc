@@ -19,6 +19,8 @@ TODO: write this section
 
 `gradlew release`
 
-`gradlew announce`
+`gradlew closeAndPromoteRepository`
+
+`gradlew sdkMajorRelease`
 
 
