@@ -24,7 +24,7 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit
 class LauncherTest extends BaseSshTest {
 
   @Rule
-  protected final ExpectedSystemExit exit = ExpectedSystemExit.none()
+  public final ExpectedSystemExit exit = ExpectedSystemExit.none()
 
   protected static final String SCRIPT = '''
     remoteSession {

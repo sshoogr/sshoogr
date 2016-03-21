@@ -328,7 +328,7 @@ class SshDslTest extends BaseSshTest {
         scp {
           showProgress = false
           from {
-            localDir new File(getCurrentDir(), 'test-settings')
+            localDir new File(currentDir, 'test-settings')
           }
           into { remoteDir '/tmp/puppet' }
         }
