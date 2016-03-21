@@ -280,17 +280,26 @@ class RemoteFile implements Appendable, Writable {
   }
 
   /**
-   * {@inheritDoc}
+   *
+   *
    */
   Appendable leftShift(CharSequence value) {
     append(value)
   }
 
   /**
+   *
+   *
+   */
+  Appendable leftShift(File file) {
+    append(file.text)
+  }
+
+  /**
    * {@inheritDoc}
    */
   Writer writeTo(Writer out) throws IOException {
-    // TODO: implement
+    out.append(getText())
     out
   }
 

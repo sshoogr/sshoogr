@@ -75,11 +75,11 @@ class RemoteFileTest extends BaseIntegrationTest {
   @Test
   void testWritable() {
     engine.remoteSession {
-      remoteFile('/tmp/test3.file').text = 'remote'
+      remoteFile('/tmp/test4.file').text = 'remote'
       def localFile = File.createTempFile('local', 'file')
       localFile.deleteOnExit()
       localFile << remoteFile('/tmp/test4.file')
-      assert localFile.text == 'remote'
+      assert localFile.text.trim() == 'remote'
     }
   }
 
