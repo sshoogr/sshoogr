@@ -40,12 +40,13 @@ class SessionDelegate {
   public static final char CANONICAL_SEPARATOR = '/' as char
   public static final String FROM_PARAMETER = '%from%'
   public static final String TO_PARAMETER = '%to%'
+  public static final String SESSION_TIMEOUT = 'Session timeout!'
 
   private String host = null
   private int port = DEFAULT_SSH_PORT
   private String username = null
   private File keyFile = null
-  private String passPhrase = null
+  private final String passPhrase = null
   private String password = null
   private boolean changed = false
 
@@ -91,13 +92,13 @@ class SessionDelegate {
         disconnect()
 
         if (host == null) {
-          throw new SshException("Host is required.")
+          throw new SshException('Host is required.')
         }
         if (username == null) {
-          throw new SshException("Username is required.")
+          throw new SshException('Username is required.')
         }
         if (keyFile == null && password == null) {
-          throw new SshException("Password or key file is required.")
+          throw new SshException('Password or key file is required.')
         }
 
         session = jsch.getSession(username, host, port)
@@ -249,10 +250,10 @@ class SessionDelegate {
   static private void validateCopySpec(ScpOptionsDelegate options) {
     if (options.source.type == null || options.source.type == UNKNOWN ||
       options.target.type == null || options.target.type == UNKNOWN) {
-      throw new SshException("Either scp source (from) or target (into) is of unknown type!")
+      throw new SshException('Either scp source (from) or target (into) is of unknown type!')
     }
     if (options.source.type == options.target.type) {
-      throw new SshException("Scp source (from) and target (into) shouldn't be both local or both remote!")
+      throw new SshException('Scp source (from) and target (into) shouldn\'t be both local or both remote!')
     }
   }
 
@@ -377,7 +378,7 @@ class SessionDelegate {
       .replace(File.separatorChar, CANONICAL_SEPARATOR as char)
   }
 
-  @SuppressWarnings([ 'FactoryMethodName', 'BuilderMethodWithSideEffects'])
+  @SuppressWarnings(['FactoryMethodName', 'BuilderMethodWithSideEffects'])
   private void createRemoteDirectory(String dstFile, ChannelSftp channel) {
     boolean dirExists = true
     try {
@@ -395,7 +396,7 @@ class SessionDelegate {
     if (options.verbose) {
       logger.info("> Getting file list from ${remoteDir} directory")
     }
-    Vector<ChannelSftp.LsEntry> entries = channel.ls(separatorsToUnix(remoteDir))
+    List<ChannelSftp.LsEntry> entries = channel.ls(separatorsToUnix(remoteDir))
     entries.each { ChannelSftp.LsEntry entry ->
       def childPath = separatorsToUnix(concat(remoteDir, entry.filename))
       if (entry.attrs.isDir()) {
@@ -431,9 +432,9 @@ class SessionDelegate {
     }
   }
 
-  public void sftpChannel(Closure cl) {
+  void sftpChannel(Closure cl) {
     connect()
-    ChannelSftp channel = (ChannelSftp) session.openChannel("sftp")
+    ChannelSftp channel = (ChannelSftp) session.openChannel('sftp')
     channel.connect()
     try {
       cl(channel)
@@ -626,9 +627,9 @@ class SessionDelegate {
       actualCommand = "${actualCommand} ${options.suffix}"
     }
     if (options.showCommand) {
-      logger.info("> " + actualCommand)
+      logger.info('> ' + actualCommand)
     }
-    ChannelExec channel = (ChannelExec) session.openChannel("exec")
+    ChannelExec channel = (ChannelExec) session.openChannel('exec')
     def savedOutput = new ByteArrayOutputStream()
     def output = savedOutput
     if (options.showOutput) {
@@ -643,6 +644,7 @@ class SessionDelegate {
     new ChannelData(channel: channel, output: savedOutput)
   }
 
+  @SuppressWarnings('CatchException')
   private CommandOutput awaitTermination(ChannelData channelData, ExecOptions options) {
     Channel channel = channelData.channel
     try {
@@ -667,11 +669,10 @@ class SessionDelegate {
       if (thread.isAlive()) {
         thread = null
         return failWithTimeout(options)
-      } else {
-        int ec = channel.exitStatus
-        verifyExitCode(ec, options)
-        return new CommandOutput(ec, channelData.output.toString())
       }
+      int ec = channel.exitStatus
+      verifyExitCode(ec, options)
+      return new CommandOutput(ec, channelData.output.toString())
     } finally {
       channel.disconnect()
     }
@@ -681,21 +682,20 @@ class SessionDelegate {
     try {
       return cl()
     } catch (JSchException e) {
-      if (e.getMessage().indexOf('session is down') >= 0) {
+      if (e.message.indexOf('session is down') >= 0) {
         return failWithTimeout(options)
-      } else {
-        return failWithException(options, e)
       }
+      return failWithException(options, e)
     }
   }
 
   private CommandOutput failWithTimeout(ExecOptions options) {
     setChanged(true)
     if (options.failOnError) {
-      throw new SshException('Session timeout!')
+      throw new SshException(SESSION_TIMEOUT)
     } else {
-      logger.warn('Session timeout!')
-      return new CommandOutput(UNKNOWN_EXIT_CODE, 'Session timeout!')
+      logger.warn(SESSION_TIMEOUT)
+      return new CommandOutput(UNKNOWN_EXIT_CODE, SESSION_TIMEOUT)
     }
   }
 
@@ -703,8 +703,8 @@ class SessionDelegate {
     if (options.failOnError) {
       throw new SshException('Command failed with exception', e)
     } else {
-      logger.warn("Caught exception: ${e.getMessage()}")
-      return new CommandOutput(UNKNOWN_EXIT_CODE, e.getMessage(), e)
+      logger.warn("Caught exception: ${e.message}")
+      return new CommandOutput(UNKNOWN_EXIT_CODE, e.message, e)
     }
   }
 
@@ -753,8 +753,7 @@ class SessionDelegate {
   static private int findFreePort() {
     ServerSocket server = new ServerSocket(0)
     try {
-      int port = server.getLocalPort()
-      return port
+      return server.localPort
     } finally {
       server?.close()
     }
@@ -763,4 +762,5 @@ class SessionDelegate {
   Session getSession() {
     session
   }
+
 }
