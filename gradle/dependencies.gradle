@@ -1,11 +1,22 @@
 
-apply plugin: 'org.asciidoctor.convert'
-
-mainClassName = mainClass
-
 repositories {
   mavenCentral()
   maven { url ossSnapshotRepositoryUrl }
+}
+
+mainClassName = mainClass
+
+targetCompatibility = '1.6'
+sourceCompatibility = '1.6'
+
+tasks.withType(JavaCompile) { task ->
+  task.targetCompatibility = project.targetCompatibility
+  task.sourceCompatibility = project.sourceCompatibility
+}
+
+tasks.withType(JavaCompile) { task ->
+  task.targetCompatibility = project.targetCompatibility
+  task.sourceCompatibility = project.sourceCompatibility
 }
 
 configurations {

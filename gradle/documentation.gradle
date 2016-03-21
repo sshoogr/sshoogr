@@ -1,6 +1,5 @@
 
-  // id 'org.asciidoctor.gradle.asciidoctor' version '1.5.3'
-
+apply plugin: 'org.asciidoctor.convert'
 
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
   classifier = 'javadoc'
@@ -24,3 +23,21 @@ githubPages {
     password = project.'github.credentials.password'
   }
 }
+
+asciidoctor {
+  attributes = [
+    toc                    : 'left',
+    doctype                : 'book',
+    icons                  : 'font',
+    encoding               : 'utf-8',
+    sectlink               : true,
+    sectanchors            : true,
+    numbered               : true,
+    linkattrs              : true,
+    imagesdir              : 'images',
+    linkcss                : true,
+    'source-highlighter'   : 'coderay',
+    'coderay-linenums-mode': 'table',
+  ]
+}
+

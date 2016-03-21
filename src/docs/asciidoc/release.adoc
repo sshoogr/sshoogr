@@ -1,0 +1,32 @@
+= Releasing sshoogr 
+
+
+== Clean build and commit all changes
+
+`gradlew formatLicense`
+
+`gradlew clean build`
+
+
+== Integration test
+
+`vagrant up`
+
+`gradlew clean integration`
+
+== Publishing to Maven Central
+
+`gradlew release`
+
+`gradlew announce`
+
+
+
+TODO: compile against java 6
+TODO: use more CompileStatic and TypeChecked 
+TODO: implement more file methods + tests
+TODO: implement more integration tests
+TODO: implement resource
+TODO: implement facts
+
+

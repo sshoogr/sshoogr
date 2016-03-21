@@ -21,4 +21,6 @@ package com.aestasit.infrastructure.ssh
  */
 class VersionTest extends BaseIntegrationTest {
 
+  // TODO: TODO: implement system test with sdkman and different groovy versions and java version
+
 }
