@@ -23,14 +23,16 @@ import groovy.transform.TypeChecked
 @TypeChecked
 class JschLogger implements com.jcraft.jsch.Logger {
 
-  private Logger logger
+  private final Logger logger
 
   JschLogger(Logger logger) {
     this.logger = logger
   }
 
+  @SuppressWarnings('UnusedMethodParameter')
   boolean isEnabled(int pLevel) { true }
 
+  @SuppressWarnings('UnusedMethodParameter')
   void log(int pLevel, String pMessage) {
     logger.debug(pMessage)
   }

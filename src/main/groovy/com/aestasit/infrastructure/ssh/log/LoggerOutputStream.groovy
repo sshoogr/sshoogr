@@ -16,16 +16,13 @@
 
 package com.aestasit.infrastructure.ssh.log
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeChecked
-
 /**
  * Output stream implementation that streams all output to logging system.
  *
  * @author Andrey Adamovich
  *
  */
-class LoggerOutputStream extends OutputStream {
+class LoggerOutputStream extends OutputStream implements Closeable {
 
   private final PipedInputStream inp
   private final PipedOutputStream out

@@ -30,30 +30,30 @@ import org.slf4j.LoggerFactory
 @CompileStatic
 class Slf4jLogger implements Logger {
 
-  static private final org.slf4j.Logger logger = LoggerFactory.getLogger(Slf4jLogger.package.name)
+  static private final org.slf4j.Logger LOG = LoggerFactory.getLogger(Slf4jLogger)
 
   void info(String message) {
-    logger.info(message)
+    LOG.info(message)
   }
 
   void warn(String message) {
-    logger.warn(message)
+    LOG.warn(message)
   }
 
   void debug(String message) {
-    logger.debug(message)
+    LOG.debug(message)
   }
 
   void stdOutput(String line) {
-    logger.debug(line)
+    LOG.debug(line)
   }
 
   void errOutput(String line) {
-    logger.debug(line)
+    LOG.debug(line)
   }
 
   void progress(String progress) {
-    // do nothing
+    LOG.trace(progress)
   }
 
   void progressEnd() {
