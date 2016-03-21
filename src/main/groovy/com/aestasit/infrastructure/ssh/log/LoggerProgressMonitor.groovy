@@ -39,6 +39,7 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
     this.logger = logger
   }
 
+  @SuppressWarnings('UnusedMethodParameter')
   void init(int op, String src, String dest, long max) {
     if (max != -1) {
       this.max = max

@@ -5,6 +5,7 @@ ruleset {
   }
   ruleset('rulesets/imports.xml') {
     exclude 'MisorderedStaticImports'
+    exclude 'NoWildcardImports'
   }
   ruleset('rulesets/naming.xml') {
     exclude 'PropertyName'
@@ -22,7 +23,7 @@ ruleset {
       finalRegex = '^_?[a-z][a-zA-Z0-9]*$'
     }
   }
-  ruleset('rulesets/unused.xml')
+  ruleset('rulesets/unused.xml') {}
   ruleset('rulesets/exceptions.xml')
   ruleset('rulesets/logging.xml') {
     exclude 'SystemErrPrint'

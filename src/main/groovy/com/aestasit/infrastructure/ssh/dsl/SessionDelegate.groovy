@@ -644,11 +644,6 @@ class SessionDelegate {
     new ChannelData(channel: channel, output: savedOutput)
   }
 
-  class ChannelData {
-    ByteArrayOutputStream output
-    Channel channel
-  }
-
   private CommandOutput awaitTermination(ChannelData channelData, ExecOptions options) {
     Channel channel = channelData.channel
     try {
