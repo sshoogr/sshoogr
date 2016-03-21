@@ -31,8 +31,8 @@ import java.util.concurrent.TimeoutException
  */
 class SshDslTest extends BaseSshTest {
 
-  static SshOptions options
-  static SshDslEngine engine
+  protected static SshOptions options
+  protected static SshDslEngine engine
 
   @BeforeClass
   static void defineOptions() {
@@ -92,7 +92,7 @@ class SshDslTest extends BaseSshTest {
   void testPasswordlessLogin() {
     engine.remoteSession {
       url = 'user2@localhost:2233'
-      keyFile = getTestKey()
+      keyFile = testKey
       exec 'whoami'
     }
   }
@@ -132,7 +132,7 @@ class SshDslTest extends BaseSshTest {
   void testOutputScripting() {
     // Test saving the output and setting exec parameters through a builder.
     engine.remoteSession {
-      System.out.println ">>>>> COMMAND: whoami"
+      System.out.println '>>>>> COMMAND: whoami'
       def output = exec(command: 'whoami', showOutput: false)
       output.output.eachLine { line -> System.out.println ">>>>> OUTPUT: ${line.reverse()}" }
       System.out.println ">>>>> EXIT: ${output.exitStatus}"
@@ -175,7 +175,7 @@ class SshDslTest extends BaseSshTest {
     engine.remoteSession {
       scp {
         from {
-          localDir new File(getCurrentDir(), 'test-settings')
+          localDir new File(currentDir, 'test-settings')
         }
         into { remoteDir '/tmp/puppet' }
       }
@@ -188,7 +188,7 @@ class SshDslTest extends BaseSshTest {
       scp {
         uploadToDirectory = '/tmp'
         from {
-          localDir new File(getCurrentDir(), 'test-settings')
+          localDir new File(currentDir, 'test-settings')
         }
         into { remoteDir '/etc/puppet' }
       }
@@ -294,16 +294,15 @@ class SshDslTest extends BaseSshTest {
       connect()
       disconnect()
     }
-    printThreadNames("THREADS BEFORE:")
-    List<String> threadsBefore = Thread.allStackTraces.collect { key, value -> key.name }
+    printThreadNames('THREADS BEFORE:')
     try {
       engine.remoteSession {
-        exec "whoami"
-        throw new TimeoutException("Bang!")
+        exec 'whoami'
+        throw new TimeoutException('Bang!')
       }
     } catch (e) {
       assert e instanceof TimeoutException
-      printThreadNames("THREADS AFTER:")
+      printThreadNames('THREADS AFTER:')
       List<String> threadsAfter = Thread.allStackTraces.collect { key, value -> key.name }
       assert !threadsAfter.contains('Connect thread 127.0.0.1 session')
     }
@@ -313,12 +312,12 @@ class SshDslTest extends BaseSshTest {
   void testExecMapValidation() {
     engine.remoteSession {
       try {
-        exec commandS: "whoami"
-        fail("Should not accept missing command parameter")
+        exec commandS: 'whoami'
+        fail('Should not accept missing command parameter')
       } catch(SshException e) {
-        assert e.message == "The 'command' parameter is not specified!"
+        assert e.message == 'The "command" parameter is not specified!'
       }
-      exec command: "whoami"
+      exec command: 'whoami'
     }
   }
 
