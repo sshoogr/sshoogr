@@ -21,12 +21,3 @@
 `gradlew announce`
 
 
-
-TODO: compile against java 6
-TODO: use more CompileStatic and TypeChecked 
-TODO: implement more file methods + tests
-TODO: implement more integration tests
-TODO: implement resource
-TODO: implement facts
-
-
