@@ -65,78 +65,103 @@ class SshDslTest extends BaseSshTest {
 
   @Test
   void testDefaultSettings() {
-    engine.remoteSession {
-      exec 'whoami'
-      exec 'du -s'
-      exec 'rm -rf /tmp/test.file'
-      scp testFile, '/tmp/test.file'
+    String output = captureOutput {
+      engine.remoteSession {
+        exec 'whoami'
+        exec 'du -s'
+        exec 'rm -rf /tmp/test.file'
+        scp testFile, '/tmp/test.file'
+      }
     }
+    assert output.contains('whoami')
+    assert output.contains('test.file')
+    assert output.contains('100%')
   }
 
   @Test
   void testUrlAndOverriding() {
-    // Test overriding default connection settings through URL.
-    engine.remoteSession {
+    String output = captureOutput {
+      // Test overriding default connection settings through URL.
+      engine.remoteSession {
 
-      url = 'user2:654321@localhost:2233'
+        url = 'user2:654321@localhost:2233'
 
-      exec 'whoami'
-      exec 'du -s'
-      exec 'rm -rf /tmp/test.file'
-      scp testFile, '/tmp/test.file'
+        exec 'whoami'
+        exec 'du -s'
+        exec 'rm -rf /tmp/test.file'
+        scp testFile, '/tmp/test.file'
 
+      }
     }
+    assert output.contains('whoami')
+    assert output.contains('test.file')
+    assert output.contains('100%')
   }
 
   @Test
   void testPasswordlessLogin() {
-    engine.remoteSession {
-      url = 'user2@localhost:2233'
-      keyFile = testKey
-      exec 'whoami'
+    String output = captureOutput {
+      engine.remoteSession {
+        url = 'user2@localhost:2233'
+        keyFile = testKey
+        exec 'whoami'
+      }
     }
+    assert output.contains('whoami')
   }
 
   @Test
   void testMethodOverriding() {
-    // Test overriding default connection settings through method parameter.
-    engine.remoteSession('user2:654321@localhost:2233') {
+    String output = captureOutput {
+      // Test overriding default connection settings through method parameter.
+      engine.remoteSession('user2:654321@localhost:2233') {
 
-      exec 'whoami'
-      exec 'du -s'
-      exec 'rm -rf /tmp/test.file'
-      scp testFile, '/tmp/test.file'
+        exec 'whoami'
+        exec 'du -s'
+        exec 'rm -rf /tmp/test.file'
+        scp testFile, '/tmp/test.file'
 
+      }
     }
+    assert output.contains('whoami')
+    assert output.contains('test.file')
+    assert output.contains('100%')
   }
 
   @Test
   void testPropertyOverriding() {
-    // Test overriding default connection settings through delegate parameters.
-    engine.remoteSession {
+    String output = captureOutput {
+      // Test overriding default connection settings through delegate parameters.
+      engine.remoteSession {
 
-      host = 'localhost'
-      user = 'user2'
-      password = '654321'
-      port = 2233
+        host = 'localhost'
+        user = 'user2'
+        password = '654321'
+        port = 2233
 
-      exec 'whoami'
-      exec 'du -s'
-      exec 'rm -rf /tmp/test.file'
-      scp testFile, '/tmp/test.file'
+        exec 'whoami'
+        exec 'du -s'
+        exec 'rm -rf /tmp/test.file'
+        scp testFile, '/tmp/test.file'
 
+      }
     }
+    assert output.contains('whoami')
+    assert output.contains('test.file')
+    assert output.contains('100%')
   }
 
   @Test
   void testOutputScripting() {
-    // Test saving the output and setting exec parameters through a builder.
-    engine.remoteSession {
-      System.out.println '>>>>> COMMAND: whoami'
-      def output = exec(command: 'whoami', showOutput: false)
-      output.output.eachLine { line -> System.out.println ">>>>> OUTPUT: ${line.reverse()}" }
-      System.out.println ">>>>> EXIT: ${output.exitStatus}"
+    String output = captureOutput {
+      // Test saving the output and setting exec parameters through a builder.
+      engine.remoteSession {
+        def commandResult = exec(command: 'whoami', showOutput: false)
+        commandResult.output.eachLine { line -> System.out.println ">>>>> OUTPUT: ${line.reverse()}" }
+      }
     }
+    assert output.contains('whoami')
+    assert output.contains('toor')
   }
 
   @Test
@@ -148,9 +173,12 @@ class SshDslTest extends BaseSshTest {
 
   @Test
   void testFailOnError() {
-    engine.remoteSession {
-      exec(command: 'abcd', failOnError: false)
+    String output = captureOutput {
+      engine.remoteSession {
+        exec(command: 'abcd', failOnError: false)
+      }
     }
+    assert output.contains('abcd')
   }
 
   @Test
@@ -166,126 +194,168 @@ class SshDslTest extends BaseSshTest {
 
   @Test
   void testExecClosure() {
-    // Test closure based builder for exec.
-    engine.remoteSession { exec { command = 'whoami' } }
+    String output = captureOutput {
+      // Test closure based builder for exec.
+      engine.remoteSession { exec { command = 'whoami' } }
+    }
+    assert output.contains('whoami')
   }
 
   @Test
   void testCopy() {
-    engine.remoteSession {
-      scp {
-        from {
-          localDir new File(currentDir, 'test-settings')
+    String output = captureOutput {
+      engine.remoteSession {
+        scp {
+          from {
+            localDir new File(currentDir, 'test-settings')
+          }
+          into { remoteDir '/tmp/puppet' }
         }
-        into { remoteDir '/tmp/puppet' }
       }
     }
+    assert output.contains('100%')
   }
 
   @Test
   void testSudoCopy() {
-    engine.remoteSession {
-      scp {
-        uploadToDirectory = '/tmp'
-        from {
-          localDir new File(currentDir, 'test-settings')
+    String output = captureOutput {
+      engine.remoteSession {
+        scp {
+          uploadToDirectory = '/tmp'
+          from {
+            localDir new File(currentDir, 'test-settings')
+          }
+          into { remoteDir '/etc/puppet' }
         }
-        into { remoteDir '/etc/puppet' }
       }
     }
+    assert output.contains('100%')
   }
 
   @Test
   void testMultiExec() {
-    engine.remoteSession {
-      exec([
+    String output = captureOutput {
+      engine.remoteSession {
+        exec([
           'ls -la',
           'whoami'
-      ])
-      exec(failOnError: false, showOutput: true, command: [
+        ])
+        exec(failOnError: false, showOutput: true, command: [
           'ls -la',
           'whoami'
-      ])
+        ])
+      }
     }
+    assert output.contains('whoami')
+    assert output.contains('ls -la')
   }
 
 
   @Test
   void testEscaping() {
-    engine.remoteSession {
-      exec(command: 'ls -la "\\', escapeCharacters: '"\\')
-      exec(command: 'ls -la "\\', escapeCharacters: ['"', '\\'])
-      exec(command: 'ls -la "\\', escapeCharacters: ['"', '\\'] as char[])
+    String output = captureOutput {
+      engine.remoteSession {
+        exec(command: 'ls -la "\\', escapeCharacters: '"\\')
+        exec(command: 'ls -la "\\', escapeCharacters: ['"', '\\'])
+        exec(command: 'ls -la "\\', escapeCharacters: ['"', '\\'] as char[])
+      }
     }
+    assert output.contains('ls -la')
   }
 
   @Test
   void testPrefix() {
-    engine.remoteSession {
-      prefix('sudo') {
-        exec([
+    String output = captureOutput {
+      engine.remoteSession {
+        prefix('sudo') {
+          exec([
             'ls -la',
             'whoami'
-        ])
+          ])
+        }
       }
     }
+    assert output.contains('sudo whoami')
+    assert output.contains('sudo ls -la')
   }
 
   @Test
   void testRemoteFile() {
-    engine.remoteSession {
-      remoteFile('/etc/init.conf').text = 'content'
+    String output = captureOutput {
+      engine.remoteSession {
+        remoteFile('/etc/init.conf').text = 'content'
+      }
     }
+    assert output.contains('100%')
   }
 
   @Test
   void testRemoteFileIsFile() {
-    engine.remoteSession {
-      assert remoteFile('/etc/init.conf').file
-      assert !remoteFile('/etc/init.conf').directory
-      assert remoteFile('/etc').directory
-      assert !remoteFile('/etc').file
+    String output = captureOutput {
+      engine.remoteSession {
+        assert remoteFile('/etc/init.conf').file
+        assert !remoteFile('/etc/init.conf').directory
+        assert remoteFile('/etc').directory
+        assert !remoteFile('/etc').file
+      }
     }
+    assert !output.contains('etc')
   }
 
   @Test
   void testOk() {
-    engine.remoteSession {
-      assert ok('whoami')
+    String output = captureOutput {
+      engine.remoteSession {
+        assert ok('whoami')
+      }
     }
+    assert !output.contains('whoami')
   }
 
   @Test
   void testOkWithPrefix() {
-    engine.remoteSession {
-      prefix 'sudo', {
-        assert ok('which service')
+    String output = captureOutput {
+      engine.remoteSession {
+        prefix 'sudo', {
+          assert ok('which service')
+        }
       }
     }
+    assert !output.contains('which')
+    assert !output.contains('sudo')
   }
 
   @Test
   void testFail() {
-    engine.remoteSession {
-      assert fail('mkdur dur')
+    String output = captureOutput {
+      engine.remoteSession {
+        assert fail('mkdur dur')
+      }
     }
+    assert !output.contains('mkdur')
   }
 
   @Test
   void testExecGStringCommand() {
-    def cmd = 'whoami'
-    engine.remoteSession {
-      assert exec(command: "$cmd", showOutput: true).output.trim() == 'root'
+    String output = captureOutput {
+      def cmd = 'whoami'
+      engine.remoteSession {
+        assert exec(command: "$cmd", showOutput: true).output.trim() == 'root'
+      }
     }
+    assert output.contains('whoami')
   }
 
   @Test
   void testExecGStringCommandArray() {
-    def cmd = 'whoami'
-    List cmds = ["$cmd", "$cmd"]
-    engine.remoteSession {
-      exec(command: cmds, showOutput: true)
+    String output = captureOutput {
+      def cmd = 'whoami'
+      List cmds = ["$cmd", "$cmd"]
+      engine.remoteSession {
+        exec(command: cmds, showOutput: true)
+      }
     }
+    assert output.contains('whoami')
   }
 
   @Test
@@ -314,7 +384,7 @@ class SshDslTest extends BaseSshTest {
       try {
         exec commandS: 'whoami'
         fail('Should not accept missing command parameter')
-      } catch(SshException e) {
+      } catch (SshException e) {
         assert e.message == 'The "command" parameter is not specified!'
       }
       exec command: 'whoami'
