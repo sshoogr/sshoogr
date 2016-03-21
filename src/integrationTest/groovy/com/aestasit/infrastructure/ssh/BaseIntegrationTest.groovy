@@ -21,8 +21,8 @@ import org.junit.Before
 
 class BaseIntegrationTest {
 
-  SshOptions options
-  SshDslEngine engine
+  protected SshOptions options
+  protected SshDslEngine engine
 
   @Before
   void defineOptions() {

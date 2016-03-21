@@ -23,8 +23,11 @@ class ExecTest extends BaseIntegrationTest {
   @Test
   void testSimple() {
     engine.remoteSession {
-      exec('uname -a')
-      exec('date')
+      def output = exec('uname -a')
+      assert output.output.contains('Linux')
+      output = exec('date')
+      String currentYear = "${Calendar.instance.get(Calendar.YEAR)}"
+      assert output.output.contains(currentYear)
       exec('hostname')
       exec {
         prefix = "sudo sh -c '"

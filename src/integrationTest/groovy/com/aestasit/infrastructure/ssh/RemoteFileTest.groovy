@@ -66,7 +66,7 @@ class RemoteFileTest extends BaseIntegrationTest {
       assert remoteFile('/tmp/test3.file').text.trim() == 'remote'
       def localFile = File.createTempFile('local', 'file')
       localFile.deleteOnExit()
-      localFile.text = "local\n"
+      localFile.text = 'local\n'
       remoteFile('/tmp/test3.file') << localFile
       assert remoteFile('/tmp/test3.file').text == 'remote\nlocal\n'
     }
