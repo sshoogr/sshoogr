@@ -243,7 +243,7 @@ class RemoteFile implements Appendable, Writable {
     File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
     tempFile.withWriter { writer ->
       text.readLines().each { String line ->
-        writer << "${line.trim()}\n"
+        writer.append("${line.trim()}\n")
       }
     }
     try {

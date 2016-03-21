@@ -18,6 +18,7 @@ package com.aestasit.infrastructure.ssh.log
 
 import com.jcraft.jsch.SftpProgressMonitor
 import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 
 /**
  * File coping progress monitor that prints progress status using logging system.
@@ -26,11 +27,12 @@ import groovy.transform.CompileStatic
  *
  */
 @CompileStatic
+@TypeChecked
 class LoggerProgressMonitor implements SftpProgressMonitor {
 
   private final Logger logger
-  private int max = 1
-  private int current = 0
+  private long max = 1
+  private long current = 0
   private boolean progressBar = true
 
   LoggerProgressMonitor(Logger logger) {
@@ -44,14 +46,14 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
       // unable to retrieve the file size
       // revert to print byte progress
       progressBar = false
-    } 
+    }
     this.current = 0
   }
 
   boolean count(long count) {
     current += count
     if (progressBar) {
-      printProgressBar((int) ((current / max) * 100.0))
+      printProgressBar((long) ((current / max) * 100.0))
     } else {
       logger.info("${current} bytes transferred")
     }
@@ -62,9 +64,9 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
     logger.progressEnd()
   }
 
-  void printProgressBar(int percent) {
-    int status = percent / 2
-    def bar = (0..50).collect() {
+  void printProgressBar(long percent) {
+    long status = percent.intdiv(2).toLong()
+    def bar = (0L..50L).collect {
       (it <= status) ? ((it == status) ? ">" : "=") : " "
     }
     logger.progress("\r[${bar.join('')}] ${percent}%")

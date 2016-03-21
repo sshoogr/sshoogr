@@ -58,4 +58,29 @@ class RemoteFileTest extends BaseIntegrationTest {
       assert remoteFile('/tmp/test2.file').permissions == 777
     }
   }
+
+  @Test
+  void testAppendable() {
+    engine.remoteSession {
+      remoteFile('/tmp/test3.file') << 'remote'
+      assert remoteFile('/tmp/test3.file').text.trim() == 'remote'
+      def localFile = File.createTempFile('local', 'file')
+      localFile.deleteOnExit()
+      localFile.text = "local\n"
+      remoteFile('/tmp/test3.file') << localFile
+      assert remoteFile('/tmp/test3.file').text == 'remote\nlocal\n'
+    }
+  }
+
+  @Test
+  void testWritable() {
+    engine.remoteSession {
+      remoteFile('/tmp/test3.file').text = 'remote'
+      def localFile = File.createTempFile('local', 'file')
+      localFile.deleteOnExit()
+      localFile << remoteFile('/tmp/test4.file')
+      assert localFile.text == 'remote'
+    }
+  }
+
 }
