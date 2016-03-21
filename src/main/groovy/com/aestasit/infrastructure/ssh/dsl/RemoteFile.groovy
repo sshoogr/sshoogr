@@ -257,10 +257,7 @@ class RemoteFile implements Appendable, Writable {
   }
 
   /**
-   *
-   * @param csq
-   * @return
-   * @throws IOException
+   * {@inheritDoc}
    */
   Appendable append(CharSequence csq) throws IOException {
     String originalText = getText()
