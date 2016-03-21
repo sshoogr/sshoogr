@@ -1,5 +1,7 @@
 === Releasing `sshoogr`
 
+TODO: write this section
+
 ==== Clean build and commit all changes
 
 `gradlew formatLicense`

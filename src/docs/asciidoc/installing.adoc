@@ -1,5 +1,7 @@
 === Installing `sshoogr`
 
+TODO: write this section
+
 ==== Installing `sshoogr` with SDKMAN!
 
 The simplest way to use `sshoogr` from the command line is by using http://sdkman.io.
