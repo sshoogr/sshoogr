@@ -20,14 +20,14 @@ import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
 /**
- * Abstract class holding common configuration options available for EXEC and SCP functionality.
+ * Class holding common configuration options available for EXEC and SCP functionality.
  *
  * @author Andrey Adamovich
  *
  */
 @CompileStatic
 @TypeChecked
-abstract class CommonOptions {
+class CommonOptions {
 
   Boolean failOnError        = true
   Boolean sshDebug           = false

@@ -35,8 +35,10 @@ import static com.aestasit.infrastructure.ssh.dsl.ParsingUtils.resolveId
 @CompileStatic
 class RemoteFile implements Appendable, Writable {
 
-  private final SessionDelegate delegate
-  private final String destination
+  public static final int EMPTY_ID = -1
+
+  protected final SessionDelegate delegate
+  protected final String destination
 
   /**
    * Remote file reference constructor.
@@ -48,7 +50,7 @@ class RemoteFile implements Appendable, Writable {
     this.delegate = delegate
     this.destination = destination
     if (!destination || !destination.trim()) {
-      throw new SshException("Remote file destination is not set!")
+      throw new SshException('Remote file destination is not set!')
     }
   }
 
@@ -87,10 +89,10 @@ class RemoteFile implements Appendable, Writable {
    * @return owner's user name.
    */
   String getOwner() {
-    int uid = -1
+    int uid = EMPTY_ID
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat(this.destination)
-      uid = attr.getUId()
+      uid = attr.UId
     }
     delegate.exec("getent passwd ${uid} | cut -d: -f1").output.trim()
   }
@@ -117,10 +119,10 @@ class RemoteFile implements Appendable, Writable {
    * @return owner group name.
    */
   String getGroup() {
-    int uid = -1
+    int uid = EMPTY_ID
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat(this.destination)
-      uid = attr.getGId()
+      uid = attr.GId
     }
     delegate.exec("getent group ${uid} | cut -d: -f1").output.trim()
   }
@@ -161,7 +163,7 @@ class RemoteFile implements Appendable, Writable {
     int mask = 0
     delegate.sftpChannel { ChannelSftp channel ->
       SftpATTRS attr = channel.stat(this.destination)
-      mask = attr.getPermissions() - 32768
+      mask = attr.permissions - 32768
     }
     mask
   }
@@ -222,7 +224,7 @@ class RemoteFile implements Appendable, Writable {
    * @return file content.
    */
   String getText() {
-    File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
+    File tempFile = createTempFile()
     try {
       delegate.scp {
         from { remoteFile destination }
@@ -240,7 +242,7 @@ class RemoteFile implements Appendable, Writable {
    * @param text content to set.
    */
   void setText(String text) {
-    File tempFile = File.createTempFile(this.getClass().getPackage().name, "txt")
+    File tempFile = createTempFile()
     tempFile.withWriter { writer ->
       text.readLines().each { String line ->
         writer.append("${line.trim()}\n")
@@ -256,12 +258,16 @@ class RemoteFile implements Appendable, Writable {
     }
   }
 
+  private File createTempFile() {
+    File.createTempFile(this.getClass().package.name, 'txt')
+  }
+
   /**
    * {@inheritDoc}
    */
   Appendable append(CharSequence csq) throws IOException {
-    String originalText = getText()
-    setText(originalText + csq)
+    String originalText = this.text
+    this.text = originalText + csq
     this
   }
 
@@ -303,7 +309,7 @@ class RemoteFile implements Appendable, Writable {
    * {@inheritDoc}
    */
   Writer writeTo(Writer out) throws IOException {
-    out.append(getText())
+    out.append(this.text)
     out
   }
 

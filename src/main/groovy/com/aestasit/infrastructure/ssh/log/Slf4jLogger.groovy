@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory
 @CompileStatic
 class Slf4jLogger implements Logger {
 
-  private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass().getPackage().getName())
+  static private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass().package.name)
 
   void info(String message) {
     logger.info(message)

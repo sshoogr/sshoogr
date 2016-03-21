@@ -17,12 +17,13 @@
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.SshException
-import com.aestasit.infrastructure.ssh.dsl.FileSetType
 import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 
-import static com.aestasit.infrastructure.ssh.dsl.FileSetType.*
+import static com.aestasit.infrastructure.ssh.dsl.FileSetType.UNKNOWN
+import static com.aestasit.infrastructure.ssh.dsl.FileSetType.LOCAL
+import static com.aestasit.infrastructure.ssh.dsl.FileSetType.REMOTE
 
 /**
  * Closure delegate that is used to collect data about remote or local file collection.
@@ -107,7 +108,7 @@ class FileSetDelegate {
     if (this.type == UNKNOWN || this.type == type) {
       this.type = type
     } else {
-      throw new SshException("File set can not contain both local and remote source or target definitions!")
+      throw new SshException('File set can not contain both local and remote source or target definitions!')
     }
 
   }

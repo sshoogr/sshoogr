@@ -37,31 +37,31 @@ class AnsiLogger implements Logger {
   }	
   
   void info(String message) {
-    println(ansi().fg(BLUE).a(message).reset())
+    System.out.println(ansi().fg(BLUE).a(message).reset())
   }
 
   void warn(String message) {
-  	println(ansi().fg(YELLOW).a(message).reset())
+    System.out.println(ansi().fg(YELLOW).a(message).reset())
   }
 
   void debug(String message) {
-    println(ansi().fg(GREEN).a(message).reset())
+    System.out.println(ansi().fg(GREEN).a(message).reset())
   }
 
   void stdOutput(String line) {
-    println(ansi().fg(WHITE).a(line).reset())
+    System.out.println(ansi().fg(WHITE).a(line).reset())
   }
 
   void errOutput(String line) {
-    println(ansi().fg(RED).a(line).reset())
+    System.out.println(ansi().fg(RED).a(line).reset())
   }
 
   void progress(String progress) {
-    print(ansi().fg(WHITE).a(progress).reset())
+    System.out.print(ansi().fg(WHITE).a(progress).reset())
   }
 
   void progressEnd() {
-    println()
+    System.out.println()
   }
 
 }

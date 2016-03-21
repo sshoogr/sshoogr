@@ -67,7 +67,7 @@ class LoggerProgressMonitor implements SftpProgressMonitor {
   void printProgressBar(long percent) {
     long status = percent.intdiv(2).toLong()
     def bar = (0L..50L).collect {
-      (it <= status) ? ((it == status) ? ">" : "=") : " "
+      (it <= status) ? ((it == status) ? '>' : '=') : ' '
     }
     logger.progress("\r[${bar.join('')}] ${percent}%")
   }
