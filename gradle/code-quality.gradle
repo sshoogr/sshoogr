@@ -1,4 +1,21 @@
 
+codenarc { 
+  configFile = file('src/conf/codenarc/codenarc.groovy') 
+}
+
+sonarqube {
+  properties {
+    property "sonar.sources",           "src/main/java"
+    property "sonar.projectName",       "${project.group}:${project.name}"
+    property "sonar.projectKey",        "${project.group}:${project.name}"
+    property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
+  }
+}
+
+tasks.getByName('sonarqube') {
+  dependsOn test
+}
+
 ext {
  licenseHeader = """Copyright (C) 2011-${Calendar.getInstance().get(Calendar.YEAR)} Aestas/IT
 
@@ -24,7 +41,7 @@ task generateLicense << {
 
 tasks.withType(SourceTask) {
   if (it.getClass().name.startsWith('nl.javadude.gradle.plugins.license')) {
-    dependsOn generateLicense
+    it.dependsOn generateLicense
   }
 }
 
@@ -32,3 +49,4 @@ license {
   header rootProject.file('build/HEADER')
   exclude '*.gdsl' 
 }
+

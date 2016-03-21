@@ -1,6 +1,4 @@
 
-conf2ScopeMappings.addMapping(1, configurations.groovy, 'provided')
-
 jar {
   manifest {
     attributes(
@@ -89,3 +87,5 @@ uploadArchives {
     }
   }
 }
+
+  // id 'io.codearte.nexus-staging' version '0.5.3'

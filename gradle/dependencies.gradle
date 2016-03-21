@@ -1,5 +1,12 @@
 
+apply plugin: 'org.asciidoctor.convert'
+
 mainClassName = mainClass
+
+repositories {
+  mavenCentral()
+  maven { url ossSnapshotRepositoryUrl }
+}
 
 configurations {
   groovy
@@ -28,3 +35,5 @@ dependencies {
   testCompile "com.github.stefanbirkner:system-rules:${systemRulesVersion}"
 
 }
+
+conf2ScopeMappings.addMapping(1, configurations.groovy, 'provided')

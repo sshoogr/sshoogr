@@ -1,4 +1,16 @@
 
+buildscript {
+  repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'http://dl.bintray.com/vermeulen-mp/gradle-plugins' }
+  }
+  dependencies {
+    classpath 'net.gvmtool:gradle-sdkvendor-plugin:0.3.1'
+    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+  }
+}
+
 plugins {
 
   id 'groovy'
@@ -7,28 +19,20 @@ plugins {
   id 'idea'
   id 'project-report'
   id 'application'
+  id 'codenarc'
 
   id 'net.saliman.cobertura' version '2.2.5'
   id 'com.github.hierynomus.license' version '0.12.1'
   id 'org.ajoberstar.github-pages' version '1.4.2'
   id 'net.researchgate.release' version '2.2.1'
-
-  // TODO: apply plugin: 'io.codearte.nexus-staging'   http://www.sonatype.org/nexus/2015/03/31/nexus-staging-plugin-automatic-releasepromotion-of-artifacts-to-maven-central-from-gradle/
-
-  // TODO: apply plugin: "com.gradle.plugin-publish"   https://plugins.gradle.org/docs/publish-plugin
-  // TODO: id 'com.jfrog.artifactory' version '4.0.0'
-  // TODO: id 'org.asciidoctor.gradle.asciidoctor' version '1.5.3'
-  // TODO: id 'org.sonarqube' version '1.0'
+  id 'org.sonarqube' version '1.2'
 
 }
 
-apply from: 'gradle/repos.gradle'
-apply from: 'gradle/deps.gradle'
-apply from: 'gradle/license.gradle'
-apply from: 'gradle/integration.gradle'
+apply from: 'gradle/dependencies.gradle'
+apply from: 'gradle/code-quality.gradle'
+apply from: 'gradle/integration-test.gradle'
 apply from: 'gradle/ide.gradle'
-apply from: 'gradle/docs.gradle'
-apply from: 'gradle/sdkman.gradle'
-// TODO: apply from: 'gradle/sonar.gradle'
+apply from: 'gradle/documentation.gradle'
 apply from: 'gradle/release.gradle'
-
+apply from: 'gradle/announce.gradle'

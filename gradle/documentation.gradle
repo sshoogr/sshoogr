@@ -1,4 +1,7 @@
 
+  // id 'org.asciidoctor.gradle.asciidoctor' version '1.5.3'
+
+
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
   classifier = 'javadoc'
   from 'build/docs/groovydoc'

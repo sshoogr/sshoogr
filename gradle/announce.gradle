@@ -1,0 +1,15 @@
+
+apply plugin: 'net.gvmtool.sdkvendor'
+
+gvm {
+  api = "https://sdkman-vendor.herokuapp.com"
+  consumerKey = sdkmanConsumerKey
+  consumerToken = sdkmanConsumerToken
+  candidate = project.name
+  version = sdkmanDefaultVersion
+  url = "https://repo1.maven.org/maven2/${rootProject.group.split('\\.').join('/')}/${rootProject.name}/${rootProject.sdkmanDefaultVersion}/${rootProject.name}-${rootProject.sdkmanDefaultVersion}.zip"
+  hashtag = "#${project.name}"
+}
+
+// TODO: announce on twitter
+// TODO: release notes on github
