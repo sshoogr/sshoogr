@@ -1,20 +1,19 @@
-= Releasing sshoogr 
+=== Releasing `sshoogr`
 
-
-== Clean build and commit all changes
+==== Clean build and commit all changes
 
 `gradlew formatLicense`
 
 `gradlew clean build`
 
 
-== Integration test
+==== Integration test
 
 `vagrant up`
 
 `gradlew clean integration`
 
-== Publishing to Maven Central
+==== Publishing to Maven Central
 
 `gradlew release`
 

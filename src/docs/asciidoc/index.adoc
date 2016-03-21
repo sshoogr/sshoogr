@@ -1,6 +1,11 @@
-= Sshoogr Guide
+= `sshoogr`
+
+== User's Guide
 
 include::installing.adoc[]
+
+== Developer's Guide
+
 include::hacking.adoc[]
-include::contributors.adoc[]
 include::release.adoc[]
+include::contributors.adoc[]
