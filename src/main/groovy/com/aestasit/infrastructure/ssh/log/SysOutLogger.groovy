@@ -30,31 +30,31 @@ import groovy.transform.TypeChecked
 class SysOutLogger implements Logger {
 
   void info(String message) {
-    println "$message"
+    System.out.println "$message"
   }
 
   void warn(String message) {
-    println "WARN: $message"
+    System.out.println "WARN: $message"
   }
 
   void debug(String message) {
-    println "DEBUG: $message"
+    System.out.println "DEBUG: $message"
   }
 
   void stdOutput(String line) {
-    println "$line"
+    System.out.println "$line"
   }
 
   void errOutput(String line) {
-    println "$line"
+    System.out.println "$line"
   }
 
   void progress(String progress) {
-  	print progress
+    System.out.print progress
   }
 
   void progressEnd() {
-    println()
+    System.out.println()
   }
 
 }
