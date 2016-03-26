@@ -31,6 +31,7 @@ class ExecOptions extends CommonOptions {
 
   Boolean showOutput       = true
   Boolean showCommand      = true
+  Boolean hideSecrets      = true
   Long maxWait             = 0
 
   Long succeedOnExitStatus = 0
@@ -39,6 +40,7 @@ class ExecOptions extends CommonOptions {
   String prefix            = null
   String suffix            = null
   def escapeCharacters     = null
+  List<String> secrets     = []
 
   ExecOptions() {
   }
@@ -47,12 +49,14 @@ class ExecOptions extends CommonOptions {
     this.failOnError         = setValue(opt1?.failOnError, true)
     this.showOutput          = setValue(opt1?.showOutput, true)
     this.showCommand         = setValue(opt1?.showCommand, true)
+    this.hideSecrets         = setValue(opt1?.hideSecrets, true)
     this.maxWait             = setValue(opt1?.maxWait, 0L)
     this.succeedOnExitStatus = setValue(opt1?.succeedOnExitStatus, 0L)
     this.usePty              = setValue(opt1?.usePty, true)
     this.prefix              = setValue(opt1?.prefix, null)
     this.suffix              = setValue(opt1?.suffix, null)
     this.escapeCharacters    = setValue(opt1?.escapeCharacters, null)    
+    this.secrets             = setValue(opt1?.secrets, null)
   }
 
   ExecOptions(ExecOptions opt1, ExecOptions opt2) {
@@ -63,12 +67,14 @@ class ExecOptions extends CommonOptions {
     this.failOnError         = setValue(opt2?.failOnError, opt1?.failOnError, true)
     this.showOutput          = setValue(opt2?.showOutput, opt1?.showOutput, true)
     this.showCommand         = setValue(opt2?.showCommand, opt1?.showCommand, true)
+    this.hideSecrets         = setValue(opt2?.hideSecrets, opt1?.hideSecrets, true)
     this.maxWait             = setValue(opt2?.maxWait as Long, opt1?.maxWait, 0L)
     this.succeedOnExitStatus = setValue(opt2?.succeedOnExitStatus as Long, opt1?.succeedOnExitStatus, 0L)
     this.usePty              = setValue(opt2?.usePty, opt1?.usePty, true)
     this.prefix              = setValue(opt2?.prefix, opt1?.prefix, null)
     this.suffix              = setValue(opt2?.suffix, opt1?.suffix, null)
     this.escapeCharacters    = setValue(opt2?.escapeCharacters, opt1?.escapeCharacters, null)
+    this.secrets             = setValue(opt2?.secrets, opt1?.secrets, null) as List<String>
   }
 
 }

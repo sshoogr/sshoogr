@@ -264,6 +264,17 @@ class SshDslTest extends BaseSshTest {
   }
 
   @Test
+  void testRedacting() {
+    String output = captureOutput {
+      engine.remoteSession {
+        exec(command: './script.sh username secret1 secret2', secrets: ['secret1', 'secret2'])
+      }
+    }
+    assert !output.contains('secret1')
+    assert !output.contains('secret2')
+  }
+
+  @Test
   void testPrefix() {
     String output = captureOutput {
       engine.remoteSession {

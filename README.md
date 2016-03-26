@@ -317,6 +317,8 @@ The `sshOptions` may also contain a nested `execOptions` structure, which define
 
  - `showOutput` (defaults to true) - If set to true, remote command output is printed.
  - `showCommand` (defaults to true) - If set to true, remote command is printed.
+ - `hideSecrets` (defaults to true) - If set to true, secret Strings contained in ExecOptions.secrets will be redacted from output and replaced by `********`.
+ - `secrets` (defaults to [ ]) - a list of secret Strings to be redacted from output
  - `maxWait` (defaults to 0) - Number of milliseconds to wait for command to finish. If it is set to 0, then library will wait forever.
  - `succeedOnExitStatus` (defaults to 0) - Exit code that indicates commands success. If command returns different exit code, then build will fail.
  - `failOnError` (defaults to true) - If set to true, failed remote commands will fail the build.
@@ -375,6 +377,8 @@ options.with {
   execOptions.with {
     showOutput = true
     failOnError = false
+    hideSecrets = true
+    secrets = ['secret1']
     succeedOnExitStatus = 0
     maxWait = 30000
   }
