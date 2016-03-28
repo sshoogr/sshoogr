@@ -43,6 +43,7 @@ class SessionDelegate {
   public static final String SESSION_TIMEOUT = 'Session timeout!'
   public static final String ESCAPE_CHARACTER = '\\'
   public static final String ESCAPED_ESCAPE_CHARACTER = '\\\\'
+  public static final String REDACTED_SECRET = '********'
 
   private String host = null
   private int port = DEFAULT_SSH_PORT
@@ -629,12 +630,16 @@ class SessionDelegate {
       actualCommand = "${actualCommand} ${options.suffix}"
     }
     if (options.showCommand) {
-      logger.info('> ' + actualCommand)
+      if (options.hideSecrets) {
+        logger.info('> ' + redactSecrets(actualCommand, options))
+      } else {
+        logger.info('> ' + actualCommand)
+      }
     }
     ChannelExec channel = (ChannelExec) session.openChannel('exec')
     def savedOutput = new ByteArrayOutputStream()
     def output = savedOutput
-    if (options.showOutput) {
+    if (options.showOutput && !options.hideSecrets) {
       def systemOutput = new LoggerOutputStream(logger)
       output = new TeeOutputStream(savedOutput, systemOutput)
     }
@@ -646,9 +651,20 @@ class SessionDelegate {
     new ChannelData(channel: channel, output: savedOutput)
   }
 
+  private static String redactSecrets(String raw, ExecOptions options) {
+    String redactedString = raw
+
+    options.secrets?.each { secret ->
+      redactedString = redactedString.replaceAll(secret, REDACTED_SECRET)
+    }
+
+    redactedString
+  }
+
   @SuppressWarnings('CatchException')
   private CommandOutput awaitTermination(ChannelData channelData, ExecOptions options) {
     Channel channel = channelData.channel
+    String redactedOutput = null
     try {
       def thread = null
       thread =
@@ -668,13 +684,17 @@ class SessionDelegate {
         }
       thread.start()
       thread.join(options.maxWait)
+      if (options.showOutput && options.hideSecrets) {
+        redactedOutput = redactSecrets(channelData.output.toString(), options)
+        logger.info(redactedOutput)
+      }
       if (thread.isAlive()) {
         thread = null
         return failWithTimeout(options)
       }
       int ec = channel.exitStatus
       verifyExitCode(ec, options)
-      return new CommandOutput(ec, channelData.output.toString())
+      return new CommandOutput(ec, redactedOutput ?: channelData.output.toString())
     } finally {
       channel.disconnect()
     }

@@ -31,6 +31,7 @@ class ExecOptionsTest {
     def defaultOpts = new ExecOptions()
     assert defaultOpts.failOnError
     assert defaultOpts.showOutput
+    assert defaultOpts.hideSecrets
     def opts = new ExecOptions(defaultOpts, [ failOnError: false ] )
     assert !opts.failOnError
   }
