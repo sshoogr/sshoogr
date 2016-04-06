@@ -44,6 +44,8 @@ class SessionDelegate {
   public static final String ESCAPE_CHARACTER = '\\'
   public static final String ESCAPED_ESCAPE_CHARACTER = '\\\\'
   public static final String REDACTED_SECRET = '********'
+  public static final String COMMAND_LOG_PREFIX = '> '
+  public static final Map<String, ?> SILENT_EXEC = [failOnError: false, showOutput: false, showCommand: false]
 
   private String host = null
   private int port = DEFAULT_SSH_PORT
@@ -553,7 +555,7 @@ class SessionDelegate {
    * @return true , if command was successful
    */
   boolean ok(String cmd) {
-    doExec(cmd, new ExecOptions(options.execOptions, [failOnError: false, showOutput: false, showCommand: false])).exitStatus == 0
+    doExec(cmd, new ExecOptions(options.execOptions, SILENT_EXEC)).exitStatus == 0
   }
 
   /**
@@ -568,7 +570,7 @@ class SessionDelegate {
   }
 
   String commandOutput(String cmd) {
-    doExec(cmd, new ExecOptions(options.execOptions, [failOnError: false, showOutput: false, showCommand: false])).output
+    doExec(cmd, new ExecOptions(options.execOptions, SILENT_EXEC)).output
   }
 
   def prefix(String prefix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
@@ -635,9 +637,9 @@ class SessionDelegate {
     }
     if (options.showCommand) {
       if (options.hideSecrets) {
-        logger.info('> ' + redactSecrets(actualCommand, options))
+        logger.info(COMMAND_LOG_PREFIX + redactSecrets(actualCommand, options))
       } else {
-        logger.info('> ' + actualCommand)
+        logger.info(COMMAND_LOG_PREFIX + actualCommand)
       }
     }
     ChannelExec channel = (ChannelExec) session.openChannel('exec')

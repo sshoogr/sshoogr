@@ -63,6 +63,7 @@ class ExecOptions extends CommonOptions {
     this(opt1, opt2?.properties)
   }
 
+  @SuppressWarnings("CyclomaticComplexity")
   ExecOptions(ExecOptions opt1, Map<String, ?> opt2) {
     this.failOnError         = setValue(opt2?.failOnError, opt1?.failOnError, true)
     this.showOutput          = setValue(opt2?.showOutput, opt1?.showOutput, true)
