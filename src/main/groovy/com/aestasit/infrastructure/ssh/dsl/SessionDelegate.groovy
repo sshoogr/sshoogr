@@ -538,7 +538,7 @@ class SessionDelegate {
     doExec(delegate.command, new ExecOptions(options.execOptions, delegate.execOptions))
   }
 
-  CommandOutput exec(Map<?, ?> execOptions) {
+  CommandOutput exec(Map<String, ?> execOptions) {
     if (!execOptions?.command) {
       throw new SshException('The "command" parameter is not specified!')
     }
@@ -565,6 +565,10 @@ class SessionDelegate {
    */
   boolean fail(String cmd) {
     !ok(cmd)
+  }
+
+  String commandOutput(String cmd) {
+    doExec(cmd, new ExecOptions(options.execOptions, [failOnError: false, showOutput: false, showCommand: false])).output
   }
 
   def prefix(String prefix, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
@@ -653,11 +657,9 @@ class SessionDelegate {
 
   private static String redactSecrets(String raw, ExecOptions options) {
     String redactedString = raw
-
     options.secrets?.each { secret ->
       redactedString = redactedString.replaceAll(secret, REDACTED_SECRET)
     }
-
     redactedString
   }
 
