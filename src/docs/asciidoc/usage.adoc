@@ -1,0 +1,4 @@
+
+=== `sshoogr` use cases
+
+TODO: write this section

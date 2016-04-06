@@ -3,6 +3,7 @@
 == User's Guide
 
 include::installing.adoc[]
+include::usage.adoc[]
 
 == Developer's Guide
 
