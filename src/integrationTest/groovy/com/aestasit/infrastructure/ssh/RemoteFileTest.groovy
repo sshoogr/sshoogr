@@ -62,6 +62,7 @@ class RemoteFileTest extends BaseIntegrationTest {
   @Test
   void testAppendable() {
     engine.remoteSession {
+      remoteFile('/tmp/test3.file').touch()
       remoteFile('/tmp/test3.file') << 'remote'
       assert remoteFile('/tmp/test3.file').text.trim() == 'remote'
       def localFile = File.createTempFile('local', 'file')
