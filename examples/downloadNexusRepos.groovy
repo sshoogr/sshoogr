@@ -4,7 +4,7 @@
  *
  */
 
-@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.23')
+@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.25')
 import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 
 def folders = [

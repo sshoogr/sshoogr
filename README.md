@@ -30,7 +30,7 @@ This will install the `sshoogr` and make it available on your path.
 The easiest way to use `sshoogr` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
 
 ```groovy
-@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.23')
+@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.25')
 import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 ```
 
