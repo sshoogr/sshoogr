@@ -258,6 +258,38 @@ class RemoteFile implements Appendable, Writable {
     }
   }
 
+  /**
+   * Sets remote file content as text.
+   *
+   * @param text content to set.
+   * @param trim if true, text is trimmed.
+   */
+  void setText(String text, boolean trim) {
+    File tempFile = createTempFile()
+    if (trim) {
+        tempFile.withWriter { writer ->
+            text.readLines().each { String line ->
+                writer.append("${line.trim()}\n")
+            }
+        }
+    } else {
+        tempFile.withWriter { writer ->
+            text.readLines().each { String line ->
+                writer.append("${line}\n")
+            }
+        }
+    }
+
+    try {
+      delegate.scp {
+        from { localFile(tempFile) }
+        into { remoteFile(destination) }
+      }
+    } finally {
+      tempFile.delete()
+    }
+  }
+
   @SuppressWarnings('FactoryMethodName')
   private File createTempFile() {
     File.createTempFile(this.getClass().package.name, 'txt')
