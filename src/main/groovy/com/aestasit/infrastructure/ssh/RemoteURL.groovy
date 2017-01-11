@@ -41,7 +41,7 @@ class RemoteURL {
   boolean portSet = false
   boolean userSet = false
 
-  private static final Pattern URL_PATTERN = ~/^(([^:@]+)(:([^@]+))?@)?([^:@]+)(:(\d+))?$/
+  private static final Pattern URL_PATTERN = ~/^(([^:@]+)(:(.+))?@)?([^:@]+)(:(\d+))?$/
 
   RemoteURL(String url, int defaultPort = 22) {
     def matcher = URL_PATTERN.matcher(url)
