@@ -63,22 +63,6 @@ class LauncherTest extends BaseSshTest {
   }
 
   @Test
-  void defaultSshoogrScript() {
-    String output = captureOutput {
-      // TODO: Sshoogr.main()
-    }
-    assert output.contains('Connecting')
-  }
-
-  @Test
-  void defaultSshoogrScriptWithLogger() {
-    String output = captureOutput {
-      // TODO: Sshoogr.main(['--logger', 'color'] as String[])
-    }
-    assert output.contains('Connecting')
-  }
-
-  @Test
   void helpMessage() {
     String output = captureOutput {
       Sshoogr.main(['--help'] as String[])
