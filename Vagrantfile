@@ -6,7 +6,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "private_network", ip: "192.168.33.144"
   config.vm.provider "virtualbox" do |vb|
     vb.name = "sshoogr-integration-server"
-    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    vb.customize ["modifyvm", :id, "--memory", "4096"]
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
   config.vm.provision "fix-no-tty", type: "shell" do |s|
