@@ -8,9 +8,9 @@ cache:
   - directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-script: ./gradlew build
+script: ./gradlew -iS build
 after_success:
-  ./gradlew uploadArchives
+  ./gradlew -iS uploadArchives
 env:
  global:
    - ORG_GRADLE_PROJECT_ossSnapshotRepositoryUrl=https://oss.sonatype.org/content/repositories/snapshots/
