@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `sshoogr` is a **Groovy**-based **DSL** library for working with remote servers through **SSH**. The **DSL** allows:
+The `sshoogr` (pronounced `[ʃʊgə]`) is a **Groovy**-based **DSL** library for working with remote servers through **SSH**. The **DSL** allows:
 
 - connecting,
 - executing remote commands,
