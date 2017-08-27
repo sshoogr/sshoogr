@@ -60,21 +60,20 @@ class SshDslEngine {
     jsch.config = config
   }
 
-  void remoteSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  def remoteSession(@DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, null, null)
   }
 
-  void remoteSession(String url, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
+  def remoteSession(String url, @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     remoteSession(url, null, cl)
   }
 
-  void remoteSession(String url, Object context,
+  def remoteSession(String url, Object context,
                      @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl) {
     executeSession(cl, context) { SessionDelegate sessionDelegate ->
       sessionDelegate.url = url
     }
   }
-
 
   private executeSession(
     @DelegatesTo(strategy = DELEGATE_FIRST, value = SessionDelegate) Closure cl, Object context,
