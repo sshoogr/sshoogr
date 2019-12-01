@@ -115,7 +115,7 @@ class SessionDelegate {
           }
         }
 
-        session.setPassword(password as String)
+        if (password) session.setPassword(password as String)
 
         if (this.proxyHost?.trim() && this.proxyPort?.trim()) {
           session.proxy = new ProxyHTTP(this.proxyHost, Integer.parseInt(this.proxyPort))
