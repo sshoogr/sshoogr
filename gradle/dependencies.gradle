@@ -24,6 +24,10 @@ configurations {
   all*.exclude group: 'commons-logging'
   all*.exclude group: 'log4j'
   all*.exclude module: 'slf4j-simple'
+
+  all {
+      resolutionStrategy.force "org.codehaus.groovy:groovy-all:${groovyVersion}"
+   }
 }
 
 dependencies {

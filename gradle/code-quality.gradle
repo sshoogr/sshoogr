@@ -1,6 +1,7 @@
 
 codenarc { 
-  configFile = file('src/conf/codenarc/codenarc.groovy') 
+  configFile = file('src/conf/codenarc/codenarc.groovy')
+  toolVersion = '1.5'
 }
 
 sonarqube {
@@ -40,7 +41,7 @@ task generateLicense << {
 }
 
 tasks.withType(SourceTask) {
-  if (it.getClass().name.startsWith('nl.javadude.gradle.plugins.license')) {
+  if (it.getClass().name.startsWith('com.hierynomus.gradle.license.tasks')) {
     it.dependsOn generateLicense
   }
 }
