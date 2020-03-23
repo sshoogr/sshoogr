@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Aestas/IT
+ * Copyright (C) 2011-2020 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.aestasit.infrastructure.ssh
 
 import org.junit.Test
@@ -34,7 +33,7 @@ class RemoteFileTest extends BaseIntegrationTest {
     engine.remoteSession {
       exec('rm -rf /tmp/test.file')
       remoteFile('/tmp/test.file').touch()
-      remoteFile('/tmp/test.file').setOwner('vagrant')
+      remoteFile('/tmp/test.file').owner = 'vagrant'
       assert remoteFile('/tmp/test.file').owner == 'vagrant'
     }
   }
@@ -44,7 +43,7 @@ class RemoteFileTest extends BaseIntegrationTest {
     engine.remoteSession {
       exec('rm -rf /tmp/test3.file')
       remoteFile('/tmp/test3.file').touch()
-      remoteFile('/tmp/test3.file').setGroup('lpadmin')
+      remoteFile('/tmp/test3.file').group = 'lpadmin'
       assert remoteFile('/tmp/test3.file').group == 'lpadmin'
     }
   }
@@ -54,7 +53,7 @@ class RemoteFileTest extends BaseIntegrationTest {
     engine.remoteSession {
       exec('rm -rf /tmp/test2.file')
       remoteFile('/tmp/test2.file').touch()
-      remoteFile('/tmp/test2.file').setPermissions(0777)
+      remoteFile('/tmp/test2.file').permissions = 0777
       assert remoteFile('/tmp/test2.file').permissions == 0777
     }
   }

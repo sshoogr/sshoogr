@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Aestas/IT
+ * Copyright (C) 2011-2020 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.aestasit.infrastructure.ssh.launcher
 
 import com.aestasit.infrastructure.ssh.DefaultSsh
@@ -81,7 +80,7 @@ final class Sshoogr {
       DefaultSsh.defaultPort = options.port
       DefaultSsh.defaultKeyFile = options.key
       DefaultSsh.defaultPassword = options.password
-      DefaultSsh.trustUnknownHosts = options.isTrust()
+      DefaultSsh.trustUnknownHosts = options.trust
     })
   }
 

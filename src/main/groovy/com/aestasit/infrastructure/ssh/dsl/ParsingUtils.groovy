@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Aestas/IT
+ * Copyright (C) 2011-2020 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.aestasit.infrastructure.ssh.dsl
 
 /**
@@ -30,7 +29,7 @@ class ParsingUtils {
    * @return parsed integer or null.
    */
   static Integer resolveId(CommandOutput out) {
-    if (out.output.isInteger()) {
+    if (out.output.integer) {
       return out.output.toInteger()
     }
     null

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Aestas/IT
+ * Copyright (C) 2011-2020 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.SshException
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.SftpATTRS
 import groovy.transform.CompileStatic
-import groovy.transform.TypeChecked
 
 import static com.aestasit.infrastructure.ssh.dsl.ParsingUtils.resolveId
 
@@ -31,7 +29,6 @@ import static com.aestasit.infrastructure.ssh.dsl.ParsingUtils.resolveId
  * @author Luciano Fiandesio
  *
  */
-@TypeChecked
 @CompileStatic
 class RemoteFile implements Appendable, Writable {
 
@@ -52,6 +49,10 @@ class RemoteFile implements Appendable, Writable {
     if (!destination || !destination.trim()) {
       throw new SshException('Remote file destination is not set!')
     }
+  }
+
+  protected String resolveDestination() {
+    destination
   }
 
   /***
@@ -91,7 +92,7 @@ class RemoteFile implements Appendable, Writable {
   String getOwner() {
     int uid = EMPTY_ID
     delegate.sftpChannel { ChannelSftp channel ->
-      SftpATTRS attr = channel.stat(this.destination)
+      SftpATTRS attr = channel.stat(resolveDestination())
       uid = attr.UId
     }
     delegate.exec("getent passwd ${uid} | cut -d: -f1").output.trim()
@@ -106,7 +107,7 @@ class RemoteFile implements Appendable, Writable {
     def uid = getUid(user)
     if (uid) {
       delegate.sftpChannel { ChannelSftp channel ->
-        channel.chown(uid, this.destination)
+        channel.chown(uid, resolveDestination())
       }
     } else {
       delegate.logger.warn("User ${user} does not exist!")
@@ -121,7 +122,7 @@ class RemoteFile implements Appendable, Writable {
   String getGroup() {
     int uid = EMPTY_ID
     delegate.sftpChannel { ChannelSftp channel ->
-      SftpATTRS attr = channel.stat(this.destination)
+      SftpATTRS attr = channel.stat(resolveDestination())
       uid = attr.GId
     }
     delegate.exec("getent group ${uid} | cut -d: -f1").output.trim()
@@ -136,7 +137,7 @@ class RemoteFile implements Appendable, Writable {
     def gid = getGid(group)
     if (gid) {
       delegate.sftpChannel { ChannelSftp channel ->
-        channel.chgrp(gid, this.destination)
+        channel.chgrp(gid, resolveDestination())
       }
     } else {
       delegate.logger.warn("Group ${group} does not exist!")
@@ -150,7 +151,7 @@ class RemoteFile implements Appendable, Writable {
    */
   void setPermissions(int mask) {
     delegate.sftpChannel { ChannelSftp channel ->
-      channel.chmod(mask, this.destination)
+      channel.chmod(mask, resolveDestination())
     }
   }
 
@@ -162,7 +163,7 @@ class RemoteFile implements Appendable, Writable {
   int getPermissions() {
     int mask = 0
     delegate.sftpChannel { ChannelSftp channel ->
-      SftpATTRS attr = channel.stat(this.destination)
+      SftpATTRS attr = channel.stat(resolveDestination())
       mask = attr.permissions - 32768
     }
     mask
@@ -204,7 +205,7 @@ class RemoteFile implements Appendable, Writable {
    * "Touches" remote file.
    */
   void touch() {
-    delegate.exec(command: 'touch ' + this.destination, failOnError: true, showOutput: true)
+    delegate.exec(command: 'touch ' + resolveDestination(), failOnError: true, showOutput: true)
   }
 
 
@@ -227,7 +228,7 @@ class RemoteFile implements Appendable, Writable {
     File tempFile = createTempFile()
     try {
       delegate.scp {
-        from { remoteFile destination }
+        from { remoteFile resolveDestination() }
         into { localFile tempFile }
       }
       return tempFile.text
@@ -251,7 +252,7 @@ class RemoteFile implements Appendable, Writable {
     try {
       delegate.scp {
         from { localFile(tempFile) }
-        into { remoteFile(destination) }
+        into { remoteFile(resolveDestination()) }
       }
     } finally {
       tempFile.delete()
@@ -283,7 +284,7 @@ class RemoteFile implements Appendable, Writable {
     try {
       delegate.scp {
         from { localFile(tempFile) }
-        into { remoteFile(destination) }
+        into { remoteFile(resolveDestination()) }
       }
     } finally {
       tempFile.delete()

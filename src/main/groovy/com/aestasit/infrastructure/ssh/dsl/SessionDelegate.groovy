@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Aestas/IT
+ * Copyright (C) 2011-2020 Aestas/IT
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.aestasit.infrastructure.ssh.dsl
 
 import com.aestasit.infrastructure.ssh.*
@@ -115,7 +114,7 @@ class SessionDelegate {
           }
         }
 
-        session.setPassword(password as String)
+        if (password) session.setPassword(password as String)
 
         if (this.proxyHost?.trim() && this.proxyPort?.trim()) {
           session.proxy = new ProxyHTTP(this.proxyHost, Integer.parseInt(this.proxyPort))
@@ -151,6 +150,7 @@ class SessionDelegate {
     connect()
   }
 
+  @SuppressWarnings('UnnecessarySetter')
   void setUrl(String url) {
     RemoteURL remoteURL = new RemoteURL(url, DEFAULT_SSH_PORT)
     setHost(remoteURL.host)
@@ -301,12 +301,12 @@ class SessionDelegate {
     // Upload local files and directories.
     def allLocalFiles = copySpec.source.localFiles + copySpec.source.localDirs
     allLocalFiles.each { File sourcePath ->
-      if (sourcePath.isDirectory()) {
+      if (sourcePath.directory) {
         sourcePath.eachFileRecurse { File childPath ->
           def relativePath = relativePath(sourcePath, childPath)
           logger.debug("Working with relative path: $relativePath")
           remoteDirs.each { String dstDir ->
-            if (childPath.isDirectory()) {
+            if (childPath.directory) {
               def dstParentDir = separatorsToUnix(concat(dstDir, relativePath))
               createRemoteDirectory(dstParentDir, channel)
             } else {
@@ -404,11 +404,11 @@ class SessionDelegate {
     List<ChannelSftp.LsEntry> entries = channel.ls(separatorsToUnix(remoteDir))
     entries.each { ChannelSftp.LsEntry entry ->
       def childPath = separatorsToUnix(concat(remoteDir, entry.filename))
-      if (entry.attrs.isDir()) {
+      if (entry.attrs.dir) {
         if (!(entry.filename in ['.', '..'])) {
           remoteEachFileRecurse(childPath, channel, cl)
         }
-      } else if (entry.attrs.isLink()) {
+      } else if (entry.attrs.link) {
         def linkPath = channel.readlink(childPath)
         if (options.verbose) {
           logger.info("> Skipping symlink: ${linkPath}")
@@ -616,6 +616,7 @@ class SessionDelegate {
     }
   }
 
+  @SuppressWarnings('UnnecessarySetter')
   private ChannelData executeCommand(String cmd, ExecOptions options) {
     session.timeout = options.maxWait
     String actualCommand = cmd
@@ -674,7 +675,7 @@ class SessionDelegate {
       thread =
         new Thread() {
           void run() {
-            while (!channel.isClosed()) {
+            while (!channel.closed) {
               if (thread == null) {
                 return
               }
@@ -692,7 +693,7 @@ class SessionDelegate {
         redactedOutput = redactSecrets(channelData.output.toString(), options)
         logger.info(redactedOutput)
       }
-      if (thread.isAlive()) {
+      if (thread.alive) {
         thread = null
         return failWithTimeout(options)
       }
