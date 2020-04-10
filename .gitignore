@@ -11,6 +11,7 @@ bin
 .DS_Store
 build
 .vagrant
+*.gpg
 
 # IDE files #
 *.iml
