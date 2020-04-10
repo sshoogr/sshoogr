@@ -1,12 +1,9 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - master
-  # release:
-  #   types: 
-  #     - created
+  release:
+    types: 
+      - published
 
 jobs:
   release:
