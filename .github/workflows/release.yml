@@ -2,7 +2,8 @@ name: Release
 
 on:
   push:
-    - master
+    branches:
+      - master
   # release:
   #   types: 
   #     - created
