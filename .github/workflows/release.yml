@@ -2,11 +2,13 @@ name: Release
 
 on:
   push:
-    branches:
-      - master
+    - master
+  # release:
+  #   types: 
+  #     - created
 
 jobs:
-  build:
+  release:
     name: Release
     runs-on: ubuntu-latest
     env:
@@ -31,6 +33,11 @@ jobs:
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradlew') }}
           restore-keys: |
             ${{ runner.os }}-gradlew-
+      - uses: secrethub/actions/env-export@v0.1.0
+        env:
+          SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
+          ORG_GRADLE_PROJECT_ossReleaseRepositoryUserName: secrethub://sshoogr/sshoogr/ossReleaseRepositoryUserName
+          ORG_GRADLE_PROJECT_ossReleaseRepositoryPassword: secrethub://sshoogr/sshoogr/ossReleaseRepositoryPassword
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: release
