@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
+      SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -34,11 +35,13 @@ jobs:
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradlew') }}
           restore-keys: |
             ${{ runner.os }}-gradlew-
-      - uses: secrethub/actions/env-export@v0.1.0
-        env:
-          SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
-          ORG_GRADLE_PROJECT_ossReleaseRepositoryUserName: secrethub://sshoogr/sshoogr/ossReleaseRepositoryUserName
-          ORG_GRADLE_PROJECT_ossReleaseRepositoryPassword: secrethub://sshoogr/sshoogr/ossReleaseRepositoryPassword
+      - run: |
+          echo "deb [trusted=yes] https://apt.secrethub.io stable main" > /etc/apt/sources.list.d/secrethub.sources.list
+          apt-get update
+          apt-get install -y secrethub-cli
+          mkdir -p $HOME/.gradle
+          secrethub read sshoogr/sshoogr/secring.gpg > secring.gpg
+          secrethub inject -i gradle.properties.tmpl > $HOME/.gradle/gradle.properties
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: release
