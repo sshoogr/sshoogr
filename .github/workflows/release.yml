@@ -42,6 +42,7 @@ jobs:
           sudo apt-get install -y secrethub-cli
           mkdir -p $HOME/.gradle
           secrethub read sshoogr/sshoogr/secring.gpg -o secring.gpg
+          truncate --size=-1 secring.gpg
           secrethub inject -i gradle.properties.tmpl > $HOME/.gradle/gradle.properties
       - uses: eskatos/gradle-command-action@v1
         with:
