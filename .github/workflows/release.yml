@@ -36,9 +36,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradlew-
       - run: |
-          echo "deb [trusted=yes] https://apt.secrethub.io stable main" > /etc/apt/sources.list.d/secrethub.sources.list
-          apt-get update
-          apt-get install -y secrethub-cli
+          sudo echo "deb [trusted=yes] https://apt.secrethub.io stable main" > /etc/apt/sources.list.d/secrethub.sources.list
+          sudo apt-get update
+          sudo apt-get install -y secrethub-cli
           mkdir -p $HOME/.gradle
           secrethub read sshoogr/sshoogr/secring.gpg > secring.gpg
           secrethub inject -i gradle.properties.tmpl > $HOME/.gradle/gradle.properties
