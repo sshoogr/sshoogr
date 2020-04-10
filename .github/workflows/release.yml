@@ -36,7 +36,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradlew-
       - run: |
-          sudo echo "deb [trusted=yes] https://apt.secrethub.io stable main" > /etc/apt/sources.list.d/secrethub.sources.list
+          sudo echo "deb [trusted=yes] https://apt.secrethub.io stable main" > secrethub.sources.list
+          sudo mv secrethub.sources.list /etc/apt/sources.list.d/secrethub.sources.list
           sudo apt-get update
           sudo apt-get install -y secrethub-cli
           mkdir -p $HOME/.gradle
