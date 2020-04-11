@@ -1,6 +1,8 @@
 # sshoogr
 
 ![GitHub Workflow Status](https://github.com/sshoogr/sshoogr/workflows/Build/badge.svg)
+![ASL2 Licensed](http://img.shields.io/badge/license-ASL2-blue.svg)
+![Latest Version](https://api.bintray.com/packages/sshoogr/sshoogr/sshoogr/images/download.svg)
 
 ## Overview
 
@@ -32,7 +34,7 @@ This will install the `sshoogr` and make it available on your path.
 The easiest way to use `sshoogr` in a **Groovy** script is by importing the dependency using [Grape](http://groovy.codehaus.org/Grape).
 
 ```groovy
-@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.26')
+@Grab('com.aestasit.infrastructure.sshoogr:sshoogr:0.9.28')
 import static com.aestasit.infrastructure.ssh.DefaultSsh.*
 ```
 
