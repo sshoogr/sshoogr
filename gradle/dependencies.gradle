@@ -47,11 +47,9 @@ dependencies {
 }
 
 configurations.all {
-  configurations.all {
-    resolutionStrategy.force "org.slf4j:slf4j-api:${slf4jVersion}",
-        "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
-        "commons-io:commons-io:${commonsIOVersion}",
-        "com.jcraft:jsch:${jschVersion}",
-        "junit:junit:${junitVersion}"
-  }
+  resolutionStrategy.force "org.slf4j:slf4j-api:${slf4jVersion}",
+      "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
+      "commons-io:commons-io:${commonsIOVersion}",
+      "com.jcraft:jsch:${jschVersion}",
+      "junit:junit:${junitVersion}"
 }
