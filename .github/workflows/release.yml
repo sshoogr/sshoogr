@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  release:
-    types: 
-      - published
+  push:
+    tags:
+      - "v*"
 
 jobs:
   release:
@@ -11,36 +11,45 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
-      SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sshoogr
+        uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-      - name: Set up JDK 1.8
+          path: main
+
+      - name: Checkout sshoogr-parent
+        uses: actions/checkout@v2
+        with:
+          repository: sshoogr/sshoogr-parent
+          path: sshoogr-parent
+
+      - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradlew') }}
           restore-keys: |
             ${{ runner.os }}-gradlew-
-      - run: |
-          sudo echo "deb [trusted=yes] https://apt.secrethub.io stable main" > secrethub.sources.list
-          sudo mv secrethub.sources.list /etc/apt/sources.list.d/secrethub.sources.list
-          sudo apt-get update
-          sudo apt-get install -y secrethub-cli
-          mkdir -p $HOME/.gradle
-          secrethub read sshoogr/sshoogr/secring.gpg -o secring.gpg
-          truncate --size=-1 secring.gpg
-          secrethub inject -i gradle.properties.tmpl > $HOME/.gradle/gradle.properties
-      - uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: release
+
+      - name: Publish sshoogr-parent
+        working-directory: ./sshoogr-parent
+        run: |
+          chmod +x gradlew
+          ./gradlew publishToMavenLocal
+
+      - name: Build sshoogr
+        working-directory: ./main
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDist githubRelease -PgithubToken=${{ secrets.GITHUB_TOKEN }} -S

@@ -57,7 +57,7 @@ dependencies {
 
 task createChecksum(type: Checksum) {
     dependsOn(assembleDist)
-    files = files([distZip, distTar].outputs.files.flatten())
+    files = distZip.destinationDirectory.asFileTree
     outputDir = distZip.destinationDirectory.asFile.get()
     algorithm = Checksum.Algorithm.SHA256
 }
@@ -74,11 +74,14 @@ sdkman {
 }
 
 githubRelease {
-    releaseAssets = files(distZip.destinationDirectory.asFile.get().listFiles())
+    releaseAssets = distZip.destinationDirectory.asFileTree
     token = project.githubToken
+    targetCommitish = 'main'
+    overwrite = true
     owner = 'sshoogr'
-    draft = true
-    body = '## News'
+    repo = 'sshoogr'
+    draft = false
+    body = changelog()
 }
 
 license {
