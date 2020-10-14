@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.aestasit.infrastructure.ssh.dsl
 
-config {
-  info {
-    name          = 'Sshoogr'
-    description   = 'A Groovy-based DSL for working with remote SSH servers.'
-    inceptionYear = '2011'
-    tags          = ['ssh']
-  }
+import com.jcraft.jsch.Channel
+import groovy.transform.Canonical
+import groovy.transform.CompileStatic
 
-  quality {
-    codenarc {
-      configFile = project.rootProject.file('src/conf/codenarc/codenarc.groovy')
-    }
-    sonar {
-      username     ='sshoogr'
-      organization ='sshoogr'
-    }
-  }
+@Canonical
+@CompileStatic
+class ChannelData {
+  ByteArrayOutputStream output
+  Channel channel
 }

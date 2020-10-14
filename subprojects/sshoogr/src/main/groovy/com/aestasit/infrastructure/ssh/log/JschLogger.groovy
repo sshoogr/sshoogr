@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.aestasit.infrastructure.ssh.log
 
-config {
-  info {
-    name          = 'Sshoogr'
-    description   = 'A Groovy-based DSL for working with remote SSH servers.'
-    inceptionYear = '2011'
-    tags          = ['ssh']
+import groovy.transform.CompileStatic
+
+@CompileStatic
+class JschLogger implements com.jcraft.jsch.Logger {
+
+  private final EventLogger logger
+
+  JschLogger(EventLogger logger) {
+    this.logger = logger
   }
 
-  quality {
-    codenarc {
-      configFile = project.rootProject.file('src/conf/codenarc/codenarc.groovy')
-    }
-    sonar {
-      username     ='sshoogr'
-      organization ='sshoogr'
-    }
+  @SuppressWarnings('UnusedMethodParameter')
+  boolean isEnabled(int pLevel) { true }
+
+  @SuppressWarnings('UnusedMethodParameter')
+  void log(int pLevel, String pMessage) {
+    logger.debug(pMessage)
   }
+
 }

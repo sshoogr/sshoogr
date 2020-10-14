@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-config {
-  info {
-    name          = 'Sshoogr'
-    description   = 'A Groovy-based DSL for working with remote SSH servers.'
-    inceptionYear = '2011'
-    tags          = ['ssh']
-  }
+configurations {
+    asciidoctorExtensions
+}
 
-  quality {
-    codenarc {
-      configFile = project.rootProject.file('src/conf/codenarc/codenarc.groovy')
-    }
-    sonar {
-      username     ='sshoogr'
-      organization ='sshoogr'
-    }
-  }
+dependencies {
+    asciidoctorExtensions 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.3'
+}
+
+guide {
+    groovydocApiDir = 'api'
 }

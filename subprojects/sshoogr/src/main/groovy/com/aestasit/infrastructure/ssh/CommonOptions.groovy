@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.aestasit.infrastructure.ssh
 
-config {
-  info {
-    name          = 'Sshoogr'
-    description   = 'A Groovy-based DSL for working with remote SSH servers.'
-    inceptionYear = '2011'
-    tags          = ['ssh']
+import groovy.transform.CompileStatic
+
+/**
+ * Class holding common configuration options available for EXEC and SCP functionality.
+ *
+ * @author Andrey Adamovich
+ *
+ */
+@CompileStatic
+class CommonOptions {
+
+  Boolean failOnError        = true
+  Boolean sshDebug           = false
+
+  static <T> T setValue(T val1, T dflt) {
+    val1 != null ? val1 : dflt
   }
 
-  quality {
-    codenarc {
-      configFile = project.rootProject.file('src/conf/codenarc/codenarc.groovy')
-    }
-    sonar {
-      username     ='sshoogr'
-      organization ='sshoogr'
-    }
+  static <T> T setValue(T val2, T val1, T dflt) {
+    setValue(val2, setValue(val1, dflt))
   }
 }

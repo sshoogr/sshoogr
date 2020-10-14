@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2011-2020 Aestas/IT
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import org.gradle.crypto.checksum.Checksum
+
+def resolveProperty(Project project, String envKey, String propKey, String defaultValue) {
+    String value = System.getenv(envKey)
+    if (!value) value = project.findProperty(propKey)
+    !value? defaultValue : value
+}
+
+project.ext.githubToken = resolveProperty(project, 'GITHUB_TOKEN', 'githubToken', '**undefined**')
+project.ext.sdkmanConsumerKey = resolveProperty(project, 'SDKMAN_CONSUMER_KEY', 'sdkmanConsumerKey', '**undefined**')
+project.ext.sdkmanConsumerToken = resolveProperty(project, 'SDKMAN_CONSUMER_TOKEN', 'sdkmanConsumerToken', '**undefined**')
+
+config {
+    bintray {
+        enabled = true
+    }
+}
+
+application {
+    mainClass.set('com.aestasit.infrastructure.ssh.launcher.Sshoogr')
+}
+
+dependencies {
+    // needed for running groovydoc
+    compileOnly "org.codehaus.groovy:groovy-groovydoc:${groovyVersion}"
+
+    api "org.codehaus.groovy:groovy:${groovyVersion}"
+    api "org.slf4j:slf4j-api:${slf4jVersion}"
+    api "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+    api "ch.qos.logback:logback-classic:${logbackVersion}"
+    api "commons-io:commons-io:${commonsIOVersion}"
+    api "commons-codec:commons-codec:${commonsCodecVersion}"
+    api "com.jcraft:jsch:${jschVersion}"
+    api "com.lexicalscope.jewelcli:jewelcli:${jewelcliVersion}"
+    api "org.fusesource.jansi:jansi:${jansiVersion}"
+
+    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "com.aestasit.infrastructure.mock:groovy-sshd-mock:${sshdMockVersion}"
+    testImplementation "com.github.stefanbirkner:system-rules:${systemRulesVersion}"
+}
+
+task createChecksum(type: Checksum) {
+    dependsOn(assembleDist)
+    files = files([distZip, distTar].outputs.files.flatten())
+    outputDir = distZip.destinationDirectory.asFile.get()
+    algorithm = Checksum.Algorithm.SHA256
+}
+assembleDist.finalizedBy(createChecksum)
+
+sdkman {
+    api = 'https://vendors.sdkman.io'
+    consumerKey = sdkmanConsumerKey
+    consumerToken = sdkmanConsumerToken
+    candidate = project.name
+    version = project.version
+    url = "https://github.com/sshoogr/sshoogr/releases/download/v${project.version}/sshoogr-${project.version}.zip"
+    hashtag = '#sshoogr'
+}
+
+githubRelease {
+    releaseAssets = files(distZip.destinationDirectory.asFile.get().listFiles())
+    token = project.githubToken
+    owner = 'sshoogr'
+    draft = true
+    body = '## News'
+}
+
+license {
+    mapping {
+        gdsl = 'SLASHSTAR_STYLE'
+        dsld = 'SLASHSTAR_STYLE'
+    }
+}

@@ -1,0 +1,18 @@
+= `sshoogr`
+
+== User's Guide
+
+include::{includedir}/installing.adoc[]
+include::{includedir}/usage.adoc[]
+
+== Developer's Guide
+
+include::{includedir}/hacking.adoc[]
+include::{includedir}/release.adoc[]
+include::{includedir}/contributors.adoc[]
+
+= Links
+
+link:api/index.html[Javadoc, window="_blank"]
+
+link:api-html/index.html[Source, window="_blank"]

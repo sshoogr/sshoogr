@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.aestasit.infrastructure.ssh.dsl
 
-config {
-  info {
-    name          = 'Sshoogr'
-    description   = 'A Groovy-based DSL for working with remote SSH servers.'
-    inceptionYear = '2011'
-    tags          = ['ssh']
-  }
+import com.aestasit.infrastructure.ssh.ExecOptions
+import groovy.transform.CompileStatic
+import groovy.transform.InheritConstructors
 
-  quality {
-    codenarc {
-      configFile = project.rootProject.file('src/conf/codenarc/codenarc.groovy')
-    }
-    sonar {
-      username     ='sshoogr'
-      organization ='sshoogr'
-    }
+/**
+ * Closure delegate that is used to collect all EXEC (remote command execution) options including command itself.
+ *
+ * @author Andrey Adamovich
+ *
+ */
+@InheritConstructors
+@CompileStatic
+class ExecOptionsDelegate extends ExecOptions {
+
+  String command
+
+  ExecOptionsDelegate getExecOptions() {
+    this
   }
 }
