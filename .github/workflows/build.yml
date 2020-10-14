@@ -45,7 +45,7 @@ jobs:
           chmod +x gradlew
           ./gradlew publishToMavenLocal
 
-      - name: Build sshoogr
+      - name: Build
         working-directory: ./main
         run: |
           chmod +x gradlew
