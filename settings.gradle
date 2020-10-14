@@ -24,7 +24,6 @@ buildscript {
         classpath "com.aestasit.sshoogr.gradle:sshoogr-parentbuild:$sshoogrBuildVersion"
         classpath "com.github.breadmoirai:github-release:$releasePluginVersion"
         classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
-        classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:integrationtest-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:guide-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:sonar-gradle-plugin:$kordampPluginVersion"
@@ -40,10 +39,6 @@ projects {
     plugins {
         all {
             id 'idea'
-        }
-        path(':') {
-            id 'org.kordamp.gradle.groovy-project'
-            id 'org.kordamp.gradle.bintray'
         }
         path(':guide') {
             id 'org.kordamp.gradle.guide'
