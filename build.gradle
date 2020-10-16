@@ -27,8 +27,8 @@ config {
       configFile = project.rootProject.file('src/conf/codenarc/codenarc.groovy')
     }
     sonar {
-      username     ='sshoogr'
-      organization ='sshoogr'
+      username     = 'sshoogr'
+      organization = 'sshoogr'
     }
   }
 }
