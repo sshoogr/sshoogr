@@ -108,9 +108,9 @@ class SessionDelegate {
         session = jsch.getSession(username, host, port)
         if (keyFile != null) {
           if (passPhrase) {
-            jsch.addIdentity(keyFile.absolutePath, passPhrase)
+            jsch.addIdentity(keyFile instanceof String ? new File(keyFile).absolutePath : keyFile.absolutePath, passPhrase)
           } else {
-            jsch.addIdentity(keyFile.absolutePath)
+            jsch.addIdentity(keyFile instanceof String ? new File(keyFile).absolutePath : keyFile.absolutePath)
           }
         }
 
